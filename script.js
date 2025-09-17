@@ -1,8 +1,9 @@
-// === MENU & NAVIGATION ===
+// Toggle sidebar
 function toggleMenu() {
   document.getElementById('sidebar').classList.toggle('active');
 }
 
+// Navigasi antar halaman
 function showPage(pageId) {
   if (!localStorage.getItem("currentUser") && 
       !["login", "register", "forgot"].includes(pageId)) {
@@ -10,16 +11,22 @@ function showPage(pageId) {
   }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
-  document.getElementById('sidebar').classList.remove('active');
+
+  document.getElementById('sidebar').classList.remove('active'); // auto close menu
+
   if (pageId === "profile") loadProfile();
   if (pageId === "farm") loadFarm();
 }
 
-// === SLIDER ===
+// === Slider Banner ===
 let currentSlide = 0;
 function showSlide(index) {
   const slides = document.querySelectorAll(".slide");
   if (slides.length === 0) return;
+
+  slides.forEach((s, i) => s.classList.remove("active"));
+  slides[index].classList.add("active");
+
   document.querySelector(".slides").style.transform = `translateX(-${index * 100}%)`;
 }
 function nextSlide() {
@@ -29,123 +36,61 @@ function nextSlide() {
 }
 setInterval(nextSlide, 4000);
 
-// === DATA HEWAN ===
+// === Hewan ===
 const animals = [
-  { name: "Sapi", price: 100000, earning: 5000, duration: "30 hari" },
-  { name: "Ayam", price: 50000, earning: 2000, duration: "20 hari" },
-  { name: "Kucing", price: 20000, earning: 1000, duration: "15 hari" },
-  { name: "Domba", price: 80000, earning: 3500, duration: "25 hari" },
-  { name: "Gajah", price: 200000, earning: 10000, duration: "40 hari" }
+  { name: "🐮 Sapi", price: 50000, income: 2000, days: 30 },
+  { name: "🐔 Ayam", price: 20000, income: 800, days: 20 },
+  { name: "🐑 Kambing", price: 30000, income: 1200, days: 25 },
+  { name: "🐱 Kucing", price: 40000, income: 1500, days: 28 },
+  { name: "🐘 Gajah", price: 100000, income: 5000, days: 40 }
 ];
 
-// === REGISTER ===
-function registerUser(e) {
-  e.preventDefault();
-  let email = document.getElementById("reg-email").value;
-  let username = document.getElementById("reg-username").value;
-  let password = document.getElementById("reg-password").value;
-  let pin = document.getElementById("reg-pin").value;
-
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  if (users.find(u => u.username === username)) {
-    alert("Username sudah terdaftar!");
-    return;
-  }
-
-  users.push({ email, username, password, pin, balance: 0, myFarm: [] });
-  localStorage.setItem("users", JSON.stringify(users));
-  alert("Registrasi berhasil, silakan login!");
-  showPage("login");
-}
-
-// === LOGIN ===
-function loginUser(e) {
-  e.preventDefault();
-  let username = document.getElementById("login-username").value;
-  let password = document.getElementById("login-password").value;
-
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  let user = users.find(u => u.username === username && u.password === password);
-
-  if (user) {
-    localStorage.setItem("currentUser", username);
-    alert("Login berhasil!");
-    showPage("home");
-  } else {
-    alert("Username atau password salah!");
-  }
-}
-
-// === RESET PASSWORD ===
-function resetPassword(e) {
-  e.preventDefault();
-  let username = document.getElementById("forgot-username").value;
-  let newPass = document.getElementById("forgot-newpass").value;
-
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  let user = users.find(u => u.username === username);
-
-  if (!user) {
-    alert("Username tidak ditemukan!");
-    return;
-  }
-  user.password = newPass;
-  localStorage.setItem("users", JSON.stringify(users));
-  alert("Password berhasil direset, silakan login!");
-  showPage("login");
-}
-
-// === PROFIL ===
-function loadProfile() {
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  let current = localStorage.getItem("currentUser");
-  let user = users.find(u => u.username === current);
-
-  if (user) {
-    document.getElementById("profile-username").textContent = user.username;
-    document.getElementById("profile-email").textContent = user.email;
-    document.getElementById("profile-balance").textContent = user.balance.toLocaleString();
-  }
-}
-
-// === FARM ===
+// Render farm
 function loadFarm() {
   let tbody = document.getElementById("farm-data");
   tbody.innerHTML = "";
+
   let users = JSON.parse(localStorage.getItem("users")) || [];
   let current = localStorage.getItem("currentUser");
   let user = users.find(u => u.username === current);
 
-  let total = 0;
   animals.forEach((a, i) => {
-    let owned = user.myFarm && user.myFarm.some(f => f.name === a.name);
-    if (owned) total += a.earning;
+    let sudahPunya = user?.myFarm?.some(f => f.name === a.name);
+
     let row = document.createElement("tr");
     row.innerHTML = `
       <td>${a.name}</td>
       <td>Rp ${a.price.toLocaleString()}</td>
-      <td>Rp ${a.earning.toLocaleString()}</td>
-      <td>${a.duration}</td>
-      <td>${owned ? "Sudah Dibeli" : `<button onclick="buyAnimal(${i})">Beli</button>`}</td>
+      <td>Rp ${a.income.toLocaleString()}</td>
+      <td>${a.days} hari</td>
+      <td>
+        ${sudahPunya 
+          ? `<button disabled>Sudah Dibeli</button>` 
+          : `<button onclick="buyAnimal(${i})">Beli</button>`}
+      </td>
     `;
     tbody.appendChild(row);
   });
-  document.getElementById("total-earnings").textContent = "Total Penghasilan: Rp " + total.toLocaleString() + " /hari";
+
+  updateTotalEarnings();
 }
 
-// === BELI HEWAN ===
 function buyAnimal(index) {
   let users = JSON.parse(localStorage.getItem("users")) || [];
   let current = localStorage.getItem("currentUser");
   let user = users.find(u => u.username === current);
+
   if (!user) return;
 
   let animal = animals[index];
+
+  // Cek kalau sudah punya
   if (user.myFarm && user.myFarm.some(f => f.name === animal.name)) {
     alert("Anda sudah membeli hewan ini!");
     return;
   }
 
+  // Pilih metode bayar
   let metode = prompt("Pilih metode pembayaran: Dana / OVO").toLowerCase();
   if (metode !== "dana" && metode !== "ovo") {
     alert("Metode tidak valid!");
@@ -167,60 +112,96 @@ function confirmPayment(index, metode) {
   let users = JSON.parse(localStorage.getItem("users")) || [];
   let current = localStorage.getItem("currentUser");
   let user = users.find(u => u.username === current);
+
   if (!user) return;
 
   let animal = animals[index];
+  user.myFarm = user.myFarm || [];
   user.myFarm.push(animal);
   localStorage.setItem("users", JSON.stringify(users));
 
   alert(`${animal.name} berhasil dibeli via ${metode.toUpperCase()}!`);
-  loadFarm();
   loadProfile();
+  loadFarm();
   document.getElementById("payment-qr").innerHTML = "";
 }
 
-// === WITHDRAW ===
-function withdraw() {
-  let pin = prompt("Masukkan kode keamanan:");
+function updateTotalEarnings() {
   let users = JSON.parse(localStorage.getItem("users")) || [];
   let current = localStorage.getItem("currentUser");
   let user = users.find(u => u.username === current);
 
-  if (user && pin === user.pin) {
-    alert("Penarikan berhasil! Saldo dikurangi Rp 50.000");
-    user.balance -= 50000;
-    localStorage.setItem("users", JSON.stringify(users));
-    loadProfile();
-  } else {
-    alert("Kode keamanan salah!");
+  let total = 0;
+  if (user && user.myFarm) {
+    total = user.myFarm.reduce((sum, a) => sum + a.income, 0);
   }
+
+  document.getElementById("total-earnings").textContent = 
+    `Total Penghasilan: Rp ${total.toLocaleString()} /hari`;
 }
 
-// === LOGOUT ===
-function logout() {
-  localStorage.removeItem("currentUser");
+// === Register ===
+function registerUser(e) {
+  e.preventDefault();
+  let email = document.getElementById("reg-email").value;
+  let username = document.getElementById("reg-username").value;
+  let password = document.getElementById("reg-password").value;
+  let pin = document.getElementById("reg-pin").value;
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  if (users.find(u => u.username === username)) {
+    alert("Username sudah terdaftar!");
+    return;
+  }
+
+  users.push({ email, username, password, pin, balance: 0, myFarm: [] });
+  localStorage.setItem("users", JSON.stringify(users));
+  alert("Registrasi berhasil, silakan login!");
   showPage("login");
 }
 
-// === ONLOAD ===
-window.onload = () => {
-  if (localStorage.getItem("currentUser")) {
+// === Login ===
+function loginUser(e) {
+  e.preventDefault();
+  let username = document.getElementById("login-username").value;
+  let password = document.getElementById("login-password").value;
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let user = users.find(u => u.username === username && u.password === password);
+
+  if (user) {
+    localStorage.setItem("currentUser", username);
+    alert("Login berhasil!");
     showPage("home");
   } else {
-    showPage("register");
+    alert("Username atau password salah!");
   }
+}
 
-  let data = [
-    { name: "PeternakPro", total: 150000 },
-    { name: "SultanTernak", total: 120000 },
-    { name: "Pemula", total: 80000 }
-  ];
-  let tbody = document.getElementById("leaderboard-data");
-  if (tbody) {
-    data.forEach((u, i) => {
-      let row = document.createElement("tr");
-      row.innerHTML = `<td>${i+1}</td><td>${u.name}</td><td>Rp ${u.total.toLocaleString()}</td>`;
-      tbody.appendChild(row);
-    });
+// === Lupa Password ===
+function resetPassword(e) {
+  e.preventDefault();
+  let username = document.getElementById("forgot-username").value;
+  let newPass = document.getElementById("forgot-newpass").value;
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let user = users.find(u => u.username === username);
+
+  if (!user) {
+    alert("Username tidak ditemukan!");
+    return;
   }
-};
+  user.password = newPass;
+  localStorage.setItem("users", JSON.stringify(users));
+  alert("Password berhasil direset, silakan login!");
+  showPage("login");
+}
+
+// === Profile ===
+function loadProfile() {
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let current = localStorage.getItem("currentUser");
+  let user = users.find(u => u.username === current);
+
+  if (user) {
+    document.getElementById("profile-username").textContent =
