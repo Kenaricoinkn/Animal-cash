@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Animal Cash</title>
+  <!-- Font Orbitron -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet"/>
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <h1>🐾 Animal Cash</h1>
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+  </header>
+
+  <!-- Sidebar Menu -->
+  <nav id="sidebar">
+    <a href="#" onclick="showPage('home')">HOME</a>
+    <a href="#" onclick="showPage('profile')">PROFILE</a>
+    <a href="#" onclick="showPage('farm')">FARM</a>
+    <a href="#" onclick="showPage('leaderboard')">LEADERBOARD</a>
+    <a href="#" onclick="showPage('contact')">CONTACT</a>
+  </nav>
+
+  <!-- Content -->
+  <main>
+    <!-- Home -->
+    <div id="home" class="page active">
+      <h2>Selamat Datang</h2>
+      <p>Animal Cash adalah platform tempat kamu bisa membeli hewan virtual 🐮🐔🐑
+      yang menghasilkan uang setiap hari. Semakin banyak hewan, semakin besar penghasilanmu!</p>
+    </div>
+
+    <!-- Profile -->
+    <div id="profile" class="page">
+      <h2>Profil Saya</h2>
+      <div class="card">
+        <p><b>Nama:</b> User123</p>
+        <p><b>Saldo:</b> Rp 100.000</p>
+        <button onclick="alert('Fitur penarikan dalam pengembangan')">Tarik Saldo</button>
+      </div>
+    </div>
+
+    <!-- Farm -->
+    <div id="farm" class="page">
+      <h2>Peternakan Saya</h2>
+      <div class="card">
+        <img src="https://i.ibb.co/7nbGdpH/cow.png" alt="Sapi">
+        <h3>🐮 Sapi</h3>
+        <p>Harga: Rp 50.000</p>
+        <p>Penghasilan/hari: Rp 2.000</p>
+        <p>Jangka waktu: 30 hari</p>
+        <p><b>Total: Rp 60.000</b></p>
+        <button>Beli</button>
+      </div>
+      <div class="card">
+        <img src="https://i.ibb.co/1ZpBpY2/chicken.png" alt="Ayam">
+        <h3>🐔 Ayam</h3>
+        <p>Harga: Rp 20.000</p>
+        <p>Penghasilan/hari: Rp 800</p>
+        <p>Jangka waktu: 20 hari</p>
+        <p><b>Total: Rp 16.000</b></p>
+        <button>Beli</button>
+      </div>
+      <div class="card">
+        <img src="https://i.ibb.co/0f7n9ts/goat.png" alt="Kambing">
+        <h3>🐑 Kambing</h3>
+        <p>Harga: Rp 30.000</p>
+        <p>Penghasilan/hari: Rp 1.200</p>
+        <p>Jangka waktu: 25 hari</p>
+        <p><b>Total: Rp 30.000</b></p>
+        <button>Beli</button>
+      </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div id="leaderboard" class="page">
+      <h2>🏆 Leaderboard</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Peringkat</th>
+            <th>Nama</th>
+            <th>Total Penghasilan</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-data">
+          <!-- Data diisi dari script.js -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Contact -->
+    <div id="contact" class="page">
+      <h2>Hubungi Kami</h2>
+      <form onsubmit="event.preventDefault(); alert('Pesan terkirim!')">
+        <input type="text" placeholder="Nama" required>
+        <input type="email" placeholder="Email" required>
+        <textarea placeholder="Pesan" rows="4"></textarea>
+        <button type="submit">Kirim</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>
