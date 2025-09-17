@@ -204,4 +204,70 @@ function loadProfile() {
   let user = users.find(u => u.username === current);
 
   if (user) {
-    document.getElementById("profile-username").textContent =
+    document.getElementById("profile-username").textContent = user.username;
+    document.getElementById("profile-email").textContent = user.email;
+    document.getElementById("profile-balance").textContent = user.balance.toLocaleString();
+  }
+}
+
+// === Tarik Saldo ===
+function withdraw() {
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let current = localStorage.getItem("currentUser");
+  let user = users.find(u => u.username === current);
+
+  if (!user) return;
+
+  let pin = prompt("Masukkan kode keamanan penarikan:");
+  if (pin !== user.pin) {
+    alert("Kode keamanan salah!");
+    return;
+  }
+
+  if (user.balance <= 0) {
+    alert("Saldo belum cukup untuk ditarik.");
+    return;
+  }
+
+  alert(`Penarikan Rp ${user.balance.toLocaleString()} berhasil!`);
+  user.balance = 0;
+  localStorage.setItem("users", JSON.stringify(users));
+  loadProfile();
+}
+
+// === Logout ===
+function logout() {
+  localStorage.removeItem("currentUser");
+  alert("Anda telah logout.");
+  showPage("login");
+}
+
+// === Leaderboard ===
+function loadLeaderboard() {
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let sorted = users.sort((a, b) => (b.myFarm?.length || 0) - (a.myFarm?.length || 0));
+
+  let tbody = document.getElementById("leaderboard-data");
+  tbody.innerHTML = "";
+
+  sorted.slice(0, 10).forEach((u, i) => {
+    let totalIncome = (u.myFarm || []).reduce((sum, a) => sum + a.income, 0);
+    let row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${i + 1}</td>
+      <td>${u.username}</td>
+      <td>Rp ${totalIncome.toLocaleString()} /hari</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// Auto load home/leaderboard saat halaman siap
+window.onload = () => {
+  if (localStorage.getItem("currentUser")) {
+    showPage("home");
+    loadLeaderboard();
+  } else {
+    showPage("login");
+  }
+};
