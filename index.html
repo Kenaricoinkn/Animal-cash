@@ -23,12 +23,24 @@
     <a href="#" onclick="showPage('farm')">FARM</a>
     <a href="#" onclick="showPage('leaderboard')">LEADERBOARD</a>
     <a href="#" onclick="showPage('contact')">CONTACT</a>
+    <a href="#" onclick="logout()">LOGOUT</a>
   </nav>
 
   <!-- Content -->
   <main>
+    <!-- Login -->
+    <div id="login" class="page active">
+      <h2>Login</h2>
+      <form onsubmit="loginUser(event)">
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Kata Sandi" required>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+
     <!-- Home -->
-    <div id="home" class="page active">
+    <div id="home" class="page">
       <h2>Selamat Datang</h2>
       <p>Animal Cash adalah platform tempat kamu bisa membeli hewan virtual 🐮🐔🐑
       yang menghasilkan uang setiap hari. Semakin banyak hewan, semakin besar penghasilanmu!</p>
@@ -38,7 +50,8 @@
     <div id="profile" class="page">
       <h2>Profil Saya</h2>
       <div class="card">
-        <p><b>Nama:</b> User123</p>
+        <p><b>Nama Pengguna:</b> <span id="profile-username"></span></p>
+        <p><b>Email:</b> <span id="profile-email"></span></p>
         <p><b>Saldo:</b> Rp 100.000</p>
         <button onclick="alert('Fitur penarikan dalam pengembangan')">Tarik Saldo</button>
       </div>
