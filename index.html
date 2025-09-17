@@ -92,7 +92,7 @@
         </div>
       </div>
 
-      <p>Beli hewan virtual 🐮🐔🐑🐱🐘 untuk mendapatkan penghasilan harian.<br>
+      <p>Beli hewan virtual 🐮🐔🐑🐱🐘 untuk mendapatkan penghasilan harian.  
       Semakin banyak hewan, semakin besar cuanmu!</p>
     </div>
 
@@ -110,20 +110,59 @@
     <!-- Farm -->
     <div id="farm" class="page">
       <h2>Peternakan</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Hewan</th>
-            <th>Harga</th>
-            <th>Penghasilan /hari</th>
-            <th>Jangka Waktu</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody id="farm-data"></tbody>
-      </table>
-      <p id="total-earnings">Total Penghasilan: Rp 0 /hari</p>
-      <div id="payment-qr" style="margin-top:20px; text-align:center;"></div>
+
+      <div class="card">
+        <img src="https://i.ibb.co/7nbGdpH/cow.png" alt="Sapi">
+        <h3>🐮 Sapi</h3>
+        <p>Harga: Rp 50.000</p>
+        <p>Penghasilan/hari: Rp 2.000</p>
+        <p>Durasi: 30 hari</p>
+        <button onclick="buyAnimal('sapi')">Beli</button>
+      </div>
+
+      <div class="card">
+        <img src="https://i.ibb.co/1ZpBpY2/chicken.png" alt="Ayam">
+        <h3>🐔 Ayam</h3>
+        <p>Harga: Rp 20.000</p>
+        <p>Penghasilan/hari: Rp 800</p>
+        <p>Durasi: 20 hari</p>
+        <button onclick="buyAnimal('ayam')">Beli</button>
+      </div>
+
+      <div class="card">
+        <img src="https://i.ibb.co/0f7n9ts/goat.png" alt="Kambing">
+        <h3>🐑 Kambing</h3>
+        <p>Harga: Rp 30.000</p>
+        <p>Penghasilan/hari: Rp 1.200</p>
+        <p>Durasi: 25 hari</p>
+        <button onclick="buyAnimal('kambing')">Beli</button>
+      </div>
+
+      <div class="card">
+        <img src="https://i.ibb.co/Y0FjM3V/cat.png" alt="Kucing">
+        <h3>🐱 Kucing</h3>
+        <p>Harga: Rp 40.000</p>
+        <p>Penghasilan/hari: Rp 1.500</p>
+        <p>Durasi: 28 hari</p>
+        <button onclick="buyAnimal('kucing')">Beli</button>
+      </div>
+
+      <div class="card">
+        <img src="https://i.ibb.co/0ZqM13c/elephant.png" alt="Gajah">
+        <h3>🐘 Gajah</h3>
+        <p>Harga: Rp 100.000</p>
+        <p>Penghasilan/hari: Rp 5.000</p>
+        <p>Durasi: 40 hari</p>
+        <button onclick="buyAnimal('gajah')">Beli</button>
+      </div>
+
+      <div id="farm-summary" class="card">
+        <h3>Total Penghasilan</h3>
+        <p id="farm-income">Rp 0 /hari</p>
+        <p id="farm-warning" style="color:red; font-weight:bold; display:none;"></p>
+      </div>
+
+      <div id="farm-qr" class="card" style="display:none; text-align:center;"></div>
     </div>
 
     <!-- Leaderboard -->
