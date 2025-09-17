@@ -132,5 +132,124 @@ function buyAnimal(type) {
     return;
   }
 
+  // === Generate QR Dummy ===
+  let qrText = `Transfer ${animals[type].price} ke Admin via ${metode}`;
+  let qrLink = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrText)}`;
+
+  let qrBox = document.getElementById("farm-qr");
+  qrBox.innerHTML = `
+    <h3>Pembayaran via ${metode.toUpperCase()}</h3>
+    <p>Silakan scan QR berikut untuk transfer Rp ${animals[type].price.toLocaleString()}</p>
+    <img src="${qrLink}" alt="QR ${metode}">
+    <br><button onclick="confirmPayment('${type}')">Saya sudah transfer</button>
+  `;
+  qrBox.style.display = "block";
+  qrBox.scrollIntoView({ behavior: "smooth" });
+}
+
+function confirmPayment(type) {
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let current = localStorage.getItem("currentUser");
+  let user = users.find(u => u.username === current);
+  if (!user) return;
+
+  // Simpan hewan ke myFarm
+  user.myFarm.push({ name: type, income: animals[type].income });
+  localStorage.setItem("users", JSON.stringify(users));
+
+  alert(`Pembelian ${animals[type].label} berhasil!`);
+  document.getElementById("farm-qr").style.display = "none";
+  loadFarm();
+}
+
+// === Load Farm ===
+function loadFarm() {
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let current = localStorage.getItem("currentUser");
+  let user = users.find(u => u.username === current);
+  if (!user) return;
+
+  // Update tombol beli
+  Object.keys(animals).forEach(a => {
+    let btns = document.querySelectorAll(`button[onclick="buyAnimal('${a}')"]`);
+    btns.forEach(btn => {
+      if (user.myFarm.find(f => f.name === a)) {
+        btn.textContent = "Sudah Dibeli";
+        btn.disabled = true;
+        btn.style.background = "gray";
+      } else {
+        btn.textContent = "Beli";
+        btn.disabled = false;
+        btn.style.background = "#27ae60";
+      }
+    });
+  });
+
+  // Hitung total income
+  let total = user.myFarm.reduce((sum, a) => sum + a.income, 0);
+  document.getElementById("farm-income").textContent = `Rp ${total.toLocaleString()} /hari`;
+
+  // Warning kalau belum punya hewan
+  let warn = document.getElementById("farm-warning");
+  warn.style.display = user.myFarm.length === 0 ? "block" : "none";
+  warn.textContent = "⚠️ Kamu belum membeli hewan!";
+}
+
+// === Withdraw ===
+function withdraw() {
+  let pin = prompt("Masukkan kode keamanan:");
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let current = localStorage.getItem("currentUser");
+  let user = users.find(u => u.username === current);
+
+  if (user && pin === user.pin) {
+    if (user.balance < 50000) {
+      alert("Saldo tidak cukup!");
+      return;
+    }
+    alert("Penarikan berhasil! Saldo dikurangi Rp 50.000");
+    user.balance -= 50000;
+    localStorage.setItem("users", JSON.stringify(users));
+    loadProfile();
+  } else {
+    alert("Kode keamanan salah!");
+  }
+}
+
+// === Logout ===
+function logout() {
+  localStorage.removeItem("currentUser");
+  showPage("login");
+}
+
+// === Leaderboard Dummy ===
+window.onload = () => {
+  if (localStorage.getItem("currentUser")) {
+    showPage("home");
+  } else {
+    showPage("register");
+  }
+
+  let data = [
+    { name: "PeternakPro", total: 150000 },
+    { name: "SultanTernak", total: 120000 },
+    { name: "Pemula", total: 80000 }
+  ];
+  let tbody = document.getElementById("leaderboard-data");
+  if (tbody) {
+    tbody.innerHTML = "";
+    data.forEach((u, i) => {
+      let row = document.createElement("tr");
+      row.innerHTML = `<td>${i + 1}</td><td>${u.name}</td><td>Rp ${u.total.toLocaleString()}</td>`;
+      tbody.appendChild(row);
+    });
+  }
+};
+  let metode = prompt("Pilih metode pembayaran: Dana / OVO").toLowerCase();
+  if (metode !== "dana" && metode !== "ovo") {
+    alert("Metode tidak valid!");
+    return;
+  }
+
   let qrLink = (metode === "dana")
     ? "https://api.qrserver.com/v1/create-qr-code/?size=
