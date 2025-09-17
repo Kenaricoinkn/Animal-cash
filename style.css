@@ -26,6 +26,36 @@ main { padding: 20px; }
 .page { display: none; }
 .page.active { display: block; }
 
+/* Banner Slider */
+.slider {
+  width: 100%;
+  max-width: 600px;
+  margin: 15px auto;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  background: white;
+}
+.slides {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+.slide {
+  min-width: 100%;
+  text-align: center;
+  padding: 10px;
+}
+.slide img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+.slide p {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #27ae60;
+}
 /* Card */
 .card {
   background: white; border-radius: 15px;
