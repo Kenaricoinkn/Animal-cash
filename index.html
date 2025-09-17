@@ -4,9 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Animal Cash</title>
-  <!-- Font Orbitron -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet"/>
-  <!-- CSS -->
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
@@ -16,7 +14,7 @@
     <div class="hamburger" onclick="toggleMenu()">☰</div>
   </header>
 
-  <!-- Sidebar Menu -->
+  <!-- Sidebar -->
   <nav id="sidebar">
     <a href="#" onclick="showPage('home')">HOME</a>
     <a href="#" onclick="showPage('profile')">PROFILE</a>
@@ -26,65 +24,77 @@
     <a href="#" onclick="logout()">LOGOUT</a>
   </nav>
 
-  <!-- Content -->
+  <!-- Main -->
   <main>
+    <!-- Register -->
+    <div id="register" class="page active">
+      <h2>Daftar Akun</h2>
+      <form onsubmit="registerUser(event)">
+        <input type="email" id="reg-email" placeholder="Email" required>
+        <input type="text" id="reg-username" placeholder="Username" required>
+        <input type="password" id="reg-password" placeholder="Kata Sandi" required>
+        <input type="password" id="reg-pin" placeholder="Kode Keamanan Penarikan" required>
+        <button type="submit">Daftar</button>
+      </form>
+      <p>Sudah punya akun? <a href="#" onclick="showPage('login')">Login</a></p>
+    </div>
+
     <!-- Login -->
-    <div id="login" class="page active">
+    <div id="login" class="page">
       <h2>Login</h2>
       <form onsubmit="loginUser(event)">
-        <input type="text" id="username" placeholder="Username" required>
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Kata Sandi" required>
+        <input type="text" id="login-username" placeholder="Username" required>
+        <input type="password" id="login-password" placeholder="Kata Sandi" required>
         <button type="submit">Login</button>
       </form>
+      <p>Belum punya akun? <a href="#" onclick="showPage('register')">Daftar</a></p>
+      <p><a href="#" onclick="showPage('forgot')">Lupa Password?</a></p>
+    </div>
+
+    <!-- Forgot Password -->
+    <div id="forgot" class="page">
+      <h2>Lupa Password</h2>
+      <form onsubmit="resetPassword(event)">
+        <input type="text" id="forgot-username" placeholder="Masukkan Username" required>
+        <input type="password" id="forgot-newpass" placeholder="Password Baru" required>
+        <button type="submit">Reset Password</button>
+      </form>
+      <p><a href="#" onclick="showPage('login')">Kembali ke Login</a></p>
     </div>
 
     <!-- Home -->
     <div id="home" class="page">
-      <h2>Selamat Datang</h2>
-      <p>Animal Cash adalah platform tempat kamu bisa membeli hewan virtual 🐮🐔🐑
-      yang menghasilkan uang setiap hari. Semakin banyak hewan, semakin besar penghasilanmu!</p>
+      <h2>Selamat Datang di Animal Cash</h2>
+      <p>Beli hewan virtual 🐮🐔🐑 untuk mendapatkan penghasilan harian.  
+      Semakin banyak hewan, semakin besar cuanmu!</p>
     </div>
 
     <!-- Profile -->
     <div id="profile" class="page">
-      <h2>Profil Saya</h2>
+      <h2>Profil</h2>
       <div class="card">
-        <p><b>Nama Pengguna:</b> <span id="profile-username"></span></p>
+        <p><b>Username:</b> <span id="profile-username"></span></p>
         <p><b>Email:</b> <span id="profile-email"></span></p>
-        <p><b>Saldo:</b> Rp 100.000</p>
-        <button onclick="alert('Fitur penarikan dalam pengembangan')">Tarik Saldo</button>
+        <p><b>Saldo:</b> Rp <span id="profile-balance">100000</span></p>
+        <button onclick="withdraw()">Tarik Saldo</button>
       </div>
     </div>
 
     <!-- Farm -->
     <div id="farm" class="page">
-      <h2>Peternakan Saya</h2>
+      <h2>Peternakan</h2>
       <div class="card">
-        <img src="https://i.ibb.co/7nbGdpH/cow.png" alt="Sapi">
         <h3>🐮 Sapi</h3>
         <p>Harga: Rp 50.000</p>
         <p>Penghasilan/hari: Rp 2.000</p>
         <p>Jangka waktu: 30 hari</p>
-        <p><b>Total: Rp 60.000</b></p>
         <button>Beli</button>
       </div>
       <div class="card">
-        <img src="https://i.ibb.co/1ZpBpY2/chicken.png" alt="Ayam">
         <h3>🐔 Ayam</h3>
         <p>Harga: Rp 20.000</p>
         <p>Penghasilan/hari: Rp 800</p>
         <p>Jangka waktu: 20 hari</p>
-        <p><b>Total: Rp 16.000</b></p>
-        <button>Beli</button>
-      </div>
-      <div class="card">
-        <img src="https://i.ibb.co/0f7n9ts/goat.png" alt="Kambing">
-        <h3>🐑 Kambing</h3>
-        <p>Harga: Rp 30.000</p>
-        <p>Penghasilan/hari: Rp 1.200</p>
-        <p>Jangka waktu: 25 hari</p>
-        <p><b>Total: Rp 30.000</b></p>
         <button>Beli</button>
       </div>
     </div>
@@ -100,25 +110,22 @@
             <th>Total Penghasilan</th>
           </tr>
         </thead>
-        <tbody id="leaderboard-data">
-          <!-- Data diisi dari script.js -->
-        </tbody>
+        <tbody id="leaderboard-data"></tbody>
       </table>
     </div>
 
     <!-- Contact -->
     <div id="contact" class="page">
-      <h2>Hubungi Kami</h2>
+      <h2>Kontak</h2>
       <form onsubmit="event.preventDefault(); alert('Pesan terkirim!')">
         <input type="text" placeholder="Nama" required>
         <input type="email" placeholder="Email" required>
-        <textarea placeholder="Pesan" rows="4"></textarea>
+        <textarea placeholder="Pesan"></textarea>
         <button type="submit">Kirim</button>
       </form>
     </div>
   </main>
 
-  <!-- Script -->
   <script src="script.js"></script>
 </body>
 </html>
