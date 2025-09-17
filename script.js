@@ -1,12 +1,15 @@
+// Toggle sidebar
 function toggleMenu() {
   document.getElementById('sidebar').classList.toggle('active');
 }
 
+// Ganti halaman
 function showPage(pageId) {
-  if (!localStorage.getItem("currentUser") && 
+  if (!localStorage.getItem("currentUser") &&
       !["login", "register", "forgot"].includes(pageId)) {
     pageId = "login";
   }
+
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
 
@@ -22,7 +25,7 @@ function showSlide(index) {
   const slides = document.querySelectorAll(".slide");
   if (slides.length === 0) return;
 
-  slides.forEach((s, i) => s.classList.remove("active"));
+  slides.forEach(s => s.classList.remove("active"));
   slides[index].classList.add("active");
 
   document.querySelector(".slides").style.transform = `translateX(-${index * 100}%)`;
@@ -33,8 +36,6 @@ function nextSlide() {
   showSlide(currentSlide);
 }
 setInterval(nextSlide, 4000); // ganti slide tiap 4 detik
-  if (pageId === "profile") loadProfile();
-}
 
 // Register
 function registerUser(e) {
