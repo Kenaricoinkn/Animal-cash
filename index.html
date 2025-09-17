@@ -1,42 +1,96 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Animal Cash</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farm Game</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Header -->
   <header>
-    <h1>🐾 Animal Cash</h1>
-    <div class="hamburger" onclick="toggleMenu()">☰</div>
+    <span class="hamburger" onclick="toggleMenu()">☰</span>
+    <h1>Farm Game</h1>
   </header>
 
-  <!-- Sidebar -->
   <nav id="sidebar">
-    <a href="#" onclick="showPage('home')">HOME</a>
-    <a href="#" onclick="showPage('profile')">PROFILE</a>
-    <a href="#" onclick="showPage('farm')">FARM</a>
-    <a href="#" onclick="showPage('leaderboard')">LEADERBOARD</a>
-    <a href="#" onclick="showPage('contact')">CONTACT</a>
-    <a href="#" onclick="logout()">LOGOUT</a>
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('farm')">Farm</a>
+    <a href="#" onclick="showPage('leaderboard')">Leaderboard</a>
+    <a href="#" onclick="showPage('profile')">Profil</a>
+    <a href="#" onclick="logout()">Logout</a>
   </nav>
 
-  <!-- Main -->
   <main>
+    <!-- Home -->
+    <div id="home" class="page">
+      <h2>Selamat Datang di Farm Game</h2>
+      <div class="slider">
+        <div class="slides">
+          <div class="slide active">
+            <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Sapi">
+            <p>Beli Sapi dapat bonus besar!</p>
+          </div>
+          <div class="slide">
+            <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" alt="Ayam">
+            <p>Beli Ayam panen tiap hari!</p>
+          </div>
+          <div class="slide">
+            <img src="https://cdn-icons-png.flaticon.com/512/1998/1998611.png" alt="Kucing">
+            <p>Kucing lucu, bonus kecil tapi stabil</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Farm -->
+    <div id="farm" class="page">
+      <h2>Peternakan</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Hewan</th>
+            <th>Harga</th>
+            <th>Penghasilan /hari</th>
+            <th>Jangka Waktu</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="farm-data"></tbody>
+      </table>
+      <p id="total-earnings">Total Penghasilan: Rp 0 /hari</p>
+      <div id="payment-qr" style="margin-top:20px; text-align:center;"></div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div id="leaderboard" class="page">
+      <h2>Leaderboard</h2>
+      <table>
+        <thead>
+          <tr><th>Rank</th><th>Username</th><th>Total</th></tr>
+        </thead>
+        <tbody id="leaderboard-data"></tbody>
+      </table>
+    </div>
+
+    <!-- Profile -->
+    <div id="profile" class="page">
+      <h2>Profil</h2>
+      <p><b>Username:</b> <span id="profile-username"></span></p>
+      <p><b>Email:</b> <span id="profile-email"></span></p>
+      <p><b>Saldo:</b> Rp <span id="profile-balance">0</span></p>
+      <button onclick="withdraw()">Tarik Saldo</button>
+    </div>
+
     <!-- Register -->
-    <div id="register" class="page active">
+    <div id="register" class="page">
       <h2>Daftar Akun</h2>
       <form onsubmit="registerUser(event)">
         <input type="email" id="reg-email" placeholder="Email" required>
         <input type="text" id="reg-username" placeholder="Username" required>
-        <input type="password" id="reg-password" placeholder="Kata Sandi" required>
-        <input type="password" id="reg-pin" placeholder="Kode Keamanan Penarikan" required>
+        <input type="password" id="reg-password" placeholder="Password" required>
+        <input type="text" id="reg-pin" placeholder="Kode Keamanan" required>
         <button type="submit">Daftar</button>
       </form>
-      <p>Sudah punya akun? <a href="#" onclick="showPage('login')">Login</a></p>
     </div>
 
     <!-- Login -->
@@ -44,136 +98,19 @@
       <h2>Login</h2>
       <form onsubmit="loginUser(event)">
         <input type="text" id="login-username" placeholder="Username" required>
-        <input type="password" id="login-password" placeholder="Kata Sandi" required>
+        <input type="password" id="login-password" placeholder="Password" required>
         <button type="submit">Login</button>
       </form>
-      <p>Belum punya akun? <a href="#" onclick="showPage('register')">Daftar</a></p>
       <p><a href="#" onclick="showPage('forgot')">Lupa Password?</a></p>
     </div>
 
-    <!-- Forgot Password -->
+    <!-- Lupa Password -->
     <div id="forgot" class="page">
-      <h2>Lupa Password</h2>
+      <h2>Reset Password</h2>
       <form onsubmit="resetPassword(event)">
-        <input type="text" id="forgot-username" placeholder="Masukkan Username" required>
+        <input type="text" id="forgot-username" placeholder="Username" required>
         <input type="password" id="forgot-newpass" placeholder="Password Baru" required>
-        <button type="submit">Reset Password</button>
-      </form>
-      <p><a href="#" onclick="showPage('login')">Kembali ke Login</a></p>
-    </div>
-
-    <!-- Home -->
-<div id="home" class="page">
-  <h2>Selamat Datang di Animal Cash</h2>
-
-  <!-- Banner Slider -->
-  <div class="slider">
-    <div class="slides">
-      <div class="slide active">
-        <img src="https://i.ibb.co/7nbGdpH/cow.png" alt="Sapi">
-        <p>Beli sapi 🐮 dapat bonus 10% penghasilan!</p>
-      </div>
-      <div class="slide">
-        <img src="https://i.ibb.co/1ZpBpY2/chicken.png" alt="Ayam">
-        <p>Beli ayam 🐔 gratis 1 telur emas!</p>
-      </div>
-      <div class="slide">
-        <img src="https://i.ibb.co/0f7n9ts/goat.png" alt="Kambing">
-        <p>Beli kambing 🐑 dapat hadiah rumput segar!</p>
-      </div>
-      <div class="slide">
-        <img src="https://i.ibb.co/Y0FjM3V/cat.png" alt="Kucing">
-        <p>Beli kucing 🐱 bonus 20 koin AnimalCash!</p>
-      </div>
-      <div class="slide">
-        <img src="https://i.ibb.co/0ZqM13c/elephant.png" alt="Gajah">
-        <p>Beli gajah 🐘 dapat mega bonus saldo 50k!</p>
-      </div>
-    </div>
-  </div>
-
-  <p>Beli hewan virtual 🐮🐔🐑🐱🐘 untuk mendapatkan penghasilan harian.  
-  Semakin banyak hewan, semakin besar cuanmu!</p>
-</div>
-    <!-- Profile -->
-    <div id="profile" class="page">
-      <h2>Profil</h2>
-      <div class="card">
-        <p><b>Username:</b> <span id="profile-username"></span></p>
-        <p><b>Email:</b> <span id="profile-email"></span></p>
-        <p><b>Saldo:</b> Rp <span id="profile-balance">100000</span></p>
-        <button onclick="withdraw()">Tarik Saldo</button>
-      </div>
-    </div>
-
-<!-- Farm -->
-<div id="farm" class="page">
-  <h2>Peternakan</h2>
-
-  <div class="card">
-    <h3>🐮 Sapi</h3>
-    <p>Harga: Rp 50.000</p>
-    <p>Penghasilan/hari: Rp 2.000</p>
-    <p>Jangka waktu: 30 hari</p>
-    <button>Beli</button>
-  </div>
-
-  <div class="card">
-    <h3>🐔 Ayam</h3>
-    <p>Harga: Rp 20.000</p>
-    <p>Penghasilan/hari: Rp 800</p>
-    <p>Jangka waktu: 20 hari</p>
-    <button>Beli</button>
-  </div>
-
-  <div class="card">
-    <h3>🐑 Kambing</h3>
-    <p>Harga: Rp 30.000</p>
-    <p>Penghasilan/hari: Rp 1.200</p>
-    <p>Jangka waktu: 25 hari</p>
-    <button>Beli</button>
-  </div>
-
-  <div class="card">
-    <h3>🐱 Kucing</h3>
-    <p>Harga: Rp 40.000</p>
-    <p>Penghasilan/hari: Rp 1.500</p>
-    <p>Jangka waktu: 28 hari</p>
-    <button>Beli</button>
-  </div>
-
-  <div class="card">
-    <h3>🐘 Gajah</h3>
-    <p>Harga: Rp 100.000</p>
-    <p>Penghasilan/hari: Rp 5.000</p>
-    <p>Jangka waktu: 40 hari</p>
-    <button>Beli</button>
-  </div>
-</div>
-
-    <!-- Leaderboard -->
-    <div id="leaderboard" class="page">
-      <h2>🏆 Leaderboard</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Peringkat</th>
-            <th>Nama</th>
-            <th>Total Penghasilan</th>
-          </tr>
-        </thead>
-        <tbody id="leaderboard-data"></tbody>
-      </table>
-    </div>
-
-    <!-- Contact -->
-    <div id="contact" class="page">
-      <h2>Kontak</h2>
-      <form onsubmit="event.preventDefault(); alert('Pesan terkirim!')">
-        <input type="text" placeholder="Nama" required>
-        <input type="email" placeholder="Email" required>
-        <textarea placeholder="Pesan"></textarea>
-        <button type="submit">Kirim</button>
+        <button type="submit">Reset</button>
       </form>
     </div>
   </main>
