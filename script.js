@@ -3,72 +3,129 @@ function toggleMenu() {
 }
 
 function showPage(pageId) {
-  // Jika belum login, paksa ke login
-  if (!localStorage.getItem("user") && pageId !== "login") {
-    alert("Silakan login terlebih dahulu!");
+  // Cek login
+  if (!localStorage.getItem("currentUser") && 
+      !["login", "register", "forgot"].includes(pageId)) {
     pageId = "login";
   }
-
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
-  document.getElementById('sidebar').classList.remove('active');
 
-  // Tampilkan data user di profile
-  if (pageId === "profile") {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user) {
-      document.getElementById("profile-username").textContent = user.username;
-      document.getElementById("profile-email").textContent = user.email;
-    }
+  if (pageId === "profile") loadProfile();
+}
+
+// Register
+function registerUser(e) {
+  e.preventDefault();
+  let email = document.getElementById("reg-email").value;
+  let username = document.getElementById("reg-username").value;
+  let password = document.getElementById("reg-password").value;
+  let pin = document.getElementById("reg-pin").value;
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  if (users.find(u => u.username === username)) {
+    alert("Username sudah terdaftar!");
+    return;
   }
-}
 
-// Login function
-function loginUser(event) {
-  event.preventDefault();
-  const username = document.getElementById("username").value;
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  const user = { username, email, password };
-  localStorage.setItem("user", JSON.stringify(user));
-
-  alert("Login berhasil! Selamat datang " + username);
-  showPage("home");
-}
-
-// Logout function
-function logout() {
-  localStorage.removeItem("user");
-  alert("Anda telah logout.");
+  users.push({ email, username, password, pin, balance: 100000 });
+  localStorage.setItem("users", JSON.stringify(users));
+  alert("Registrasi berhasil, silakan login!");
   showPage("login");
 }
 
-// Leaderboard Dummy Data
-const leaderboard = [
-  { name: "User123", total: 150000 },
-  { name: "FarmerPro", total: 120000 },
-  { name: "SultanTernak", total: 100000 },
-  { name: "Beginner01", total: 80000 }
-];
+// Login
+function loginUser(e) {
+  e.preventDefault();
+  let username = document.getElementById("login-username").value;
+  let password = document.getElementById("login-password").value;
 
-// Isi leaderboard
-window.onload = () => {
-  // Cek apakah user sudah login
-  if (!localStorage.getItem("user")) {
-    showPage("login");
-  } else {
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let user = users.find(u => u.username === username && u.password === password);
+
+  if (user) {
+    localStorage.setItem("currentUser", username);
+    alert("Login berhasil!");
     showPage("home");
+  } else {
+    alert("Username atau password salah!");
+  }
+}
+
+// Lupa password
+function resetPassword(e) {
+  e.preventDefault();
+  let username = document.getElementById("forgot-username").value;
+  let newPass = document.getElementById("forgot-newpass").value;
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let user = users.find(u => u.username === username);
+
+  if (!user) {
+    alert("Username tidak ditemukan!");
+    return;
+  }
+  user.password = newPass;
+  localStorage.setItem("users", JSON.stringify(users));
+  alert("Password berhasil direset, silakan login!");
+  showPage("login");
+}
+
+// Profile
+function loadProfile() {
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let current = localStorage.getItem("currentUser");
+  let user = users.find(u => u.username === current);
+
+  if (user) {
+    document.getElementById("profile-username").textContent = user.username;
+    document.getElementById("profile-email").textContent = user.email;
+    document.getElementById("profile-balance").textContent = user.balance;
+  }
+}
+
+// Withdraw
+function withdraw() {
+  let pin = prompt("Masukkan kode keamanan:");
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let current = localStorage.getItem("currentUser");
+  let user = users.find(u => u.username === current);
+
+  if (user && pin === user.pin) {
+    alert("Penarikan berhasil! Saldo dikurangi Rp 50.000");
+    user.balance -= 50000;
+    localStorage.setItem("users", JSON.stringify(users));
+    loadProfile();
+  } else {
+    alert("Kode keamanan salah!");
+  }
+}
+
+// Logout
+function logout() {
+  localStorage.removeItem("currentUser");
+  showPage("login");
+}
+
+// Leaderboard dummy
+window.onload = () => {
+  if (localStorage.getItem("currentUser")) {
+    showPage("home");
+  } else {
+    showPage("register");
   }
 
-  const tbody = document.getElementById("leaderboard-data");
-  leaderboard.forEach((user, i) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${i + 1}</td>
-      <td>${user.name}</td>
-      <td>Rp ${user.total.toLocaleString()}</td>
-    `;
-    tbody.appendChild(row);
-  });
+  let data = [
+    { name: "PeternakPro", total: 150000 },
+    { name: "SultanTernak", total: 120000 },
+    { name: "Pemula", total: 80000 }
+  ];
+  let tbody = document.getElementById("leaderboard-data");
+  if (tbody) {
+    data.forEach((u, i) => {
+      let row = document.createElement("tr");
+      row.innerHTML = `<td>${i+1}</td><td>${u.name}</td><td>Rp ${u.total.toLocaleString()}</td>`;
+      tbody.appendChild(row);
+    });
+  }
 };
