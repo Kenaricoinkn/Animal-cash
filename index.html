@@ -4,10 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Animal Cash</title>
+
   <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet"/>
+
   <!-- CSS -->
   <link rel="stylesheet" href="css/style.css"/>
+
+  <!-- 3D Model Viewer -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
   <!-- Header -->
@@ -53,7 +58,6 @@
     <!-- Home -->
     <div id="home" class="page">
       <h2>Selamat Datang di Animal Cash</h2>
-      
       <div class="slider">
         <div class="slides">
           <div class="slide active">
@@ -83,41 +87,60 @@
     <div id="farm" class="page">
       <h2>Peternakan</h2>
 
-      <div class="card">
-        <img src="https://i.ibb.co/7nbGdpH/cow.png" alt="Sapi">
+      <!-- Sapi 3D -->
+      <div class="animal-card">
+        <model-viewer
+          src="assets/models/cow.glb"
+          ios-src="assets/models/cow.usdz"
+          alt="Sapi 3D"
+          camera-controls
+          auto-rotate
+          ar
+          ar-modes="webxr scene-viewer quick-look"
+          style="width:100%; height:300px; background:#111; border-radius:12px;">
+        </model-viewer>
         <h3>🐮 Sapi</h3>
         <p>Harga: Rp 50.000</p>
         <p>Penghasilan/hari: Rp 2.000</p>
-        <button onclick="buyAnimal('sapi')">Beli</button>
+        <button onclick="buyAnimal('cow')">Beli</button>
       </div>
 
-      <div class="card">
-        <img src="https://i.ibb.co/1ZpBpY2/chicken.png" alt="Ayam">
+      <!-- Ayam 3D -->
+      <div class="animal-card">
+        <model-viewer
+          src="assets/models/chicken.glb"
+          ios-src="assets/models/chicken.usdz"
+          alt="Ayam 3D"
+          camera-controls
+          auto-rotate
+          ar
+          ar-modes="webxr scene-viewer quick-look"
+          style="width:100%; height:300px; background:#111; border-radius:12px;">
+        </model-viewer>
         <h3>🐔 Ayam</h3>
-        <p>Harga: Rp 20.000</p>
-        <p>Penghasilan/hari: Rp 800</p>
-        <button onclick="buyAnimal('ayam')">Beli</button>
-      </div>
-
-      <div id="farm-summary" class="card">
-        <h3>Total Penghasilan</h3>
-        <p id="farm-income">Rp 0 /hari</p>
-        <p id="farm-warning" style="color:red; font-weight:bold; display:none;"></p>
+        <p>Harga: Rp 10.000</p>
+        <p>Penghasilan/hari: Rp 400</p>
+        <button onclick="buyAnimal('chicken')">Beli</button>
       </div>
     </div>
 
     <!-- Contact -->
     <div id="contact" class="page">
-      <h2>Kontak Admin</h2>
-      <div class="card">
-        <p>📱 WhatsApp: <a href="https://wa.me/6281234567890" target="_blank">+62 812-3456-7890</a></p>
-        <p>📧 Email: admin@animalcash.com</p>
-        <p>📢 Telegram: <a href="https://t.me/animalcash" target="_blank">@animalcash</a></p>
-      </div>
+      <h2>Kontak</h2>
+      <p>Hubungi admin di <a href="mailto:support@animalcash.com">support@animalcash.com</a></p>
     </div>
   </main>
 
-  <!-- JS (main.js otomatis import modul lain) -->
-  <script type="module" src="js/main.js"></script>
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Animal Cash</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/auth.js"></script>
+  <script src="js/farm.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/ui.js"></script>
 </body>
 </html>
