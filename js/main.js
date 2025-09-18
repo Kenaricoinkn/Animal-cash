@@ -14,5 +14,18 @@ window.withdraw = withdraw;
 // Init
 document.addEventListener("DOMContentLoaded", () => {
   initSlider();
-  showPage("login"); // default ke login
+
+  const uid = localStorage.getItem("currentUser");
+  const lastPage = localStorage.getItem("lastPage");
+
+  if (uid) {
+    // Kalau login & ada halaman terakhir
+    if (lastPage) {
+      showPage(lastPage);
+    } else {
+      showPage("home");
+    }
+  } else {
+    showPage("login");
+  }
 });
