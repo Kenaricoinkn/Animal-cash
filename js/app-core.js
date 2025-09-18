@@ -1,37 +1,27 @@
-// window.App namespace + helpers + tabs
+// helpers + tab switch (2 tab)
 window.App = window.App || {};
-
-(function () {
-  const $ = (s) => document.querySelector(s);
-  const show = (el) => el.classList.remove('hidden');
-  const hide = (el) => el.classList.add('hidden');
-  const toast = (msg) => {
-    const t = $('#toast');
-    t.textContent = msg; show(t);
-    clearTimeout(window.__toastTimer);
-    window.__toastTimer = setTimeout(()=>hide(t), 2200);
+(function(){
+  const $   = (s)=>document.querySelector(s);
+  const show=(el)=>el.classList.remove('hidden');
+  const hide=(el)=>el.classList.add('hidden');
+  const toast=(m)=>{
+    const t=$('#toast'); if(!t) return;
+    t.textContent=m; show(t); clearTimeout(window.__toast);
+    window.__toast=setTimeout(()=>hide(t),2200);
   };
-
-  // Tab logic
-const tabEmail = $('#tab-email');
-const tabPhone = $('#tab-phone');
-const formEmail = $('#form-email');
-const formPhone = $('#form-phone');
-
-function setActive(tab){
-  [tabEmail, tabPhone].forEach(b=>b.classList.remove('tab-active'));
-  tab.classList.add('tab-active');
-}
-function showPanel(panel){
-  [formEmail, formPhone].forEach(h=>h.classList.add('hidden'));
-  panel.classList.remove('hidden');
-}
-
-tabEmail.onclick = () => { setActive(tabEmail); showPanel(formEmail); };
-tabPhone.onclick = () => { setActive(tabPhone); showPanel(formPhone); };
-  // Expose helpers
-  window.App.$ = $;
-  window.App.show = show;
-  window.App.hide = hide;
-  window.App.toast = toast;
+  // Tab in LOGIN
+  const tabEmail=$('#tab-email'), tabPhone=$('#tab-phone');
+  const formEmail=$('#form-email'), formPhone=$('#form-phone');
+  if(tabEmail && tabPhone){
+    tabEmail.onclick=()=>{ [tabEmail,tabPhone].forEach(b=>b.classList.remove('tab-active')); tabEmail.classList.add('tab-active'); hide(formPhone); show(formEmail); };
+    tabPhone.onclick=()=>{ [tabEmail,tabPhone].forEach(b=>b.classList.remove('tab-active')); tabPhone.classList.add('tab-active'); hide(formEmail); show(formPhone); };
+  }
+  // Tab in REGISTER
+  const tabRE=$('#tab-reg-email'), tabRP=$('#tab-reg-phone');
+  const formRE=$('#form-reg-email'), formRP=$('#form-reg-phone');
+  if(tabRE && tabRP){
+    tabRE.onclick=()=>{ [tabRE,tabRP].forEach(b=>b.classList.remove('tab-active')); tabRE.classList.add('tab-active'); hide(formRP); show(formRE); };
+    tabRP.onclick=()=>{ [tabRE,tabRP].forEach(b=>b.classList.remove('tab-active')); tabRP.classList.add('tab-active'); hide(formRE); show(formRP); };
+  }
+  window.App.$=$; window.App.show=show; window.App.hide=hide; window.App.toast=toast;
 })();
