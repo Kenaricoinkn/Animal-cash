@@ -1,11 +1,36 @@
-function toggleMenu() {
+// === Firebase Setup ===
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCYeFdMMjTesJUVf6iQS1lMBljSWeCfD58",
+  authDomain: "peternakan-29e74.firebaseapp.com",
+  projectId: "peternakan-29e74",
+  storageBucket: "peternakan-29e74.firebasestorage.app",
+  messagingSenderId: "1823968365",
+  appId: "1:1823968365:web:aede4c3b7eaa93bc464364"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// === Global Data ===
+const animals = {
+  sapi: { price: 50000, income: 2000, label: "Sapi" },
+  ayam: { price: 20000, income: 800, label: "Ayam" }
+};
+
+// === UI Navigation ===
+window.toggleMenu = function() {
   document.getElementById('sidebar').classList.toggle('active');
 }
 
-function showPage(pageId) {
+window.showPage = function(pageId) {
   let current = localStorage.getItem("currentUser");
 
-  if (!current && !["login", "register", "forgot"].includes(pageId)) {
+  if (!current && !["login", "register"].includes(pageId)) {
     alert("Harus login dulu!");
     pageId = "login";
   }
@@ -13,163 +38,99 @@ function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
 
-  document.getElementById('sidebar').classList.remove('active');
-
   if (pageId === "profile") loadProfile();
   if (pageId === "farm") loadFarm();
 }
 
-// === Slider Banner ===
-let currentSlide = 0;
-function showSlide(index) {
-  const slides = document.querySelectorAll(".slide");
-  if (slides.length === 0) return;
-  slides.forEach((s, i) => s.classList.remove("active"));
-  slides[index].classList.add("active");
-  document.querySelector(".slides").style.transform = `translateX(-${index * 100}%)`;
-}
-function nextSlide() {
-  const slides = document.querySelectorAll(".slide");
-  currentSlide = (currentSlide + 1) % slides.length;
-  showSlide(currentSlide);
-}
-setInterval(nextSlide, 4000);
-
 // === Register ===
-function registerUser(e) {
+window.registerUser = async function(e) {
   e.preventDefault();
-  let email = document.getElementById("reg-email").value;
-  let username = document.getElementById("reg-username").value;
-  let password = document.getElementById("reg-password").value;
-  let pin = document.getElementById("reg-pin").value;
+  const phone = document.getElementById("reg-phone").value;
+  const password = document.getElementById("reg-password").value;
+  const pin = document.getElementById("reg-pin").value;
 
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  if (users.find(u => u.username === username)) {
-    alert("Username sudah terdaftar!");
-    return;
+  try {
+    const email = phone + "@peternakan.com";
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+
+    await setDoc(doc(db, "users", userCred.user.uid), {
+      phone,
+      pin,
+      balance: 0,
+      myFarm: []
+    });
+
+    alert("Registrasi berhasil, silakan login!");
+    showPage("login");
+  } catch (err) {
+    alert("Error: " + err.message);
   }
-
-  users.push({ email, username, password, pin, balance: 0, myFarm: [] });
-  localStorage.setItem("users", JSON.stringify(users));
-  alert("Registrasi berhasil, silakan login!");
-  showPage("login");
 }
 
 // === Login ===
-function loginUser(e) {
+window.loginUser = async function(e) {
   e.preventDefault();
-  let username = document.getElementById("login-username").value;
-  let password = document.getElementById("login-password").value;
+  const phone = document.getElementById("login-phone").value;
+  const password = document.getElementById("login-password").value;
+  const email = phone + "@peternakan.com";
 
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  let user = users.find(u => u.username === username && u.password === password);
-
-  if (user) {
-    localStorage.setItem("currentUser", username);
+  try {
+    const userCred = await signInWithEmailAndPassword(auth, email, password);
+    localStorage.setItem("currentUser", userCred.user.uid);
     alert("Login berhasil!");
     showPage("home");
-  } else {
-    alert("Username atau password salah!");
+  } catch (err) {
+    alert("Login gagal: " + err.message);
   }
-}
-
-// === Reset Password ===
-function resetPassword(e) {
-  e.preventDefault();
-  let username = document.getElementById("forgot-username").value;
-  let newPass = document.getElementById("forgot-newpass").value;
-
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  let user = users.find(u => u.username === username);
-
-  if (!user) {
-    alert("Username tidak ditemukan!");
-    return;
-  }
-
-  user.password = newPass;
-  localStorage.setItem("users", JSON.stringify(users));
-  alert("Password berhasil direset, silakan login!");
-  showPage("login");
 }
 
 // === Load Profile ===
-function loadProfile() {
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  let current = localStorage.getItem("currentUser");
-  let user = users.find(u => u.username === current);
+window.loadProfile = async function() {
+  const uid = localStorage.getItem("currentUser");
+  if (!uid) return;
 
-  if (user) {
-    document.getElementById("profile-username").textContent = user.username;
-    document.getElementById("profile-email").textContent = user.email;
-    document.getElementById("profile-balance").textContent = user.balance.toLocaleString();
+  const snap = await getDoc(doc(db, "users", uid));
+  if (snap.exists()) {
+    const data = snap.data();
+    document.getElementById("profile-username").textContent = data.phone;
+    document.getElementById("profile-email").textContent = data.phone + "@peternakan.com";
+    document.getElementById("profile-balance").textContent = data.balance.toLocaleString();
   }
 }
 
 // === Buy Animal ===
-const animals = {
-  sapi: { price: 50000, income: 2000, label: "Sapi" },
-  ayam: { price: 20000, income: 800, label: "Ayam" },
-  kambing: { price: 30000, income: 1200, label: "Kambing" },
-  kucing: { price: 40000, income: 1500, label: "Kucing" },
-  gajah: { price: 100000, income: 5000, label: "Gajah" }
-};
+window.buyAnimal = async function(type) {
+  const uid = localStorage.getItem("currentUser");
+  if (!uid) return;
 
-function buyAnimal(type) {
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  let current = localStorage.getItem("currentUser");
-  let user = users.find(u => u.username === current);
-  if (!user) return;
+  const snap = await getDoc(doc(db, "users", uid));
+  if (!snap.exists()) return;
+  const user = snap.data();
 
   if (user.myFarm.find(a => a.name === type)) {
     alert("Hewan ini sudah dibeli!");
     return;
   }
 
-  let metode = prompt("Pilih metode pembayaran: Dana / OVO").toLowerCase();
-  if (metode !== "dana" && metode !== "ovo") {
-    alert("Metode tidak valid!");
-    return;
-  }
+  const konfirmasi = confirm(`Beli ${animals[type].label} seharga Rp ${animals[type].price.toLocaleString()}?`);
+  if (!konfirmasi) return;
 
-  // === Generate QR Dummy ===
-  let qrText = `Transfer ${animals[type].price} ke Admin via ${metode}`;
-  let qrLink = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrText)}`;
-
-  let qrBox = document.getElementById("farm-qr");
-  qrBox.innerHTML = `
-    <h3>Pembayaran via ${metode.toUpperCase()}</h3>
-    <p>Silakan scan QR berikut untuk transfer Rp ${animals[type].price.toLocaleString()}</p>
-    <img src="${qrLink}" alt="QR ${metode}">
-    <br><button onclick="confirmPayment('${type}')">Saya sudah transfer</button>
-  `;
-  qrBox.style.display = "block";
-  qrBox.scrollIntoView({ behavior: "smooth" });
-}
-
-function confirmPayment(type) {
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  let current = localStorage.getItem("currentUser");
-  let user = users.find(u => u.username === current);
-  if (!user) return;
-
-  // Simpan hewan ke myFarm
-  user.myFarm.push({ name: type, income: animals[type].income });
-  localStorage.setItem("users", JSON.stringify(users));
+  const updatedFarm = [...user.myFarm, { name: type, income: animals[type].income }];
+  await updateDoc(doc(db, "users", uid), { myFarm: updatedFarm });
 
   alert(`Pembelian ${animals[type].label} berhasil!`);
-  document.getElementById("farm-qr").style.display = "none";
   loadFarm();
 }
 
 // === Load Farm ===
-function loadFarm() {
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  let current = localStorage.getItem("currentUser");
-  let user = users.find(u => u.username === current);
-  if (!user) return;
+window.loadFarm = async function() {
+  const uid = localStorage.getItem("currentUser");
+  if (!uid) return;
 
-  // Update tombol beli
+  const snap = await getDoc(doc(db, "users", uid));
+  if (!snap.exists()) return;
+  const user = snap.data();
+
   Object.keys(animals).forEach(a => {
     let btns = document.querySelectorAll(`button[onclick="buyAnimal('${a}')"]`);
     btns.forEach(btn => {
@@ -185,63 +146,45 @@ function loadFarm() {
     });
   });
 
-  // Hitung total income
   let total = user.myFarm.reduce((sum, a) => sum + a.income, 0);
   document.getElementById("farm-income").textContent = `Rp ${total.toLocaleString()} /hari`;
 
-  // Warning kalau belum punya hewan
   let warn = document.getElementById("farm-warning");
   warn.style.display = user.myFarm.length === 0 ? "block" : "none";
   warn.textContent = "⚠️ Kamu belum membeli hewan!";
 }
 
 // === Withdraw ===
-function withdraw() {
-  let pin = prompt("Masukkan kode keamanan:");
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  let current = localStorage.getItem("currentUser");
-  let user = users.find(u => u.username === current);
+window.withdraw = async function() {
+  const uid = localStorage.getItem("currentUser");
+  if (!uid) return;
 
-  if (user && pin === user.pin) {
-    if (user.balance < 50000) {
-      alert("Saldo tidak cukup!");
-      return;
-    }
-    alert("Penarikan berhasil! Saldo dikurangi Rp 50.000");
-    user.balance -= 50000;
-    localStorage.setItem("users", JSON.stringify(users));
-    loadProfile();
-  } else {
+  const snap = await getDoc(doc(db, "users", uid));
+  if (!snap.exists()) return;
+  const user = snap.data();
+
+  const pinInput = prompt("Masukkan kode keamanan:");
+  if (pinInput !== user.pin) {
     alert("Kode keamanan salah!");
+    return;
   }
+
+  if (user.balance < 50000) {
+    alert("Saldo tidak cukup!");
+    return;
+  }
+
+  await updateDoc(doc(db, "users", uid), {
+    balance: user.balance - 50000
+  });
+
+  alert("Penarikan berhasil!");
+  loadProfile();
 }
 
 // === Logout ===
-function logout() {
+window.logout = async function() {
+  await signOut(auth);
   localStorage.removeItem("currentUser");
   showPage("login");
 }
-
-// === Leaderboard Dummy ===
-window.onload = () => {
-  if (localStorage.getItem("currentUser")) {
-    showPage("home");
-  } else {
-    showPage("register");
-  }
-
-  let data = [
-    { name: "PeternakPro", total: 150000 },
-    { name: "SultanTernak", total: 120000 },
-    { name: "Pemula", total: 80000 }
-  ];
-  let tbody = document.getElementById("leaderboard-data");
-  if (tbody) {
-    tbody.innerHTML = "";
-    data.forEach((u, i) => {
-      let row = document.createElement("tr");
-      row.innerHTML = `<td>${i + 1}</td><td>${u.name}</td><td>Rp ${u.total.toLocaleString()}</td>`;
-      tbody.appendChild(row);
-    });
-  }
-};
