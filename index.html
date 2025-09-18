@@ -4,89 +4,87 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>KIEON — Login</title>
-
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Styles -->
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col">
 
-  <!-- Header -->
   <header class="px-4 sm:px-6 py-4 flex items-center justify-between">
     <div>
-  <h1 class="text-base sm:text-lg font-semibold">ANIMAL CASH</h1>
-  <p class="text-xs text-slate-400">Masuk untuk melanjutkan</p>
-</div>
-
+      <h1 class="text-base sm:text-lg font-semibold">KIEON Quantitative Robot</h1>
+      <p class="text-xs text-slate-400">Masuk untuk melanjutkan</p>
+    </div>
     <div class="pill hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs text-slate-300">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-80" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 1 7 7c0 5.25-7 13-7 13S5 14.25 5 9a7 7 0 0 1 7-7Zm0 9.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/></svg>
       bahasa Indonesia
     </div>
   </header>
 
-  <!-- Card -->
   <main class="flex-1 flex items-start sm:items-center justify-center px-4 pb-10">
     <div class="glass w-full max-w-md rounded-2xl shadow-2xl px-5 sm:px-7 py-6 sm:py-8 relative">
 
       <!-- Tabs -->
-<div class="mt-4 sm:mt-2 grid grid-cols-2 text-center text-sm">
-  <button id="tab-email" class="py-3 tab-active">Masuk Email</button>
-  <button id="tab-phone" class="py-3 text-slate-300 hover:text-white">Login Telepon</button>
-</div>
+      <div class="mt-2 grid grid-cols-2 text-center text-sm">
+        <button id="tab-email" class="py-3 tab-active">Masuk Email</button>
+        <button id="tab-phone" class="py-3 text-slate-300 hover:text-white">Login Telepon</button>
+      </div>
 
-<!-- Email Form -->
-<form id="form-email" class="mt-4 space-y-4">
-  <div>
-    <label class="text-xs text-slate-300">Surel</label>
-    <input id="email" type="email" required placeholder="nama@domain.com"
-           class="mt-1 w-full rounded-xl bg-slate-900/60 border border-white/10 px-4 py-3 outline-none focus:border-sky-400" />
-  </div>
+      <!-- Email LOGIN -->
+      <form id="form-email" class="mt-4 space-y-4">
+        <div>
+          <label class="text-xs text-slate-300">Surel</label>
+          <input id="email" type="email" required placeholder="nama@domain.com"
+                 class="mt-1 w-full rounded-xl bg-slate-900/60 border border-white/10 px-4 py-3 outline-none focus:border-sky-400" />
+        </div>
+        <div>
+          <label class="text-xs text-slate-300">Kata sandi masuk</label>
+          <div class="mt-1 relative">
+            <input id="password" type="password" required placeholder="••••••••"
+                   class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-4 py-3 pr-12 outline-none focus:border-sky-400" />
+            <button type="button" id="togglePwd" class="absolute right-3 top-1/2 -translate-y-1/2 opacity-80 hover:opacity-100" aria-label="lihat sandi">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/></svg>
+            </button>
+          </div>
+        </div>
+        <button id="btn-email" type="submit" class="btn-primary w-full py-3 rounded-xl font-semibold shadow-lg">Gabung</button>
+        <p class="text-center text-sm text-slate-400">
+          Tidak ada akun? <a href="register.html" class="text-sky-300 hover:underline">Daftar</a>
+        </p>
+        <div id="email-alert" class="hidden text-sm mt-2 p-3 rounded-lg bg-red-500/10 border border-red-400/30 text-red-200"></div>
+      </form>
 
-  <div>
-    <label class="text-xs text-slate-300">Kata sandi masuk</label>
-    <div class="mt-1 relative">
-      <input id="password" type="password" required placeholder="••••••••"
-             class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-4 py-3 pr-12 outline-none focus:border-sky-400" />
-      <button type="button" id="togglePwd" class="absolute right-3 top-1/2 -translate-y-1/2 opacity-80 hover:opacity-100">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/></svg>
-      </button>
+      <!-- Telepon LOGIN (password, tanpa OTP) -->
+      <form id="form-phone" class="hidden mt-4 space-y-4">
+        <div>
+          <label class="text-xs text-slate-300">Nomor Telepon</label>
+          <input id="phone" type="tel" placeholder="+62 8123456789"
+                 class="mt-1 w-full rounded-xl bg-slate-900/60 border border-white/10 px-4 py-3 outline-none focus:border-sky-400" />
+        </div>
+        <div>
+          <label class="text-xs text-slate-300">Kata sandi masuk</label>
+          <div class="mt-1 relative">
+            <input id="phone-password" type="password" placeholder="••••••••"
+                   class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-4 py-3 pr-12 outline-none focus:border-sky-400" />
+            <button type="button" id="togglePhonePwd" class="absolute right-3 top-1/2 -translate-y-1/2 opacity-80 hover:opacity-100" aria-label="lihat sandi telepon">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/></svg>
+            </button>
+          </div>
+        </div>
+        <button id="btn-phone" type="submit" class="btn-primary w-full py-3 rounded-xl font-semibold shadow-lg">Gabung</button>
+        <div id="phone-alert" class="hidden text-sm mt-2 p-3 rounded-lg bg-red-500/10 border border-red-400/30 text-red-200"></div>
+      </form>
+
+      <div class="mt-6 text-center">
+        <a href="#" class="text-slate-300 hover:underline">Buka beranda</a>
+      </div>
     </div>
-  </div>
+  </main>
 
-  <button id="btn-email" type="submit" class="btn-primary w-full py-3 rounded-xl font-semibold shadow-lg">Gabung</button>
-
-  <p class="text-center text-sm text-slate-400">
-    Tidak ada akun? <a href="#" class="text-sky-300 hover:underline" id="to-register">Daftar</a>
-  </p>
-
-  <div id="email-alert" class="hidden text-sm mt-2 p-3 rounded-lg bg-red-500/10 border border-red-400/30 text-red-200"></div>
-</form>
-
-<!-- Phone Form -->
-<form id="form-phone" class="hidden mt-4 space-y-4">
-  <div class="text-xs text-slate-300">Nomor Telepon</div>
-  <input id="phone" type="tel" placeholder="+62 8123456789"
-         class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-4 py-3 outline-none focus:border-sky-400" />
-  <div class="flex gap-2">
-    <button id="btn-send-otp" type="button" class="btn-primary flex-1 py-3 rounded-xl font-semibold shadow-lg">Kirim Kode</button>
-    <button id="btn-verify-otp" type="button" class="px-4 py-3 rounded-xl bg-slate-800 border border-white/10">Verifikasi</button>
-  </div>
-  <input id="otp" type="text" inputmode="numeric" placeholder="Masukkan kode OTP"
-         class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-4 py-3 outline-none focus:border-sky-400" />
-  <div id="phone-alert" class="hidden text-sm mt-2 p-3 rounded-lg bg-red-500/10 border border-red-400/30 text-red-200"></div>
-  <div id="recaptcha-container"></div>
-</form>
-
-  <!-- Toast -->
   <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-5 hidden bg-slate-900/95 border border-white/10 px-4 py-2 rounded-xl text-sm shadow-2xl"></div>
 
-  <!-- Scripts (order matters) -->
   <script src="js/app-core.js"></script>
   <script type="module" src="js/firebase-init.js"></script>
   <script src="js/auth-email.js"></script>
   <script src="js/auth-phone.js"></script>
-  <script src="js/telegram.js"></script>
 </body>
 </html>
