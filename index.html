@@ -30,8 +30,7 @@
     <div id="register" class="page active">
       <h2>Daftar Akun</h2>
       <form onsubmit="registerUser(event)">
-        <input type="email" id="reg-email" placeholder="Email" required>
-        <input type="text" id="reg-username" placeholder="Username" required>
+        <input type="text" id="reg-phone" placeholder="Nomor HP" required>
         <input type="password" id="reg-password" placeholder="Kata Sandi" required>
         <input type="password" id="reg-pin" placeholder="Kode Keamanan Penarikan" required>
         <button type="submit">Daftar</button>
@@ -43,23 +42,11 @@
     <div id="login" class="page">
       <h2>Login</h2>
       <form onsubmit="loginUser(event)">
-        <input type="text" id="login-username" placeholder="Username" required>
+        <input type="text" id="login-phone" placeholder="Nomor HP" required>
         <input type="password" id="login-password" placeholder="Kata Sandi" required>
         <button type="submit">Login</button>
       </form>
       <p>Belum punya akun? <a href="#" onclick="showPage('register')">Daftar</a></p>
-      <p><a href="#" onclick="showPage('forgot')">Lupa Password?</a></p>
-    </div>
-
-    <!-- Forgot Password -->
-    <div id="forgot" class="page">
-      <h2>Lupa Password</h2>
-      <form onsubmit="resetPassword(event)">
-        <input type="text" id="forgot-username" placeholder="Masukkan Username" required>
-        <input type="password" id="forgot-newpass" placeholder="Password Baru" required>
-        <button type="submit">Reset Password</button>
-      </form>
-      <p><a href="#" onclick="showPage('login')">Kembali ke Login</a></p>
     </div>
 
     <!-- Home -->
@@ -81,18 +68,10 @@
             <img src="https://i.ibb.co/0f7n9ts/goat.png" alt="Kambing">
             <p>Beli kambing 🐑 dapat hadiah rumput segar!</p>
           </div>
-          <div class="slide">
-            <img src="https://i.ibb.co/Y0FjM3V/cat.png" alt="Kucing">
-            <p>Beli kucing 🐱 bonus 20 koin AnimalCash!</p>
-          </div>
-          <div class="slide">
-            <img src="https://i.ibb.co/0ZqM13c/elephant.png" alt="Gajah">
-            <p>Beli gajah 🐘 dapat mega bonus saldo 50k!</p>
-          </div>
         </div>
       </div>
 
-      <p>Beli hewan virtual 🐮🐔🐑🐱🐘 untuk mendapatkan penghasilan harian.  
+      <p>Beli hewan virtual 🐮🐔🐑 untuk mendapatkan penghasilan harian.  
       Semakin banyak hewan, semakin besar cuanmu!</p>
     </div>
 
@@ -116,7 +95,6 @@
         <h3>🐮 Sapi</h3>
         <p>Harga: Rp 50.000</p>
         <p>Penghasilan/hari: Rp 2.000</p>
-        <p>Durasi: 30 hari</p>
         <button onclick="buyAnimal('sapi')">Beli</button>
       </div>
 
@@ -125,35 +103,7 @@
         <h3>🐔 Ayam</h3>
         <p>Harga: Rp 20.000</p>
         <p>Penghasilan/hari: Rp 800</p>
-        <p>Durasi: 20 hari</p>
         <button onclick="buyAnimal('ayam')">Beli</button>
-      </div>
-
-      <div class="card">
-        <img src="https://i.ibb.co/0f7n9ts/goat.png" alt="Kambing">
-        <h3>🐑 Kambing</h3>
-        <p>Harga: Rp 30.000</p>
-        <p>Penghasilan/hari: Rp 1.200</p>
-        <p>Durasi: 25 hari</p>
-        <button onclick="buyAnimal('kambing')">Beli</button>
-      </div>
-
-      <div class="card">
-        <img src="https://i.ibb.co/Y0FjM3V/cat.png" alt="Kucing">
-        <h3>🐱 Kucing</h3>
-        <p>Harga: Rp 40.000</p>
-        <p>Penghasilan/hari: Rp 1.500</p>
-        <p>Durasi: 28 hari</p>
-        <button onclick="buyAnimal('kucing')">Beli</button>
-      </div>
-
-      <div class="card">
-        <img src="https://i.ibb.co/0ZqM13c/elephant.png" alt="Gajah">
-        <h3>🐘 Gajah</h3>
-        <p>Harga: Rp 100.000</p>
-        <p>Penghasilan/hari: Rp 5.000</p>
-        <p>Durasi: 40 hari</p>
-        <button onclick="buyAnimal('gajah')">Beli</button>
       </div>
 
       <div id="farm-summary" class="card">
@@ -161,8 +111,6 @@
         <p id="farm-income">Rp 0 /hari</p>
         <p id="farm-warning" style="color:red; font-weight:bold; display:none;"></p>
       </div>
-
-      <div id="farm-qr" class="card" style="display:none; text-align:center;"></div>
     </div>
 
     <!-- Leaderboard -->
@@ -179,19 +127,9 @@
         <tbody id="leaderboard-data"></tbody>
       </table>
     </div>
-
-    <!-- Contact -->
-    <div id="contact" class="page">
-      <h2>Kontak</h2>
-      <form onsubmit="event.preventDefault(); alert('Pesan terkirim!')">
-        <input type="text" placeholder="Nama" required>
-        <input type="email" placeholder="Email" required>
-        <textarea placeholder="Pesan"></textarea>
-        <button type="submit">Kirim</button>
-      </form>
-    </div>
   </main>
 
-  <script src="script.js"></script>
+  <!-- Firebase & Script -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
