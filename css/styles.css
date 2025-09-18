@@ -14,3 +14,28 @@ body{
 .btn-primary{ background:linear-gradient(180deg,#82b1ff,#5aa2ff); color:#0b1020; }
 .btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
 .pill{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); }
+/* tombol mata reuse via CSS */
+.eye-btn{
+  position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  width:24px; height:24px; opacity:.85;
+}
+.eye-btn::before{
+  content:"";
+  display:block; width:24px; height:24px;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/></svg>') center/contain no-repeat;
+  background:#cbd5e1;
+}
+
+/* country code group */
+.cc-wrap{
+  display:flex; align-items:center;
+  padding:0 10px; border-radius:0.75rem;
+  background:rgba(15,23,42,.6);
+  border:1px solid rgba(255,255,255,.1);
+  height:48px;
+}
+.cc-select{
+  background:transparent; color:#e5e7eb; outline:none; border:none;
+  appearance:none; padding-right:4px; font-size:14px;
+}
+.cc-divider{ color:#8fb5ff; margin-left:6px; margin-right:2px; opacity:.7; }
