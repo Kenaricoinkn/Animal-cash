@@ -1,15 +1,9 @@
-// This file is a module because it imports Firebase from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getAuth,
-  signInWithEmailAndPassword,
-  RecaptchaVerifier,
-  signInWithPhoneNumber
+  getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// =========================
-// TODO: GANTI DENGAN punyamu
-// =========================
+// ---- GANTI DENGAN punyamu ----
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -18,41 +12,45 @@ const firebaseConfig = {
   messagingSenderId: "YOUR_SENDER_ID",
   appId: "YOUR_APP_ID"
 };
+// ------------------------------
 
-// Init Firebase
-const app = initializeApp(firebaseConfig);
+const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 auth.languageCode = 'id';
 
-// Setup invisible reCAPTCHA (for phone auth)
-function initRecaptcha() {
-  try {
-    // container ada di index.html
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { size: 'invisible' });
-  } catch (e) {
-    // ignore if already exists
-  }
+// Mapping: +62 812-xxx -> 62812xxx@phone.user
+const PHONE_EMAIL_DOMAIN = "phone.user";
+function normalizePhone(phone){
+  if(!phone) return "";
+  const cleaned = phone.replace(/[^\d+]/g, '');
+  const withCC  = cleaned.startsWith('+') ? cleaned.slice(1) : cleaned; // remove +
+  return withCC; // digits only
 }
-initRecaptcha();
+function phoneToEmail(phone){
+  const digits = normalizePhone(phone);
+  if(!digits) throw new Error('Nomor telepon tidak valid.');
+  return `${digits}@${PHONE_EMAIL_DOMAIN}`;
+}
 
-// Expose minimal SDK to other files (no imports needed there)
 window.App = window.App || {};
 window.App.firebase = {
   auth,
-  // email/password
-  async signInEmail(email, password){
-    return await signInWithEmailAndPassword(auth, email, password);
+  // EMAIL
+  signInEmail: (email, pass) => signInWithEmailAndPassword(auth, email, pass),
+  signUpEmail : async (email, pass) => {
+    const uc = await createUserWithEmailAndPassword(auth, email, pass);
+    return uc;
   },
-  // phone OTP
-  async sendOtp(phone){
-    if (!window.recaptchaVerifier) initRecaptcha();
-    const confirmationResult = await signInWithPhoneNumber(auth, phone, window.recaptchaVerifier);
-    window.App.__confirmationResult = confirmationResult;
-    return confirmationResult;
+  // PHONE as email mapping
+  signInPhonePass: (phone, pass) => {
+    const email = phoneToEmail(phone);
+    return signInWithEmailAndPassword(auth, email, pass);
   },
-  async verifyOtp(code){
-    const c = window.App.__confirmationResult;
-    if (!c) throw new Error('Kirim kode terlebih dahulu.');
-    return await c.confirm(code);
+  signUpPhonePass: async (phone, pass) => {
+    const email = phoneToEmail(phone);
+    const uc = await createUserWithEmailAndPassword(auth, email, pass);
+    // Simpan nomor ke displayName agar mudah dilihat di daftar user
+    await updateProfile(uc.user, { displayName: `tel:${normalizePhone(phone)}` });
+    return uc;
   }
 };
