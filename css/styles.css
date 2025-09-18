@@ -1,9 +1,9 @@
-/* Background & glass */
 body{
   background:
     radial-gradient(1200px 600px at 20% -10%, rgba(56,189,248,.15), transparent 60%),
     radial-gradient(1000px 700px at 110% 10%, rgba(99,102,241,.18), transparent 60%),
     linear-gradient(180deg, #0b1020 0%, #0a0f1a 100%);
+  min-height: 100vh;
 }
 .glass{
   background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
@@ -11,12 +11,6 @@ body{
   border: 1px solid rgba(255,255,255,.08);
 }
 .tab-active{ color:#a5b4fc; border-bottom:2px solid #93c5fd; }
-.btn-primary{
-  background: linear-gradient(180deg,#82b1ff,#5aa2ff);
-  color:#0b1020;
-}
+.btn-primary{ background:linear-gradient(180deg,#82b1ff,#5aa2ff); color:#0b1020; }
 .btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
-.pill{
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.12);
-}
+.pill{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); }
