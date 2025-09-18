@@ -4,8 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Animal Cash</title>
+  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
   <!-- Header -->
@@ -19,7 +21,6 @@
     <a href="#" onclick="showPage('home')">HOME</a>
     <a href="#" onclick="showPage('profile')">PROFILE</a>
     <a href="#" onclick="showPage('farm')">FARM</a>
-    <a href="#" onclick="showPage('leaderboard')">LEADERBOARD</a>
     <a href="#" onclick="showPage('contact')">CONTACT</a>
     <a href="#" onclick="logout()">LOGOUT</a>
   </nav>
@@ -52,6 +53,7 @@
     <!-- Home -->
     <div id="home" class="page">
       <h2>Selamat Datang di Animal Cash</h2>
+      
       <div class="slider">
         <div class="slides">
           <div class="slide active">
@@ -61,10 +63,6 @@
           <div class="slide">
             <img src="https://i.ibb.co/1ZpBpY2/chicken.png" alt="Ayam">
             <p>Beli ayam 🐔 gratis 1 telur emas!</p>
-          </div>
-          <div class="slide">
-            <img src="https://i.ibb.co/0f7n9ts/goat.png" alt="Kambing">
-            <p>Beli kambing 🐑 dapat hadiah rumput segar!</p>
           </div>
         </div>
       </div>
@@ -108,23 +106,18 @@
       </div>
     </div>
 
-    <!-- Leaderboard -->
-    <div id="leaderboard" class="page">
-      <h2>🏆 Leaderboard</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Peringkat</th>
-            <th>Nama</th>
-            <th>Total Penghasilan</th>
-          </tr>
-        </thead>
-        <tbody id="leaderboard-data"></tbody>
-      </table>
+    <!-- Contact -->
+    <div id="contact" class="page">
+      <h2>Kontak Admin</h2>
+      <div class="card">
+        <p>📱 WhatsApp: <a href="https://wa.me/6281234567890" target="_blank">+62 812-3456-7890</a></p>
+        <p>📧 Email: admin@animalcash.com</p>
+        <p>📢 Telegram: <a href="https://t.me/animalcash" target="_blank">@animalcash</a></p>
+      </div>
     </div>
   </main>
 
-  <!-- Firebase & Script -->
-  <script type="module" src="script.js"></script>
+  <!-- JS (main.js otomatis import modul lain) -->
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
