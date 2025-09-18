@@ -1,47 +1,36 @@
-// Phone OTP handlers
-(function () {
+(function(){
   const { $, show, hide, toast, firebase } = window.App;
-
   const phoneInput = $('#phone');
-  const otpInput   = $('#otp');
-  const phoneAlert = $('#phone-alert');
-  const btnSend    = $('#btn-send-otp');
-  const btnVerify  = $('#btn-verify-otp');
-
   if (!phoneInput) return;
 
-  btnSend.onclick = async () => {
-    hide(phoneAlert);
-    const phone = (phoneInput.value || '').trim();
-    if (!phone.startsWith('+')) {
-      phoneAlert.textContent = 'Nomor wajib format internasional, contoh: +62...';
-      show(phoneAlert); return;
-    }
-    try {
-      await firebase.sendOtp(phone);
-      toast('Kode OTP terkirim via SMS');
-    } catch (e) {
-      phoneAlert.textContent = formatErr(e?.message || String(e));
-      show(phoneAlert);
-    }
+  const passInput  = $('#phone-password');
+  const phoneAlert = $('#phone-alert');
+  const btnPhone   = $('#btn-phone');
+
+  $('#togglePhonePwd').onclick = () => {
+    passInput.type = passInput.type === 'password' ? 'text' : 'password';
   };
 
-  btnVerify.onclick = async () => {
-    hide(phoneAlert);
-    try {
-      const res = await firebase.verifyOtp((otpInput.value || '').trim());
-      toast('Login telepon berhasil: ' + (res.user.phoneNumber || ''));
+  $('#form-phone').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    hide(phoneAlert); btnPhone.disabled = true;
+    try{
+      const phone = (phoneInput.value||'').trim();
+      const pass  = (passInput.value||'');
+      if(!phone || !pass) throw new Error('Nomor telepon & kata sandi wajib diisi.');
+      const cred = await firebase.signInPhonePass(phone, pass);
+      toast('Masuk telepon: ' + (cred.user.displayName || phone));
       // TODO: window.location.href = '/dashboard.html';
-    } catch (e) {
-      phoneAlert.textContent = 'Kode OTP salah atau kedaluwarsa.';
+    }catch(err){
+      phoneAlert.textContent = pretty(err?.message || '');
       show(phoneAlert);
-    }
-  };
+    }finally{ btnPhone.disabled=false; }
+  });
 
-  function formatErr(msg){
-    if (msg.includes('auth/too-many-requests')) return 'Terlalu banyak percobaan, coba lagi nanti.';
-    if (msg.includes('captcha')) return 'reCAPTCHA gagal. Pastikan domain sudah terdaftar di Firebase.';
-    if (msg.includes('auth/invalid-phone-number')) return 'Nomor telepon tidak valid.';
-    return 'Gagal mengirim OTP: ' + msg.replace('Firebase: ', '');
+  function pretty(msg){
+    if (msg.includes('auth/invalid-credential') || msg.includes('auth/wrong-password')) return 'Nomor atau kata sandi salah.';
+    if (msg.includes('auth/user-not-found')) return 'Akun telepon belum terdaftar.';
+    if (msg.includes('auth/too-many-requests')) return 'Terlalu banyak percobaan. Coba lagi nanti.';
+    return 'Gagal masuk: ' + msg.replace('Firebase: ','');
   }
 })();
