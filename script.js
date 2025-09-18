@@ -1,7 +1,19 @@
 // === Firebase Setup ===
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCYeFdMMjTesJUVf6iQS1lMBljSWeCfD58",
@@ -22,30 +34,73 @@ const animals = {
   ayam: { price: 20000, income: 800, label: "Ayam" }
 };
 
+// === Helpers: persist current page ===
+function setCurrentPage(pageId) {
+  try { localStorage.setItem('currentPage', pageId); } catch(e) {}
+}
+function getStoredPage() {
+  return localStorage.getItem('currentPage') || null;
+}
+
 // === UI Navigation ===
 window.toggleMenu = function() {
   document.getElementById('sidebar').classList.toggle('active');
 }
 
 window.showPage = function(pageId) {
-  let current = localStorage.getItem("currentUser");
+  // simpan page yang dipilih (persist)
+  setCurrentPage(pageId);
 
-  if (!current && !["login", "register"].includes(pageId)) {
-    alert("Harus login dulu!");
+  // cek user (dari localStorage atau auth)
+  const storedUID = localStorage.getItem("currentUser");
+  const authUID = auth.currentUser ? auth.currentUser.uid : null;
+  const current = storedUID || authUID;
+
+  // halaman publik yang boleh dibuka tanpa login
+  const publicPages = ["login", "register"];
+
+  if (!current && !publicPages.includes(pageId)) {
+    // jika tidak ada user, paksa ke login
     pageId = "login";
   }
 
+  // tampilkan page
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
+  const el = document.getElementById(pageId);
+  if (el) el.classList.add('active');
 
+  // tutup sidebar kalau terbuka
+  const sb = document.getElementById('sidebar');
+  if (sb) sb.classList.remove('active');
+
+  // panggil loader yang relevan
   if (pageId === "profile") loadProfile();
   if (pageId === "farm") loadFarm();
 }
 
+// === Firebase Auth state handling ===
+// Ketika auth berubah (login / logout / inisialisasi), kita set localStorage currentUser
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // user masih login -> simpan uid
+    try { localStorage.setItem("currentUser", user.uid); } catch(e) {}
+    // Tampilkan page yang terakhir dipilih (default ke 'home')
+    const page = getStoredPage() || "home";
+    showPage(page);
+  } else {
+    // tidak ada user -> hapus uid
+    try { localStorage.removeItem("currentUser"); } catch(e) {}
+    // Tampilkan page public terakhir (atau register)
+    const page = getStoredPage() || "register";
+    // showPage akan mengarahkan ke login jika page dilindungi
+    showPage(page);
+  }
+});
+
 // === Register ===
 window.registerUser = async function(e) {
   e.preventDefault();
-  const phone = document.getElementById("reg-phone").value;
+  const phone = document.getElementById("reg-phone").value.trim();
   const password = document.getElementById("reg-password").value;
   const pin = document.getElementById("reg-pin").value;
 
@@ -70,15 +125,18 @@ window.registerUser = async function(e) {
 // === Login ===
 window.loginUser = async function(e) {
   e.preventDefault();
-  const phone = document.getElementById("login-phone").value;
+  const phone = document.getElementById("login-phone").value.trim();
   const password = document.getElementById("login-password").value;
   const email = phone + "@peternakan.com";
 
   try {
     const userCred = await signInWithEmailAndPassword(auth, email, password);
-    localStorage.setItem("currentUser", userCred.user.uid);
+    // localStorage currentUser akan juga diset via onAuthStateChanged, tapi set immediate juga baik
+    try { localStorage.setItem("currentUser", userCred.user.uid); } catch(e) {}
     alert("Login berhasil!");
-    showPage("home");
+    // tampilkan halaman yang tersimpan atau home
+    const page = getStoredPage() || "home";
+    showPage(page);
   } catch (err) {
     alert("Login gagal: " + err.message);
   }
@@ -92,22 +150,22 @@ window.loadProfile = async function() {
   const snap = await getDoc(doc(db, "users", uid));
   if (snap.exists()) {
     const data = snap.data();
-    document.getElementById("profile-username").textContent = data.phone;
-    document.getElementById("profile-email").textContent = data.phone + "@peternakan.com";
-    document.getElementById("profile-balance").textContent = data.balance.toLocaleString();
+    document.getElementById("profile-username").textContent = data.phone || "";
+    document.getElementById("profile-email").textContent = (data.phone ? data.phone + "@peternakan.com" : "");
+    document.getElementById("profile-balance").textContent = (data.balance || 0).toLocaleString();
   }
 }
 
 // === Buy Animal ===
 window.buyAnimal = async function(type) {
   const uid = localStorage.getItem("currentUser");
-  if (!uid) return;
+  if (!uid) { alert("Harus login dulu!"); return; }
 
   const snap = await getDoc(doc(db, "users", uid));
   if (!snap.exists()) return;
   const user = snap.data();
 
-  if (user.myFarm.find(a => a.name === type)) {
+  if ((user.myFarm || []).find(a => a.name === type)) {
     alert("Hewan ini sudah dibeli!");
     return;
   }
@@ -115,7 +173,7 @@ window.buyAnimal = async function(type) {
   const konfirmasi = confirm(`Beli ${animals[type].label} seharga Rp ${animals[type].price.toLocaleString()}?`);
   if (!konfirmasi) return;
 
-  const updatedFarm = [...user.myFarm, { name: type, income: animals[type].income }];
+  const updatedFarm = [...(user.myFarm || []), { name: type, income: animals[type].income }];
   await updateDoc(doc(db, "users", uid), { myFarm: updatedFarm });
 
   alert(`Pembelian ${animals[type].label} berhasil!`);
@@ -134,7 +192,7 @@ window.loadFarm = async function() {
   Object.keys(animals).forEach(a => {
     let btns = document.querySelectorAll(`button[onclick="buyAnimal('${a}')"]`);
     btns.forEach(btn => {
-      if (user.myFarm.find(f => f.name === a)) {
+      if ((user.myFarm || []).find(f => f.name === a)) {
         btn.textContent = "Sudah Dibeli";
         btn.disabled = true;
         btn.style.background = "gray";
@@ -146,18 +204,18 @@ window.loadFarm = async function() {
     });
   });
 
-  let total = user.myFarm.reduce((sum, a) => sum + a.income, 0);
+  let total = (user.myFarm || []).reduce((sum, a) => sum + (a.income || 0), 0);
   document.getElementById("farm-income").textContent = `Rp ${total.toLocaleString()} /hari`;
 
   let warn = document.getElementById("farm-warning");
-  warn.style.display = user.myFarm.length === 0 ? "block" : "none";
+  warn.style.display = (user.myFarm || []).length === 0 ? "block" : "none";
   warn.textContent = "⚠️ Kamu belum membeli hewan!";
 }
 
 // === Withdraw ===
 window.withdraw = async function() {
   const uid = localStorage.getItem("currentUser");
-  if (!uid) return;
+  if (!uid) { alert("Harus login dulu!"); return; }
 
   const snap = await getDoc(doc(db, "users", uid));
   if (!snap.exists()) return;
@@ -169,13 +227,13 @@ window.withdraw = async function() {
     return;
   }
 
-  if (user.balance < 50000) {
+  if ((user.balance || 0) < 50000) {
     alert("Saldo tidak cukup!");
     return;
   }
 
   await updateDoc(doc(db, "users", uid), {
-    balance: user.balance - 50000
+    balance: (user.balance || 0) - 50000
   });
 
   alert("Penarikan berhasil!");
@@ -184,7 +242,11 @@ window.withdraw = async function() {
 
 // === Logout ===
 window.logout = async function() {
-  await signOut(auth);
-  localStorage.removeItem("currentUser");
+  try {
+    await signOut(auth);
+  } catch(e) {
+    console.warn("SignOut error:", e);
+  }
+  try { localStorage.removeItem("currentUser"); } catch(e) {}
   showPage("login");
 }
