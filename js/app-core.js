@@ -13,28 +13,22 @@ window.App = window.App || {};
   };
 
   // Tab logic
-  const tabEmail = $('#tab-email');
-  const tabPhone = $('#tab-phone');
-  const tabTg    = $('#tab-telegram');
-  const formEmail = $('#form-email');
-  const formPhone = $('#form-phone');
-  const boxTg    = $('#telegram-box');
+const tabEmail = $('#tab-email');
+const tabPhone = $('#tab-phone');
+const formEmail = $('#form-email');
+const formPhone = $('#form-phone');
 
-  function setActive(tab){
-    [tabEmail, tabPhone, tabTg].forEach(b=>b.classList.remove('tab-active'));
-    tab.classList.add('tab-active');
-  }
-  function showPanel(panel){
-    [formEmail, formPhone, boxTg].forEach(hide);
-    show(panel);
-  }
+function setActive(tab){
+  [tabEmail, tabPhone].forEach(b=>b.classList.remove('tab-active'));
+  tab.classList.add('tab-active');
+}
+function showPanel(panel){
+  [formEmail, formPhone].forEach(h=>h.classList.add('hidden'));
+  panel.classList.remove('hidden');
+}
 
-  if (tabEmail && tabPhone && tabTg){
-    tabEmail.onclick = () => { setActive(tabEmail); showPanel(formEmail); };
-    tabPhone.onclick = () => { setActive(tabPhone); showPanel(formPhone); };
-    tabTg.onclick    = () => { setActive(tabTg);    showPanel(boxTg);    };
-  }
-
+tabEmail.onclick = () => { setActive(tabEmail); showPanel(formEmail); };
+tabPhone.onclick = () => { setActive(tabPhone); showPanel(formPhone); };
   // Expose helpers
   window.App.$ = $;
   window.App.show = show;
