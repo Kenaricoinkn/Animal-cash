@@ -82,18 +82,15 @@ window.showPage = function(pageId) {
 // Ketika auth berubah (login / logout / inisialisasi), kita set localStorage currentUser
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    // user masih login -> simpan uid
-    try { localStorage.setItem("currentUser", user.uid); } catch(e) {}
-    // Tampilkan page yang terakhir dipilih (default ke 'home')
+    localStorage.setItem("currentUser", user.uid);
+
+    // kalau user baru login, langsung ke home
     const page = getStoredPage() || "home";
     showPage(page);
+
   } else {
-    // tidak ada user -> hapus uid
-    try { localStorage.removeItem("currentUser"); } catch(e) {}
-    // Tampilkan page public terakhir (atau register)
-    const page = getStoredPage() || "register";
-    // showPage akan mengarahkan ke login jika page dilindungi
-    showPage(page);
+    localStorage.removeItem("currentUser");
+    showPage("login");
   }
 });
 
@@ -131,12 +128,15 @@ window.loginUser = async function(e) {
 
   try {
     const userCred = await signInWithEmailAndPassword(auth, email, password);
-    // localStorage currentUser akan juga diset via onAuthStateChanged, tapi set immediate juga baik
-    try { localStorage.setItem("currentUser", userCred.user.uid); } catch(e) {}
+
+    // Simpan UID ke localStorage
+    localStorage.setItem("currentUser", userCred.user.uid);
+
     alert("Login berhasil!");
-    // tampilkan halaman yang tersimpan atau home
-    const page = getStoredPage() || "home";
-    showPage(page);
+
+    // Paksa ke home setelah login
+    showPage("home");
+
   } catch (err) {
     alert("Login gagal: " + err.message);
   }
