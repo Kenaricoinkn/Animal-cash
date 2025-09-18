@@ -7,6 +7,12 @@ export function toggleMenu() {
 export function showPage(pageId) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(pageId).classList.add("active");
+
+  // Tutup sidebar setelah klik menu
+  document.getElementById("sidebar").classList.remove("show");
+
+  // Simpan halaman terakhir
+  localStorage.setItem("lastPage", pageId);
 }
 
 // === Withdraw Dummy ===
