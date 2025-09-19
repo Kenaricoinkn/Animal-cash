@@ -6,7 +6,7 @@ import {
 // ---- GANTI DENGAN punyamu ----
 const firebaseConfig = {
   apiKey: "AIzaSyCYeFdMMjTesJUVf6iQS1lMBljSWeCfD58",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  authDomain: "peternakan-29e74.firebaseapp.com",
   projectId: "peternakan-29e74",
   storageBucket: "peternakan-29e74.firebaseapp.com",
   messagingSenderId: "1823968365",
