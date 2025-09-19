@@ -25,7 +25,32 @@ body{
   mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/></svg>') center/contain no-repeat;
   background:#cbd5e1;
 }
-
+/* Dashboard custom */
+.icon-chip {
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 9999px;
+  font-size: 16px;
+}
+.lang-chip {
+  display: inline-flex; align-items: center; gap: .35rem;
+  height: 36px; padding: 0 12px;
+  font-size: 13px; color: #e5e7eb;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 9999px;
+}
+.search-pill {
+  height: 44px;
+  border-radius: 9999px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.15);
+}
+.tabbtn.tab-active {
+  color: #a5b4fc;
+}
 /* country code group */
 .cc-wrap{
   display:flex; align-items:center;
