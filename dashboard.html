@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>KIEON — Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/bg-anim.css"/>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col bg-anim">
+
+  <!-- Top bar -->
+  <header class="px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="text-lg font-semibold">KIEON Quantitative Robot</span>
+      <span id="bell" class="ml-1 w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="btnLanguage" class="pill px-3 py-1.5 text-xs">🌐 <span id="langLabel">bahasa Indonesia</span></button>
+      <button id="btnLogout" class="pill px-3 py-1.5 text-xs">Keluar</button>
+    </div>
+  </header>
+
+  <!-- Scroll area -->
+  <main class="flex-1 px-4 pb-28">
+    <!-- Carousel/banner -->
+    <section class="rounded-2xl overflow-hidden mb-4 ring-1 ring-white/10">
+      <img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1400&auto=format&fit=crop"
+           alt="banner" class="w-full h-40 object-cover opacity-90">
+    </section>
+
+    <!-- Cards total -->
+    <section class="grid grid-cols-2 gap-3 mb-4">
+      <div class="glass p-4 rounded-2xl">
+        <div class="text-slate-300 text-sm" data-i18n="total_asset">Total aset</div>
+        <div class="text-2xl font-bold">0 <span class="text-sm">USDT</span></div>
+        <div class="text-xs text-slate-400">≈ $ 0</div>
+      </div>
+      <div class="glass p-4 rounded-2xl">
+        <div class="text-slate-300 text-sm" data-i18n="quant_acc">Akun Kuantitatif</div>
+        <div class="text-2xl font-bold">0.00 <span class="text-sm">USDT</span></div>
+        <div class="text-xs text-slate-400">≈ $ 0.00</div>
+      </div>
+    </section>
+
+    <!-- Grid icon menu (Home tab content) -->
+    <section id="homeGrid" class="glass p-4 rounded-2xl">
+      <div class="grid grid-cols-4 gap-4 text-center">
+        <a class="flex flex-col items-center gap-2">
+          <div class="w-12 h-12 rounded-full bg-slate-800 grid place-content-center">💰</div>
+          <span class="text-xs" data-i18n="topup">Isi ulang</span>
+        </a>
+        <a class="flex flex-col items-center gap-2">
+          <div class="w-12 h-12 rounded-full bg-slate-800 grid place-content-center">🏧</div>
+          <span class="text-xs" data-i18n="withdraw">Menarik</span>
+        </a>
+        <a class="flex flex-col items-center gap-2">
+          <div class="w-12 h-12 rounded-full bg-slate-800 grid place-content-center">❓</div>
+          <span class="text-xs" data-i18n="help">Membantu</span>
+        </a>
+        <a class="flex flex-col items-center gap-2">
+          <div class="w-12 h-12 rounded-full bg-slate-800 grid place-content-center">👥</div>
+          <span class="text-xs" data-i18n="team">Tim</span>
+        </a>
+        <a class="flex flex-col items-center gap-2">
+          <div class="w-12 h-12 rounded-full bg-slate-800 grid place-content-center">📄</div>
+          <span class="text-xs" data-i18n="activity">Aktivitas</span>
+        </a>
+        <a class="flex flex-col items-center gap-2" data-tab="invite">
+          <div class="w-12 h-12 rounded-full bg-slate-800 grid place-content-center">📨</div>
+          <span class="text-xs" data-i18n="inviteFriends">Mengundang teman-teman</span>
+        </a>
+        <a class="flex flex-col items-center gap-2">
+          <div class="w-12 h-12 rounded-full bg-slate-800 grid place-content-center">🤝</div>
+          <span class="text-xs" data-i18n="agent">Kerjasama Agen</span>
+        </a>
+        <a class="flex flex-col items-center gap-2">
+          <div class="w-12 h-12 rounded-full bg-slate-800 grid place-content-center">📰</div>
+          <span class="text-xs" data-i18n="news">Berita</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- FARM tab content -->
+    <section id="farmTab" class="hidden">
+      <h2 class="text-lg font-semibold mb-3" data-i18n="farm">Farm</h2>
+      <div class="grid gap-3">
+        <div class="glass p-4 rounded-2xl">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-semibold">Pool AYAM</div>
+              <div class="text-xs text-slate-400">APY 18.2% — Stake KENARI</div>
+            </div>
+            <button class="btn-primary px-3 py-2 rounded-xl text-sm" data-i18n="stake">Stake</button>
+          </div>
+        </div>
+        <div class="glass p-4 rounded-2xl">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-semibold">Pool SAPI</div>
+              <div class="text-xs text-slate-400">APY 25.6% — Stake KENARI/BNB</div>
+            </div>
+            <button class="btn-primary px-3 py-2 rounded-xl text-sm" data-i18n="stake">Stake</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVITE tab content -->
+    <section id="inviteTab" class="hidden">
+      <h2 class="text-lg font-semibold mb-2" data-i18n="inviteFriends">Mengundang teman-teman</h2>
+      <div class="glass p-4 rounded-2xl">
+        <p class="text-sm text-slate-300 mb-2" data-i18n="inviteDesc">Bagikan tautan undangan Anda untuk mendapatkan bonus.</p>
+        <div class="flex gap-2">
+          <input id="inviteLink" class="flex-1 rounded-xl bg-slate-900/60 border border-white/10 px-3 py-2" readonly value="https://example.com/invite/ABC123"/>
+          <button id="copyInvite" class="btn-primary px-3 py-2 rounded-xl text-sm" data-i18n="copy">Salin</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE tab content -->
+    <section id="profileTab" class="hidden">
+      <h2 class="text-lg font-semibold mb-2" data-i18n="me">Aku</h2>
+      <div class="glass p-4 rounded-2xl">
+        <div class="text-sm"><span class="text-slate-400">UID:</span> <span id="uid">—</span></div>
+        <div class="text-sm"><span class="text-slate-400" data-i18n="loginAs">Masuk sebagai</span>: <span id="who">—</span></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Tabbar -->
+  <nav class="fixed left-0 right-0 bottom-0 px-4 py-2 bg-slate-900/80 backdrop-blur border-t border-white/10">
+    <div class="grid grid-cols-4 text-center">
+      <button class="tabbtn tab-active" data-tab="home">
+        <div>🏠</div><div class="text-xs" data-i18n="home">Rumah</div>
+      </button>
+      <button class="tabbtn" data-tab="farm">
+        <div>🌾</div><div class="text-xs" data-i18n="farm">Farm</div>
+      </button>
+      <button class="tabbtn" data-tab="invite">
+        <div>💌</div><div class="text-xs" data-i18n="invite">Mengundang teman</div>
+      </button>
+      <button class="tabbtn" data-tab="profile">
+        <div>👤</div><div class="text-xs" data-i18n="me">Aku</div>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Language Sheet -->
+  <div id="langSheet" class="fixed inset-0 hidden">
+    <div class="absolute inset-0 bg-black/60" data-close></div>
+    <div class="absolute left-0 right-0 bottom-0 rounded-t-3xl glass p-4 max-h-[70vh] overflow-auto">
+      <h3 class="text-center text-base font-semibold mb-3">language</h3>
+      <ul id="langList" class="divide-y divide-white/5"></ul>
+    </div>
+  </div>
+
+  <script src="js/app-core.js" defer></script>
+  <script type="module" src="js/firebase-init.js"></script>
+  <script src="js/i18n.js" type="module"></script>
+  <script src="js/dashboard.js" type="module"></script>
+</body>
+</html>
