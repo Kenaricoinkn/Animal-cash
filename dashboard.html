@@ -11,15 +11,26 @@
 <body class="text-slate-100 min-h-screen flex flex-col bg-anim">
 
   <!-- Top bar -->
-  <header class="px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <span class="text-lg font-semibold">KIEON Quantitative Robot</span>
-      <span id="bell" class="ml-1 w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+  <header class="px-4 pt-4">
+    <!-- Brand + aksi -->
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3 min-w-0">
+        <img src="https://i.imgur.com/0mGv0cN.png" alt="logo" class="w-8 h-8 rounded-xl ring-1 ring-white/10">
+        <div class="min-w-0">
+          <div class="text-sm font-semibold truncate">KIEON Quantitative Robot</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="icon-chip" aria-label="pesan">💬</button>
+        <button class="icon-chip relative" aria-label="notifikasi">
+          🔔
+          <span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+        </button>
+        <button id="btnLanguage" class="lang-chip"><span>🌐</span><span id="langLabel">bahasa Indonesia</span></button>
+      </div>
     </div>
-    <div class="flex items-center gap-2">
-      <button id="btnLanguage" class="pill px-3 py-1.5 text-xs">🌐 <span id="langLabel">bahasa Indonesia</span></button>
-      <button id="btnLogout" class="pill px-3 py-1.5 text-xs">Keluar</button>
-    </div>
+    <!-- search bar lonjong -->
+    <div class="mt-3 search-pill"></div>
   </header>
 
   <!-- Scroll area -->
@@ -82,28 +93,11 @@
       </div>
     </section>
 
-    <!-- FARM tab content -->
-    <section id="farmTab" class="hidden">
-      <h2 class="text-lg font-semibold mb-3" data-i18n="farm">Farm</h2>
-      <div class="grid gap-3">
-        <div class="glass p-4 rounded-2xl">
-          <div class="flex items-center justify-between">
-            <div>
-              <div class="font-semibold">Pool AYAM</div>
-              <div class="text-xs text-slate-400">APY 18.2% — Stake KENARI</div>
-            </div>
-            <button class="btn-primary px-3 py-2 rounded-xl text-sm" data-i18n="stake">Stake</button>
-          </div>
-        </div>
-        <div class="glass p-4 rounded-2xl">
-          <div class="flex items-center justify-between">
-            <div>
-              <div class="font-semibold">Pool SAPI</div>
-              <div class="text-xs text-slate-400">APY 25.6% — Stake KENARI/BNB</div>
-            </div>
-            <button class="btn-primary px-3 py-2 rounded-xl text-sm" data-i18n="stake">Stake</button>
-          </div>
-        </div>
+    <!-- MENGUKUR tab content -->
+    <section id="measureTab" class="hidden">
+      <h2 class="text-lg font-semibold mb-3">Mengukur</h2>
+      <div class="glass p-4 rounded-2xl text-sm text-slate-300">
+        Konten “Mengukur” akan ditambahkan pada tahap berikutnya.
       </div>
     </section>
 
@@ -135,11 +129,11 @@
       <button class="tabbtn tab-active" data-tab="home">
         <div>🏠</div><div class="text-xs" data-i18n="home">Rumah</div>
       </button>
-      <button class="tabbtn" data-tab="farm">
-        <div>🌾</div><div class="text-xs" data-i18n="farm">Farm</div>
+      <button class="tabbtn" data-tab="measure">
+        <div>📏</div><div class="text-xs">Mengukur</div>
       </button>
       <button class="tabbtn" data-tab="invite">
-        <div>💌</div><div class="text-xs" data-i18n="invite">Mengundang teman</div>
+        <div>💌</div><div class="text-xs" data-i18n="invite">Mengundang teman-teman</div>
       </button>
       <button class="tabbtn" data-tab="profile">
         <div>👤</div><div class="text-xs" data-i18n="me">Aku</div>
