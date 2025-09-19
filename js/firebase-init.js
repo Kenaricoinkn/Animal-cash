@@ -46,7 +46,8 @@ function phoneToEmail(phone){
 window.App = window.App || {};
 window.App.firebase = {
   auth,
-
+// Beritahu semua halaman bahwa Firebase sudah siap
+window.dispatchEvent(new Event('firebase-ready'));
   // EMAIL
   signInEmail: (email, pass) =>
     signInWithEmailAndPassword(auth, email, pass),
