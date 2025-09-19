@@ -21,14 +21,12 @@
     </defs>
   </svg>
 
-  <!-- Top bar -->
-  <header class="px-4 pt-4">
+  <!-- Top bar (padding atas diperkecil) -->
+  <header class="px-4 pt-2 pb-2">
     <div class="flex items-center justify-between">
-      <!-- Judul -->
       <div class="min-w-0">
         <span class="brand-title truncate">Animals Cash</span>
       </div>
-      <!-- Aksi: chat + bahasa -->
       <div class="flex items-center gap-2">
         <button class="icon-chip" aria-label="pesan">💬</button>
         <button id="btnLanguage" class="lang-chip">
@@ -36,18 +34,18 @@
         </button>
       </div>
     </div>
-    <!-- Search bar -->
-    <div class="mt-3 search-pill"></div>
+    <!-- Search bar (tinggi & margin atas diperkecil) -->
+    <div class="mt-1 search-pill" style="height:34px"></div>
   </header>
 
   <!-- Loader sebelum auth cek -->
-  <div id="gate" class="px-4 py-8 text-center text-slate-300">Memuat...</div>
+  <div id="gate" class="px-4 py-6 text-center text-slate-300">Memuat...</div>
 
   <!-- Scroll area -->
-  <main id="app" class="hidden flex-1 px-4 pb-20 pt-1">
+  <main id="app" class="hidden flex-1 px-4 pb-20 pt-0">
 
-    <!-- Banner -->
-    <section class="rounded-2xl overflow-hidden mb-2 ring-1 ring-white/10">
+    <!-- Banner (tinggi & jarak bawah diperkecil) -->
+    <section class="rounded-2xl overflow-hidden mb-1 ring-1 ring-white/10">
       <img
         loading="lazy"
         src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=800&auto=format&fit=crop"
@@ -58,11 +56,11 @@
         "
         sizes="(max-width:640px) 100vw, 800px"
         alt="banner"
-        class="w-full h-40 object-cover opacity-90">
+        class="w-full h-36 object-cover opacity-90">
     </section>
 
-    <!-- Cards total -->
-    <section class="grid grid-cols-2 gap-3 mb-2">
+    <!-- Cards total (jarak bawah diperkecil) -->
+    <section class="grid grid-cols-2 gap-3 mb-1">
       <div class="glass p-4 rounded-2xl">
         <div class="text-slate-300 text-sm">Total aset</div>
         <div class="text-2xl font-bold">0 <span class="text-sm">USDT</span></div>
@@ -77,7 +75,7 @@
 
     <!-- HOME menu -->
     <section id="homeGrid" class="glass p-4 rounded-2xl tab-content">
-      <div class="grid grid-cols-4 gap-x-2 gap-y-3 place-items-center text-center">
+      <div class="grid grid-cols-4 gap-x-2 gap-y-2 place-items-center text-center">
         <!-- Isi ulang -->
         <a class="menu-item">
           <div class="menu-circle">
@@ -175,7 +173,6 @@
           </div>
           <span class="menu-title">Berita</span>
         </a>
-
       </div>
     </section>
 
