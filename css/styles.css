@@ -64,3 +64,41 @@ body{
   appearance:none; padding-right:4px; font-size:14px;
 }
 .cc-divider{ color:#8fb5ff; margin-left:6px; margin-right:2px; opacity:.7; }
+/* ===== Brand Title: warna-warni + kedip halus ===== */
+.brand-title{
+  display:inline-block;
+  font-weight:800;
+  letter-spacing:.3px;
+  /* gradient pelangi */
+  background: linear-gradient(90deg,
+      #60a5fa, #a78bfa, #f472b6, #f59e0b, #34d399, #60a5fa);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  /* sedikit glow agar kebaca di dark bg */
+  filter: drop-shadow(0 0 6px rgba(99,102,241,.22));
+
+  /* animasi: shimmer + kedip lembut */
+  animation: brand-shimmer 14s linear infinite,
+             brand-breathe 3.6s ease-in-out infinite;
+}
+
+/* animasi geser gradient (shimmer) */
+@keyframes brand-shimmer{
+  0%   { background-position:   0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position:   0% 50%; }
+}
+
+/* “kedip” pelan: naik-turun opacity, bukan blink total */
+@keyframes brand-breathe{
+  0%,100% { opacity: .92; }
+  50%     { opacity: 1; }
+}
+
+/* Respect user: reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .brand-title{ animation: none; }
+}
