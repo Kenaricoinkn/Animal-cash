@@ -185,3 +185,98 @@ body {
 .tab-content{
   margin-top: .5rem;
 }
+/* ---------- FARM styles ---------- */
+.section-title{
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: .2px;
+  margin-bottom: .6rem;
+}
+
+/* kartu utama farm */
+.farm-card{
+  padding: 14px;
+  border-radius: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* header saldo */
+.farm-head{
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: .6rem;
+}
+.farm-balance{
+  font-size: 1.6rem;       /* tidak terlalu besar */
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .3px;
+}
+
+/* grid metrik */
+.metric-grid{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 8px 10px;
+}
+@media (max-width: 420px){
+  .metric-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+.metric{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.metric-label{
+  font-size: .72rem;
+  font-weight: 500;
+  opacity: .95;
+}
+.metric-value{
+  font-size: 1rem;
+  font-weight: 700;
+  text-shadow: 0 1px 1px rgba(0,0,0,.35);
+}
+
+/* chip (kotak transparan) serbaguna */
+.chip{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 9999px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+  color: #e5e7eb;
+  font-size: .76rem;
+  white-space: nowrap;
+}
+.chip.subtle{
+  background: rgba(255,255,255,.04);
+  border-color: rgba(255,255,255,.08);
+  font-weight: 600;
+}
+.chip.strong{
+  background: linear-gradient(180deg, rgba(146,197,255,.15), rgba(100,180,255,.08));
+  border-color: rgba(163,210,255,.25);
+  font-weight: 700;
+}
+
+/* footer */
+.farm-footer{
+  margin-top: 12px;
+}
+.farm-footer .sep{
+  opacity: .85;
+  margin: 0 .25rem;
+}
+
+/* supaya tab non-home tidak ketiban jarak dari header home */
+.tab-content + .tab-content{
+  margin-top: 0;
+}
