@@ -10,52 +10,55 @@ if (!window.App?.firebase) {
 function init(){
   const { auth } = window.App.firebase;
 
-  // redirect jika belum login
+  // redirect jika belum login + isi profil
   const unsub = auth.onAuthStateChanged(user=>{
     if (!user) { window.location.href = 'index.html'; return; }
-    // isi profil
-    document.querySelector('#uid').textContent = user.uid;
-    document.querySelector('#who').textContent = user.email || user.displayName || '(user)';
+    document.querySelector('#uid')?.replaceChildren(document.createTextNode(user.uid));
+    document.querySelector('#who')?.replaceChildren(document.createTextNode(user.email || user.displayName || '(user)'));
   });
 
-  // tabs
-  const tabBtns = document.querySelectorAll('.tabbtn');
-  const homeGrid = document.querySelector('#homeGrid');
-  const farmTab  = document.querySelector('#farmTab');
-  const inviteTab= document.querySelector('#inviteTab');
-  const profileTab=document.querySelector('#profileTab');
-  const sections = { home:homeGrid, farm:farmTab, invite:inviteTab, profile:profileTab };
+  /* ---------- Tabs ---------- */
+  const tabBtns    = document.querySelectorAll('.tabbtn');
+  const homeGrid   = document.querySelector('#homeGrid');
+  const measureTab = document.querySelector('#measureTab');
+  const inviteTab  = document.querySelector('#inviteTab');
+  const profileTab = document.querySelector('#profileTab');
+
+  const sections = { home: homeGrid, measure: measureTab, invite: inviteTab, profile: profileTab };
 
   tabBtns.forEach(btn=>{
     btn.addEventListener('click', ()=>{
       tabBtns.forEach(b=>b.classList.remove('tab-active'));
       btn.classList.add('tab-active');
-      Object.values(sections).forEach(s=>s.classList.add('hidden'));
+      Object.values(sections).forEach(s=>s?.classList.add('hidden'));
       const key = btn.dataset.tab;
       sections[key]?.classList.remove('hidden');
     });
   });
 
-  // copy invite
+  /* ---------- Copy invite ---------- */
   document.querySelector('#copyInvite')?.addEventListener('click', ()=>{
-    const val = document.querySelector('#inviteLink').value;
-    navigator.clipboard?.writeText(val);
-    window.App.toast?.('Tautan disalin');
+    const val = document.querySelector('#inviteLink')?.value || '';
+    if (val) {
+      navigator.clipboard?.writeText(val);
+      window.App.toast?.('Tautan disalin');
+    }
   });
 
-  // language
+  /* ---------- Language sheet ---------- */
   const langSheet = document.querySelector('#langSheet');
   document.querySelector('#btnLanguage')?.addEventListener('click', ()=>{
     buildLanguageSheet();
-    langSheet.classList.remove('hidden');
+    langSheet?.classList.remove('hidden');
   });
-  langSheet?.querySelector('[data-close]')?.addEventListener('click', ()=> langSheet.classList.add('hidden'));
+  langSheet?.querySelector('[data-close]')?.addEventListener('click', ()=> langSheet?.classList.add('hidden'));
   applyLang(localStorage.getItem('lang') || 'id');
 
-  // logout
-  document.querySelector('#btnLogout')?.addEventListener('click', async ()=>{
-    await auth.signOut();
-    unsub?.();
-    window.location.href = 'index.html';
-  });
+  /* ---------- Opsional: logout pindah ke tab "Aku" nanti ----------
+     Tidak ada tombol #btnLogout di header lagi, jadi listener logout dihapus.
+     Kalau nanti kamu tambahkan tombol logout di profileTab, cukup:
+     document.querySelector('#btnLogout')?.addEventListener('click', async ()=>{
+       await auth.signOut(); unsub?.(); window.location.href = 'index.html';
+     });
+  --------------------------------------------------------------- */
 }
