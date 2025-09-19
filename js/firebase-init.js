@@ -5,12 +5,12 @@ import {
 
 // ---- GANTI DENGAN punyamu ----
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyCYeFdMMjTesJUVf6iQS1lMBljSWeCfD58",
   authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  projectId: "peternakan-29e74",
+  storageBucket: "peternakan-29e74.firebaseapp.com",
+  messagingSenderId: "1823968365",
+  appId: "1:1823968365:web:aede4c3b7eaa93bc464364"
 };
 // ------------------------------
 
