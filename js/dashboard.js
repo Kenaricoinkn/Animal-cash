@@ -1,94 +1,93 @@
-// js/dashboard.js
-// (i18n optional — aman walau modulnya belum dipakai)
-import { applyLang, buildLanguageSheet } from './i18n.js';
-import { initFarm }   from './features/farm.js';
-import { initInvite } from './features/invite.js';
-import { initProfile } from './features/profile.js';
+// js/dashboard.js — robust, aman walau modul lain belum ada
+(async () => {
+  // ----- Helper: tunggu DOM & Firebase siap -----
+  const whenDOMReady = new Promise(res => {
+    if (document.readyState !== 'loading') res();
+    else document.addEventListener('DOMContentLoaded', res, { once: true });
+  });
 
-// Kalau Firebase belum siap, tunggu sinyalnya
-if (!window.App?.firebase) {
-  window.addEventListener('firebase-ready', init, { once: true });
-} else {
-  init();
-}
+  const whenFirebase = new Promise(res => {
+    if (window.App?.firebase) res();
+    else window.addEventListener('firebase-ready', res, { once: true });
+  });
 
-function init () {
+  await Promise.all([whenDOMReady, whenFirebase]);
+
+  // ----- Safely load optional modules (tidak bikin error kalau belum ada) -----
+  let applyLang = () => {}, buildLanguageSheet = () => {};
+  let initFarm   = () => {}, initInvite = () => {}, initProfile = () => {};
+
+  try { const m = await import('./i18n.js'); applyLang = m.applyLang || applyLang; buildLanguageSheet = m.buildLanguageSheet || buildLanguageSheet; } catch {}
+  try { const m = await import('./features/farm.js');   initFarm   = m.initFarm   || initFarm; } catch {}
+  try { const m = await import('./features/invite.js'); initInvite = m.initInvite || initInvite; } catch {}
+  try { const m = await import('./features/profile.js');initProfile= m.initProfile|| initProfile; } catch {}
+
+  // ----- Auth guard -----
   const { auth } = window.App.firebase;
+  const gate = document.getElementById('gate');
+  const app  = document.getElementById('app');
 
-  // ---- Auth guard ----
   const unsubAuth = auth.onAuthStateChanged(user => {
-    const gate = document.getElementById('gate');
-    const app  = document.getElementById('app');
-
     if (!user) {
       window.location.href = 'index.html';
       return;
     }
-
     gate?.classList.add('hidden');
     app?.classList.remove('hidden');
 
-    // Init fitur per tab
+    // init per fitur (kalau ada filenya)
     initProfile(user);
     initInvite();
     initFarm();
   });
 
-  // ---- Tabs ----
+  // ----- Tabs logic -----
   const tabBtns    = document.querySelectorAll('.tabbtn');
 
-  const homeHeader = document.querySelector('#homeHeader'); // banner + saldo (khusus home)
-  const homeGrid   = document.querySelector('#homeGrid');   // grid menu (khusus home)
+  const homeHeader = document.querySelector('#homeHeader'); // banner + saldo (khusus Home)
+  const homeGrid   = document.querySelector('#homeGrid');   // grid ikon (khusus Home)
   const farmTab    = document.querySelector('#farmTab');
   const inviteTab  = document.querySelector('#inviteTab');
   const profileTab = document.querySelector('#profileTab');
 
-  // Semua view yang bisa disembunyikan/ditampakkan
+  // Semua view yang bisa di-show/hide
   const ALL_VIEWS = [homeHeader, homeGrid, farmTab, inviteTab, profileTab].filter(Boolean);
 
-  // View mana yang aktif untuk tiap tab
+  // View aktif per tab
   const VIEWS_BY_TAB = {
-    home:   [homeHeader, homeGrid], // Home harus tampil dua-duanya
+    home:   [homeHeader, homeGrid],
     farm:   [farmTab],
     invite: [inviteTab],
     profile:[profileTab],
   };
 
-  function switchTab (tabKey) {
-    // highlight tombol
+  function switchTab(tabKey) {
     tabBtns.forEach(b => b.classList.toggle('tab-active', b.dataset.tab === tabKey));
-    // sembunyikan semuanya
     ALL_VIEWS.forEach(el => el?.classList.add('hidden'));
-    // tampilkan yang diperlukan
     (VIEWS_BY_TAB[tabKey] || []).forEach(el => el?.classList.remove('hidden'));
   }
 
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-  });
+  tabBtns.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 
-  // default ke Home
+  // default Home (tampilkan banner + grid)
   switchTab('home');
 
-  // ---- Language sheet (opsional, bisa dipakai nanti) ----
+  // ----- Language sheet (opsional) -----
   const langSheet = document.querySelector('#langSheet');
-
   document.querySelector('#btnLanguage')?.addEventListener('click', () => {
-    try { buildLanguageSheet?.(); } catch (_) {}
+    try { buildLanguageSheet(); } catch {}
     langSheet?.classList.remove('hidden');
   });
-
   langSheet?.querySelector('[data-close]')?.addEventListener('click', () => {
     langSheet?.classList.add('hidden');
   });
+  try { applyLang(localStorage.getItem('lang') || 'id'); } catch {}
 
-  try { applyLang?.(localStorage.getItem('lang') || 'id'); } catch (_) {}
-
-  // ---- Optional Logout (kalau ada tombolnya) ----
+  // ----- Optional logout (kalau ada tombolnya) -----
   document.querySelector('#btnLogout')?.addEventListener('click', async () => {
     try { await auth.signOut(); } finally {
       unsubAuth?.();
       window.location.href = 'index.html';
     }
   });
-}
+})();
