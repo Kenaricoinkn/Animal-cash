@@ -112,68 +112,71 @@ body {
 }
 .cc-divider { color: #8fb5ff; margin: 0 4px; opacity: .7; }
 
-/* ===== GRID MENU (circle kecil + ikon jelas) ===== */
-.menu-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: .45rem;
+/* ===== GRID MENU (rapi di hp) ===== */
+.menu-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.45rem;
+  width:78px;                 /* kunci lebar tiap item */
 }
-.menu-title {
-  font-size: .75rem;
-  line-height: 1.2;
-  color: #f8fafc;
-  text-shadow: 0 1px 2px rgba(0,0,0,.55);
-  white-space: nowrap;
-}
-.menu-circle {
-  width: 54px; height: 54px;
-  border-radius: 9999px;
-  position: relative;
-  display: grid;
-  place-items: center;
+
+.menu-circle{
+  width:54px; height:54px;
+  border-radius:9999px;
+  position:relative;
+  display:grid; place-items:center;
   background:
     radial-gradient(140% 140% at 30% 25%, rgba(120,255,240,.14), rgba(95,120,160,.1) 40%, rgba(20,25,45,.9) 75%),
     linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-  border: 1px solid rgba(160,210,255,.35);
+  border:1px solid rgba(160,210,255,.35);
   box-shadow:
     inset 0 2px 5px rgba(255,255,255,.08),
     inset 0 -4px 10px rgba(0,0,0,.35),
     0 3px 8px rgba(0,0,0,.4);
-  backdrop-filter: blur(3px);
-  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+  backdrop-filter:blur(3px);
+  transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease;
 }
-.menu-circle::after {
-  content: "";
-  position: absolute; inset: 3px;
-  border-radius: inherit;
-  background: radial-gradient(80% 60% at 70% 25%, rgba(255,255,255,.18), transparent 70%);
-  pointer-events: none;
+.menu-circle::after{
+  content:""; position:absolute; inset:3px; border-radius:inherit;
+  background:radial-gradient(80% 60% at 70% 25%, rgba(255,255,255,.18), transparent 70%);
+  pointer-events:none;
 }
-.menu-item:hover .menu-circle {
-  transform: translateY(-2px);
-  border-color: rgba(180,240,255,.55);
+.menu-item:hover .menu-circle{
+  transform:translateY(-2px);
+  border-color:rgba(180,240,255,.55);
   box-shadow:
     inset 0 2px 7px rgba(255,255,255,.1),
     inset 0 -6px 12px rgba(0,0,0,.4),
     0 8px 14px rgba(0,0,0,.5);
 }
-.menu-icon {
-  width: 30px; height: 30px;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.6));
+
+.menu-icon{
+  width:30px; height:30px;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.6));
 }
 .menu-icon path,
 .menu-icon circle,
 .menu-icon rect,
 .menu-icon polyline,
-.menu-icon line {
-  stroke: url(#icGrad);
-  stroke-width: 2.3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
+.menu-icon line{
+  stroke:url(#icGrad);
+  stroke-width:2.3;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  fill:none;
 }
-.menu-icon .fill {
-  fill: url(#icGrad);
-  stroke: none;
+.menu-icon .fill{ fill:url(#icGrad); stroke:none; }
+
+/* label rapi 2 baris */
+.menu-title{
+  font-size:.78rem;
+  line-height:1.15;
+  color:#f8fafc;
+  text-shadow:0 1px 2px rgba(0,0,0,.55);
+  text-align:center;
+  white-space:normal;        /* boleh turun baris */
+  word-break:keep-all;
+  max-width:78px;            /* sama seperti lebar item */
+  min-height:2.4em;          /* tinggi cadangan untuk 2 baris */
 }
