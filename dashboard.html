@@ -43,39 +43,39 @@
   <!-- Konten utama -->
   <main id="app" class="hidden flex-1 px-4 pb-20 pt-1">
 
-    <!-- HEADER khusus Home -->
-<div id="homeHeader" class="tab-content">
-  <!-- Banner -->
-  <section class="rounded-2xl overflow-hidden mb-2 ring-1 ring-white/10">
-    <img
-      loading="lazy"
-      src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=800&auto=format&fit=crop"
-      srcset="
-        https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=480&auto=format&fit=crop 480w,
-        https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=800&auto=format&fit=crop 800w,
-        https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1200&auto=format&fit=crop 1200w
-      "
-      sizes="(max-width:640px) 100vw, 800px"
-      alt="banner"
-      class="w-full h-40 object-cover opacity-90">
-  </section>
+    <!-- ===================== HOME HEADER (khusus tab Home) ===================== -->
+    <section id="homeHeader" class="tab-content">
+      <!-- Banner -->
+      <div class="rounded-2xl overflow-hidden mb-2 ring-1 ring-white/10">
+        <img
+          loading="lazy"
+          src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=800&auto=format&fit=crop"
+          srcset="
+            https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=480&auto=format&fit=crop 480w,
+            https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=800&auto=format&fit=crop 800w,
+            https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1200&auto=format&fit=crop 1200w
+          "
+          sizes="(max-width:640px) 100vw, 800px"
+          alt="banner"
+          class="w-full h-40 object-cover opacity-90">
+      </div>
 
-  <!-- Cards total -->
-  <section class="grid grid-cols-2 gap-3 mb-2">
-    <div class="glass p-4 rounded-2xl">
-      <div class="text-slate-300 text-sm">Total aset</div>
-      <div class="text-2xl font-bold">0 <span class="text-sm">IDR</span></div>
-      <div class="text-xs text-slate-400">≈ Rp 0</div>
-    </div>
-    <div class="glass p-4 rounded-2xl">
-      <div class="text-slate-300 text-sm">Akun Kuantitatif</div>
-      <div class="text-2xl font-bold">0.00 <span class="text-sm">IDR</span></div>
-      <div class="text-xs text-slate-400">≈ Rp 0.00</div>
-    </div>
-  </section>
-</div>
+      <!-- Kartu saldo ringkas -->
+      <div class="grid grid-cols-2 gap-3 mb-2">
+        <div class="glass p-4 rounded-2xl">
+          <div class="text-slate-300 text-sm">Total aset</div>
+          <div class="text-2xl font-bold">0 <span class="text-sm">IDR</span></div>
+          <div class="text-xs text-slate-400">≈ Rp 0</div>
+        </div>
+        <div class="glass p-4 rounded-2xl">
+          <div class="text-slate-300 text-sm">Akun Kuantitatif</div>
+          <div class="text-2xl font-bold">0.00 <span class="text-sm">IDR</span></div>
+          <div class="text-xs text-slate-400">≈ Rp 0.00</div>
+        </div>
+      </div>
+    </section>
 
-    <!-- HOME menu (8 ikon) -->
+    <!-- ===================== HOME MENU GRID ===================== -->
     <section id="homeGrid" class="glass p-4 rounded-2xl tab-content">
       <div class="menu-grid grid grid-cols-4 gap-x-3 gap-y-4 place-items-center text-center">
 
@@ -180,98 +180,50 @@
       </div>
     </section>
 
-    
-<!-- FARM -->
-<section id="farmTab" class="hidden tab-content">
-  <h2 class="section-title">Farm</h2>
+    <!-- ===================== FARM ===================== -->
+    <section id="farmTab" class="hidden tab-content">
+      <h2 class="section-title">Farm</h2>
 
-  <div class="farm-card glass">
-    <div class="farm-head">
-      <span class="chip subtle">Akun Kuantitatif</span>
-      <div class="farm-balance">0.00</div>
-    </div>
-
-    <div class="metric-grid">
-      <div class="metric">
-        <span class="metric-label chip">Aset Keuntungan</span>
-        <div class="metric-value">0.00</div>
-      </div>
-      <div class="metric">
-        <span class="metric-label chip">Penghasilan Hari Ini</span>
-        <div class="metric-value">0</div>
-      </div>
-      <div class="metric">
-        <span class="metric-label chip">Total Pendapatan</span>
-        <div class="metric-value">0.00</div>
-      </div>
-      <div class="metric">
-        <span class="metric-label chip">Jumlah Hari yang Dapat Dihitung</span>
-        <div class="metric-value">210</div>
-      </div>
-      <div class="metric">
-        <span class="metric-label chip">Hari Hitung Mundur</span>
-        <div class="metric-value">210</div>
-      </div>
-    </div>
-
-    <div class="farm-footer">
-      <button class="chip strong w-full justify-center">
-        <span>Catatan transaksi</span>
-        <span class="sep">››</span>
-        <span>0 / 0</span>
-      </button>
-    </div>
-  </div>
-</section>
-  <!-- Kartu saldo/akun -->
-  <div class="farm-card rounded-2xl overflow-hidden">
-    <div class="farm-card__overlay"></div>
-
-    <div class="p-4 sm:p-5 relative z-10">
-      <div class="mb-3">
-        <div class="text-xs text-slate-200/80">Akun Kuantitatif</div>
-        <div class="text-2xl font-extrabold tracking-wide">0.00</div>
-      </div>
-
-      <!-- 3 statistik -->
-      <div class="grid grid-cols-3 gap-2 text-center">
-        <div>
-          <div class="stat-title">Aset Keuntungan</div>
-          <div class="stat-value">0.00</div>
+      <div class="farm-card glass">
+        <div class="farm-head">
+          <span class="chip subtle">Akun Kuantitatif</span>
+          <div class="farm-balance">0.00</div>
         </div>
-        <div>
-          <div class="stat-title">Penghasilan Hari Ini</div>
-          <div class="stat-value">0</div>
+
+        <div class="metric-grid">
+          <div class="metric">
+            <span class="metric-label chip">Aset Keuntungan</span>
+            <div class="metric-value">0.00</div>
+          </div>
+          <div class="metric">
+            <span class="metric-label chip">Penghasilan Hari Ini</span>
+            <div class="metric-value">0</div>
+          </div>
+          <div class="metric">
+            <span class="metric-label chip">Total Pendapatan</span>
+            <div class="metric-value">0.00</div>
+          </div>
+          <div class="metric">
+            <span class="metric-label chip">Jumlah Hari yang Dapat Dihitung</span>
+            <div class="metric-value">210</div>
+          </div>
+          <div class="metric">
+            <span class="metric-label chip">Hari Hitung Mundur</span>
+            <div class="metric-value">210</div>
+          </div>
         </div>
-        <div>
-          <div class="stat-title">Total Pendapatan</div>
-          <div class="stat-value">0.00</div>
+
+        <div class="farm-footer">
+          <button class="chip strong w-full justify-center">
+            <span>Catatan transaksi</span>
+            <span class="sep">››</span>
+            <span>0 / 0</span>
+          </button>
         </div>
       </div>
+    </section>
 
-      <!-- info hari -->
-      <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
-        <div class="info-line">
-          <span>Jumlah Hari yang Dapat Dihitung</span>
-          <strong>210</strong>
-        </div>
-        <div class="info-line">
-          <span>Hari Hitung Mundur</span>
-          <strong>210</strong>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Catatan transaksi -->
-  <div class="mt-3">
-    <button class="pill-dark w-full px-4 py-3 rounded-2xl text-slate-100 text-base font-medium">
-      Catatan transaksi &raquo;&raquo; <span class="opacity-80">0 / 0</span>
-    </button>
-  </div>
-</section>
-
-    <!-- INVITE -->
+    <!-- ===================== INVITE ===================== -->
     <section id="inviteTab" class="hidden tab-content">
       <h2 class="text-lg font-semibold mb-2">Mengundang teman</h2>
       <div class="glass p-4 rounded-2xl">
@@ -283,7 +235,7 @@
       </div>
     </section>
 
-    <!-- PROFILE -->
+    <!-- ===================== PROFILE ===================== -->
     <section id="profileTab" class="hidden tab-content">
       <h2 class="text-lg font-semibold mb-2">Aku</h2>
       <div class="glass p-4 rounded-2xl">
@@ -291,6 +243,7 @@
         <div class="text-sm"><span class="text-slate-400">Masuk sebagai</span>: <span id="who">—</span></div>
       </div>
     </section>
+
   </main>
 
   <!-- Bottom Tabbar -->
