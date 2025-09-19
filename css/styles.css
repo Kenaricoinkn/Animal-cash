@@ -1,20 +1,113 @@
+/* =========================================================
+   Global & Background
+   ========================================================= */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
 body{
+  -webkit-tap-highlight-color: transparent;
   background:
     radial-gradient(1200px 600px at 20% -10%, rgba(56,189,248,.15), transparent 60%),
     radial-gradient(1000px 700px at 110% 10%, rgba(99,102,241,.18), transparent 60%),
     linear-gradient(180deg, #0b1020 0%, #0a0f1a 100%);
+  color: #e5e7eb;
   min-height: 100vh;
 }
+
+/* =========================================================
+   Reusable UI
+   ========================================================= */
 .glass{
   background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,.08);
+  border-radius: 1rem;
 }
-.tab-active{ color:#a5b4fc; border-bottom:2px solid #93c5fd; }
-.btn-primary{ background:linear-gradient(180deg,#82b1ff,#5aa2ff); color:#0b1020; }
+
+.pill{
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 9999px;
+}
+
+.btn-primary{
+  background: linear-gradient(180deg,#82b1ff,#5aa2ff);
+  color:#0b1020;
+  border-radius: 0.75rem;
+}
 .btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
-.pill{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); }
-/* tombol mata reuse via CSS */
+
+.tab-active{ color:#a5b4fc; border-bottom:2px solid #93c5fd; }
+.tabbtn.tab-active { color:#a5b4fc; }
+
+/* =========================================================
+   Header chips & search
+   ========================================================= */
+.icon-chip{
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 9999px;
+  font-size: 16px;
+}
+
+.lang-chip{
+  display: inline-flex; align-items: center; gap: .35rem;
+  height: 36px; padding: 0 12px;
+  font-size: 13px; color: #e5e7eb;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 9999px;
+}
+
+.search-pill{
+  height: 44px;
+  border-radius: 9999px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.15);
+}
+
+/* =========================================================
+   Brand Title (gradient + shimmer + breathe)
+   ========================================================= */
+.brand-title{
+  display:inline-block;
+  font-weight:800;
+  letter-spacing:.3px;
+
+  /* gradient pelangi */
+  background: linear-gradient(90deg,
+    #60a5fa, #a78bfa, #f472b6, #f59e0b, #34d399, #60a5fa);
+  background-size: 300% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent; /* penting untuk WebKit */
+
+  /* glow halus */
+  filter: drop-shadow(0 0 6px rgba(99,102,241,.22));
+
+  /* animasi: shimmer + kedip lembut */
+  animation: brand-shimmer 14s linear infinite,
+             brand-breathe 3.6s ease-in-out infinite;
+}
+@keyframes brand-shimmer{
+  0%   { background-position:   0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position:   0% 50%; }
+}
+@keyframes brand-breathe{
+  0%,100% { opacity: .92; }
+  50%     { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce){
+  .brand-title{ animation: none; }
+}
+
+/* =========================================================
+   Eye toggle icon (password visibility)
+   ========================================================= */
 .eye-btn{
   position:absolute; right:12px; top:50%; transform:translateY(-50%);
   width:24px; height:24px; opacity:.85;
@@ -23,73 +116,13 @@ body{
   content:"";
   display:block; width:24px; height:24px;
   mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/></svg>') center/contain no-repeat;
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/></svg>') center/contain no-repeat;
   background:#cbd5e1;
 }
-/* Dashboard custom */
-.icon-chip {
-  width: 36px; height: 36px;
-  display: grid; place-items: center;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 9999px;
-  font-size: 16px;
-}
-.lang-chip {
-  display: inline-flex; align-items: center; gap: .35rem;
-  height: 36px; padding: 0 12px;
-  font-size: 13px; color: #e5e7eb;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 9999px;
-}
-.search-pill {
-  height: 44px;
-  border-radius: 9999px;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.15);
-}
-.tabbtn.tab-active {
-  color: #a5b4fc;
-}
-/* ===== Brand Title: warna-warni + kedip halus ===== */
-.brand-title{
-  display:inline-block;
-  font-weight:800;
-  letter-spacing:.3px;
-  /* gradient pelangi */
-  background: linear-gradient(90deg,
-      #60a5fa, #a78bfa, #f472b6, #f59e0b, #34d399, #60a5fa);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 
-  /* sedikit glow agar kebaca di dark bg */
-  filter: drop-shadow(0 0 6px rgba(99,102,241,.22));
-
-  /* animasi: shimmer + kedip lembut */
-  animation: brand-shimmer 14s linear infinite,
-             brand-breathe 3.6s ease-in-out infinite;
-}
-
-/* animasi geser gradient (shimmer) */
-@keyframes brand-shimmer{
-  0%   { background-position:   0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position:   0% 50%; }
-}
-
-/* “kedip” pelan: naik-turun opacity, bukan blink total */
-@keyframes brand-breathe{
-  0%,100% { opacity: .92; }
-  50%     { opacity: 1; }
-}
-
-/* Respect user: reduce motion */
-@media (prefers-reduced-motion: reduce){
-  .brand-title{ animation: none; }
-}
-/* country code group */
+/* =========================================================
+   Country code select (register/login telepon)
+   ========================================================= */
 .cc-wrap{
   display:flex; align-items:center;
   padding:0 10px; border-radius:0.75rem;
@@ -101,4 +134,7 @@ body{
   background:transparent; color:#e5e7eb; outline:none; border:none;
   appearance:none; padding-right:4px; font-size:14px;
 }
-.cc-divider{ color:#8fb5ff; margin-left:6px; margin-right:2px; opacity:.7; }
+.cc-divider{
+  color:#8fb5ff; margin-left:6px; margin-right:2px; opacity:.7;
+}
+```0
