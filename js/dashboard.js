@@ -18,13 +18,13 @@ function init(){
   });
 
   /* ---------- Tabs ---------- */
-  const tabBtns    = document.querySelectorAll('.tabbtn');
-  const homeGrid   = document.querySelector('#homeGrid');
-  const measureTab = document.querySelector('#measureTab');
-  const inviteTab  = document.querySelector('#inviteTab');
-  const profileTab = document.querySelector('#profileTab');
+  const tabBtns   = document.querySelectorAll('.tabbtn');
+  const homeGrid  = document.querySelector('#homeGrid');
+  const farmTab   = document.querySelector('#farmTab');
+  const inviteTab = document.querySelector('#inviteTab');
+  const profileTab= document.querySelector('#profileTab');
 
-  const sections = { home: homeGrid, measure: measureTab, invite: inviteTab, profile: profileTab };
+  const sections = { home: homeGrid, farm: farmTab, invite: inviteTab, profile: profileTab };
 
   tabBtns.forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -54,9 +54,8 @@ function init(){
   langSheet?.querySelector('[data-close]')?.addEventListener('click', ()=> langSheet?.classList.add('hidden'));
   applyLang(localStorage.getItem('lang') || 'id');
 
-  /* ---------- Opsional: logout pindah ke tab "Aku" nanti ----------
-     Tidak ada tombol #btnLogout di header lagi, jadi listener logout dihapus.
-     Kalau nanti kamu tambahkan tombol logout di profileTab, cukup:
+  /* ---------- (Opsional) Logout di tab "Aku"
+     Kalau nanti kamu tambahkan tombol #btnLogout di profileTab, aktifkan:
      document.querySelector('#btnLogout')?.addEventListener('click', async ()=>{
        await auth.signOut(); unsub?.(); window.location.href = 'index.html';
      });
