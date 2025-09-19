@@ -43,34 +43,37 @@
   <!-- Konten utama -->
   <main id="app" class="hidden flex-1 px-4 pb-20 pt-1">
 
-    <!-- Banner -->
-    <section class="rounded-2xl overflow-hidden mb-2 ring-1 ring-white/10">
-      <img
-        loading="lazy"
-        src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=800&auto=format&fit=crop"
-        srcset="
-          https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=480&auto=format&fit=crop 480w,
-          https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=800&auto=format&fit=crop 800w,
-          https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1200&auto=format&fit=crop 1200w
-        "
-        sizes="(max-width:640px) 100vw, 800px"
-        alt="banner"
-        class="w-full h-40 object-cover opacity-90">
-    </section>
+    <!-- HEADER khusus Home -->
+<div id="homeHeader" class="tab-content">
+  <!-- Banner -->
+  <section class="rounded-2xl overflow-hidden mb-2 ring-1 ring-white/10">
+    <img
+      loading="lazy"
+      src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=800&auto=format&fit=crop"
+      srcset="
+        https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=480&auto=format&fit=crop 480w,
+        https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=800&auto=format&fit=crop 800w,
+        https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1200&auto=format&fit=crop 1200w
+      "
+      sizes="(max-width:640px) 100vw, 800px"
+      alt="banner"
+      class="w-full h-40 object-cover opacity-90">
+  </section>
 
-    <!-- Cards total -->
-    <section class="grid grid-cols-2 gap-3 mb-2">
-      <div class="glass p-4 rounded-2xl">
-        <div class="text-slate-300 text-sm">Total aset</div>
-        <div class="text-2xl font-bold">0 <span class="text-sm">USDT</span></div>
-        <div class="text-xs text-slate-400">≈ $ 0</div>
-      </div>
-      <div class="glass p-4 rounded-2xl">
-        <div class="text-slate-300 text-sm">Akun Kuantitatif</div>
-        <div class="text-2xl font-bold">0.00 <span class="text-sm">USDT</span></div>
-        <div class="text-xs text-slate-400">≈ $ 0.00</div>
-      </div>
-    </section>
+  <!-- Cards total -->
+  <section class="grid grid-cols-2 gap-3 mb-2">
+    <div class="glass p-4 rounded-2xl">
+      <div class="text-slate-300 text-sm">Total aset</div>
+      <div class="text-2xl font-bold">0 <span class="text-sm">IDR</span></div>
+      <div class="text-xs text-slate-400">≈ Rp 0</div>
+    </div>
+    <div class="glass p-4 rounded-2xl">
+      <div class="text-slate-300 text-sm">Akun Kuantitatif</div>
+      <div class="text-2xl font-bold">0.00 <span class="text-sm">IDR</span></div>
+      <div class="text-xs text-slate-400">≈ Rp 0.00</div>
+    </div>
+  </section>
+</div>
 
     <!-- HOME menu (8 ikon) -->
     <section id="homeGrid" class="glass p-4 rounded-2xl tab-content">
