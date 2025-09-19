@@ -123,3 +123,65 @@ body {
   text-align:center; white-space:normal; word-break:keep-all;
   max-width:78px; min-height:2.4em;   /* tinggi cadangan 2 baris */
 }
+/* ===== FARM (Akun Kuantitatif) ===== */
+.farm-card{
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #0e1626;
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 8px 30px rgba(0,0,0,.35);
+}
+
+.farm-card__overlay{
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35)),
+    url('https://images.unsplash.com/photo-1621416894569-0f7cb37f1e88?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
+  opacity: .9;
+  filter: saturate(1.06) contrast(1.04);
+}
+
+/* Teks kecil “judul statistik” */
+.stat-title{
+  font-size: .78rem;
+  color: rgba(241,245,249,.9);
+}
+
+/* Angka/stat utama */
+.stat-value{
+  margin-top: .15rem;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: .3px;
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0,0,0,.35);
+}
+
+/* Baris info di bawah (hari dapat dihitung, hitung mundur) */
+.info-line{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .55rem .7rem;
+  background: rgba(15,23,42,.55);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: .9rem;
+  color: #e2e8f0;
+}
+
+/* Tombol “Catatan transaksi” */
+.pill-dark{
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* Sedikit rapikan spacing global pada container home/farm */
+.tab-content{
+  margin-top: .5rem;
+}
