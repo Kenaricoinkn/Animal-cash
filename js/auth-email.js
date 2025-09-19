@@ -13,15 +13,24 @@
 
   $('#form-email').addEventListener('submit', async (e) => {
     e.preventDefault();
-    hide(emailAlert); btnEmail.disabled = true;
+    hide(emailAlert); 
+    btnEmail.disabled = true;
+
     try {
       const cred = await firebase.signInEmail(emailInput.value.trim(), passInput.value);
       toast('Masuk sebagai ' + (cred.user.email || 'user'));
-      // TODO: window.location.href = '/dashboard.html';
+
+      // ✅ setelah sukses login, arahkan ke dashboard
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 800);
+
     } catch (err) {
       emailAlert.textContent = pretty(err?.message || '');
       show(emailAlert);
-    } finally { btnEmail.disabled = false; }
+    } finally { 
+      btnEmail.disabled = false; 
+    }
   });
 
   function pretty(msg){
