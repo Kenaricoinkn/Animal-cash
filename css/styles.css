@@ -51,19 +51,6 @@ body{
 .tabbtn.tab-active {
   color: #a5b4fc;
 }
-/* country code group */
-.cc-wrap{
-  display:flex; align-items:center;
-  padding:0 10px; border-radius:0.75rem;
-  background:rgba(15,23,42,.6);
-  border:1px solid rgba(255,255,255,.1);
-  height:48px;
-}
-.cc-select{
-  background:transparent; color:#e5e7eb; outline:none; border:none;
-  appearance:none; padding-right:4px; font-size:14px;
-}
-.cc-divider{ color:#8fb5ff; margin-left:6px; margin-right:2px; opacity:.7; }
 /* ===== Brand Title: warna-warni + kedip halus ===== */
 .brand-title{
   display:inline-block;
@@ -102,3 +89,16 @@ body{
 @media (prefers-reduced-motion: reduce){
   .brand-title{ animation: none; }
 }
+/* country code group */
+.cc-wrap{
+  display:flex; align-items:center;
+  padding:0 10px; border-radius:0.75rem;
+  background:rgba(15,23,42,.6);
+  border:1px solid rgba(255,255,255,.1);
+  height:48px;
+}
+.cc-select{
+  background:transparent; color:#e5e7eb; outline:none; border:none;
+  appearance:none; padding-right:4px; font-size:14px;
+}
+.cc-divider{ color:#8fb5ff; margin-left:6px; margin-right:2px; opacity:.7; }
