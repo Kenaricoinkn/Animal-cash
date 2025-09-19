@@ -34,6 +34,7 @@ body{
   background: linear-gradient(180deg,#82b1ff,#5aa2ff);
   color:#0b1020;
   border-radius: 0.75rem;
+  font-weight: 600;
 }
 .btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
 
@@ -137,6 +138,7 @@ body{
 .cc-divider{
   color:#8fb5ff; margin-left:6px; margin-right:2px; opacity:.7;
 }
+
 /* =========================================================
    Bottom Tabbar
    ========================================================= */
@@ -227,11 +229,10 @@ main section h2 {
 #farmTab button:hover {
   transform: scale(1.05);
 }
+
 /* =========================================================
    Transisi Tab & Reveal App
    ========================================================= */
-
-/* setiap konten tab punya kelas .tab-content */
 .tab-content{
   opacity: 0;
   transform: translateY(6px);
@@ -244,7 +245,6 @@ main section h2 {
   to  { opacity:1; transform: translateY(0); }
 }
 
-/* efek muncul saat halaman siap setelah auth */
 #app.app-reveal{
   animation: appIn .25s ease both;
 }
@@ -253,7 +253,6 @@ main section h2 {
   to  { opacity:1; transform: scale(1); }
 }
 
-/* hormati preferensi user */
 @media (prefers-reduced-motion: reduce){
   .tab-content{ opacity:1; transform:none; }
   .tab-content.is-active{ animation:none; }
