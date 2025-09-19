@@ -1,6 +1,5 @@
 import { applyLang, buildLanguageSheet } from './i18n.js';
 
-// guard: hanya user login yang boleh masuk
 if (!window.App?.firebase) {
   window.addEventListener('firebase-ready', init, { once:true });
 } else {
@@ -9,10 +8,20 @@ if (!window.App?.firebase) {
 
 function init(){
   const { auth } = window.App.firebase;
+  const appEl  = document.querySelector('#app');
+  const gateEl = document.querySelector('#gate');
 
-  // redirect jika belum login + isi profil
+  // auth guard
   const unsub = auth.onAuthStateChanged(user=>{
-    if (!user) { window.location.href = 'index.html'; return; }
+    if (!user) {
+      window.location.replace('index.html');
+      return;
+    }
+    // sudah login -> tampilkan app
+    gateEl?.classList.add('hidden');
+    appEl?.classList.remove('hidden');
+    appEl?.classList.add('app-reveal');
+
     document.querySelector('#uid')?.replaceChildren(document.createTextNode(user.uid));
     document.querySelector('#who')?.replaceChildren(document.createTextNode(user.email || user.displayName || '(user)'));
   });
@@ -28,36 +37,38 @@ function init(){
 
   tabBtns.forEach(btn=>{
     btn.addEventListener('click', ()=>{
+      // reset semua button
       tabBtns.forEach(b=>b.classList.remove('tab-active'));
       btn.classList.add('tab-active');
-      Object.values(sections).forEach(s=>s?.classList.add('hidden'));
+
+      // sembunyikan semua section + reset anim
+      Object.values(sections).forEach(s=>{
+        s?.classList.add('hidden');
+        s?.classList.remove('is-active');
+      });
+
+      // tampilkan tab target + animasi
       const key = btn.dataset.tab;
-      sections[key]?.classList.remove('hidden');
+      const target = sections[key];
+      if (target){
+        target.classList.remove('hidden');
+        void target.offsetWidth; // force reflow
+        target.classList.add('is-active');
+      }
     });
   });
 
   /* ---------- Copy invite ---------- */
   document.querySelector('#copyInvite')?.addEventListener('click', ()=>{
     const val = document.querySelector('#inviteLink')?.value || '';
-    if (val) {
-      navigator.clipboard?.writeText(val);
-      window.App.toast?.('Tautan disalin');
-    }
+    if (val) { navigator.clipboard?.writeText(val); window.App.toast?.('Tautan disalin'); }
   });
 
   /* ---------- Language sheet ---------- */
   const langSheet = document.querySelector('#langSheet');
   document.querySelector('#btnLanguage')?.addEventListener('click', ()=>{
-    buildLanguageSheet();
-    langSheet?.classList.remove('hidden');
+    buildLanguageSheet(); langSheet?.classList.remove('hidden');
   });
   langSheet?.querySelector('[data-close]')?.addEventListener('click', ()=> langSheet?.classList.add('hidden'));
   applyLang(localStorage.getItem('lang') || 'id');
-
-  /* ---------- (Opsional) Logout di tab "Aku"
-     Kalau nanti kamu tambahkan tombol #btnLogout di profileTab, aktifkan:
-     document.querySelector('#btnLogout')?.addEventListener('click', async ()=>{
-       await auth.signOut(); unsub?.(); window.location.href = 'index.html';
-     });
-  --------------------------------------------------------------- */
 }
