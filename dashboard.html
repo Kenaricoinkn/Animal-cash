@@ -178,12 +178,56 @@
     </section>
 
     <!-- FARM -->
-    <section id="farmTab" class="hidden tab-content">
-      <h2 class="text-lg font-semibold mb-3">Farm</h2>
-      <div class="glass p-4 rounded-2xl text-sm text-slate-300">
-        Konten “Farm” akan ditambahkan di sini.
+<section id="farmTab" class="hidden tab-content">
+  <h2 class="text-lg font-semibold mb-3">Farm</h2>
+
+  <!-- Kartu saldo/akun -->
+  <div class="farm-card rounded-2xl overflow-hidden">
+    <div class="farm-card__overlay"></div>
+
+    <div class="p-4 sm:p-5 relative z-10">
+      <div class="mb-3">
+        <div class="text-xs text-slate-200/80">Akun Kuantitatif</div>
+        <div class="text-2xl font-extrabold tracking-wide">0.00</div>
       </div>
-    </section>
+
+      <!-- 3 statistik -->
+      <div class="grid grid-cols-3 gap-2 text-center">
+        <div>
+          <div class="stat-title">Aset Keuntungan</div>
+          <div class="stat-value">0.00</div>
+        </div>
+        <div>
+          <div class="stat-title">Penghasilan Hari Ini</div>
+          <div class="stat-value">0</div>
+        </div>
+        <div>
+          <div class="stat-title">Total Pendapatan</div>
+          <div class="stat-value">0.00</div>
+        </div>
+      </div>
+
+      <!-- info hari -->
+      <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
+        <div class="info-line">
+          <span>Jumlah Hari yang Dapat Dihitung</span>
+          <strong>210</strong>
+        </div>
+        <div class="info-line">
+          <span>Hari Hitung Mundur</span>
+          <strong>210</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Catatan transaksi -->
+  <div class="mt-3">
+    <button class="pill-dark w-full px-4 py-3 rounded-2xl text-slate-100 text-base font-medium">
+      Catatan transaksi &raquo;&raquo; <span class="opacity-80">0 / 0</span>
+    </button>
+  </div>
+</section>
 
     <!-- INVITE -->
     <section id="inviteTab" class="hidden tab-content">
