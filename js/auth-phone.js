@@ -13,18 +13,29 @@
 
   $('#form-phone').addEventListener('submit', async (e)=>{
     e.preventDefault();
-    hide(phoneAlert); btnPhone.disabled = true;
+    hide(phoneAlert); 
+    btnPhone.disabled = true;
+
     try{
       const phone = (phoneInput.value||'').trim();
       const pass  = (passInput.value||'');
+
       if(!phone || !pass) throw new Error('Nomor telepon & kata sandi wajib diisi.');
+
       const cred = await firebase.signInPhonePass(phone, pass);
       toast('Masuk telepon: ' + (cred.user.displayName || phone));
-      // TODO: window.location.href = '/dashboard.html';
+
+      // ✅ setelah sukses login → arahkan ke dashboard
+      setTimeout(()=>{
+        window.location.href = 'dashboard.html';
+      }, 800);
+
     }catch(err){
       phoneAlert.textContent = pretty(err?.message || '');
       show(phoneAlert);
-    }finally{ btnPhone.disabled=false; }
+    }finally{ 
+      btnPhone.disabled=false; 
+    }
   });
 
   function pretty(msg){
