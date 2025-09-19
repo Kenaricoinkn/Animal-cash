@@ -1,3 +1,12 @@
+if (!window.App?.firebase) {
+  window.addEventListener('firebase-ready', initRegister, { once: true });
+} else {
+  initRegister();
+}
+
+function initRegister() {
+  // >>> Pindahkan seluruh isi register.js kamu ke dalam fungsi ini <<<
+}
 (function(){
   const { $, show, hide, toast, firebase } = window.App;
 
