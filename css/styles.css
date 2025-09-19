@@ -1,34 +1,82 @@
+/* ========================================================================
+   GLOBAL / THEME
+   ======================================================================== */
+
 /* ===== Background umum ===== */
-body {
+body{
   background:
     radial-gradient(1200px 600px at 20% -10%, rgba(56,189,248,.15), transparent 60%),
     radial-gradient(1000px 700px at 110% 10%, rgba(99,102,241,.18), transparent 60%),
     linear-gradient(180deg, #0b1020 0%, #0a0f1a 100%);
-  min-height: 100vh;
-  font-family: 'Inter', system-ui, sans-serif;
-  color: #f8fafc;
+  min-height:100vh;
+  font-family:'Inter', system-ui, sans-serif;
+  color:#f8fafc;
 }
 
-/* ===== Glass Effect ===== */
-.glass {
-  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,.08);
+/* ===== Glass Effect (gelap transparan) ===== */
+.glass{
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.08);
 }
 
-/* ===== Buttons & Tabs ===== */
-.tab-active { color: #a5b4fc; border-bottom: 2px solid #93c5fd; }
-.btn-primary {
-  background: linear-gradient(180deg, #82b1ff, #5aa2ff);
-  color: #0b1020;
-}
-.btn-primary:disabled { opacity: .6; cursor: not-allowed; }
-.pill { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); }
+/* ========================================================================
+   UI ATOM: BUTTONS, TABS, CHIPS
+   ======================================================================== */
+.tab-active{ color:#a5b4fc; border-bottom:2px solid #93c5fd; }
 
-/* ===== Eye Button (toggle password) ===== */
-.eye-btn {
-  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  width: 24px; height: 24px; opacity: .85;
+.btn-primary{
+  background:linear-gradient(180deg,#82b1ff,#5aa2ff);
+  color:#0b1020;
+}
+.btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
+
+.pill{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+}
+
+/* Tombol hijau panjang (untuk “Beli”) */
+.btn-success{
+  width:100%;
+  border:none;
+  margin-top:10px;
+  border-radius:14px;
+  padding:12px 14px;
+  color:#052e16;
+  font-weight:700;
+  background:linear-gradient(180deg,#8ef58a,#56d35a);
+  box-shadow:0 6px 18px rgba(34,197,94,.25);
+}
+.btn-success:active{ transform:translateY(1px); }
+
+/* ===== Chip (kotak transparan kecil) ===== */
+.chip{
+  display:inline-flex; align-items:center; gap:.35rem;
+  height:28px; padding:0 .6rem; border-radius:9999px;
+  font-size:.78rem; line-height:1;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  color:#e7efff;
+}
+.chip.subtle{
+  background:rgba(163,210,255,.08);
+  border-color:rgba(163,210,255,.22);
+}
+.chip.strong{
+  height:42px; font-weight:800; font-size:.9rem;
+  background:linear-gradient(180deg,#9bd2ff,#6fb5ff);
+  color:#071223; border:none;
+}
+
+/* ========================================================================
+   SMALL PARTS
+   ======================================================================== */
+
+/* Eye button (toggle password) */
+.eye-btn{
+  position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  width:24px; height:24px; opacity:.85;
 }
 .eye-btn::before{
   content:""; display:block; width:24px; height:24px;
@@ -36,7 +84,7 @@ body {
   background:#cbd5e1;
 }
 
-/* ===== Icon chip & language chip ===== */
+/* Icon chip & language chip */
 .icon-chip{
   width:36px; height:36px; display:grid; place-items:center;
   background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
@@ -53,7 +101,7 @@ body {
   background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.15);
 }
 
-/* ===== Brand Title: warna-warni + shimmer ===== */
+/* Brand Title: warna-warni + shimmer */
 .brand-title{
   display:inline-block; font-weight:800; letter-spacing:.3px;
   background:linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6,#f59e0b,#34d399,#60a5fa);
@@ -61,11 +109,11 @@ body {
   color:transparent; filter:drop-shadow(0 0 6px rgba(99,102,241,.22));
   animation:brand-shimmer 14s linear infinite, brand-breathe 3.6s ease-in-out infinite;
 }
-@keyframes brand-shimmer{ 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-@keyframes brand-breathe{ 0%,100%{opacity:.92} 50%{opacity:1} }
-@media (prefers-reduced-motion: reduce){ .brand-title{ animation:none } }
+@keyframes brand-shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes brand-breathe{0%,100%{opacity:.92}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){ .brand-title{animation:none} }
 
-/* ===== Country Code Input ===== */
+/* Country code input */
 .cc-wrap{
   display:flex; align-items:center; padding:0 10px; border-radius:.75rem;
   background:rgba(15,23,42,.6); border:1px solid rgba(255,255,255,.1); height:48px;
@@ -73,11 +121,10 @@ body {
 .cc-select{ background:transparent; color:#e5e7eb; outline:none; border:none; appearance:none; padding-right:4px; font-size:14px; }
 .cc-divider{ color:#8fb5ff; margin:0 4px; opacity:.7; }
 
-/* ===== GRID MENU (rapi di hp) ===== */
-.menu-item{
-  display:flex; flex-direction:column; align-items:center; gap:.45rem;
-  width:78px;                     /* kunci lebar tiap item */
-}
+/* ========================================================================
+   HOME — MENU GRID
+   ======================================================================== */
+.menu-item{ display:flex; flex-direction:column; align-items:center; gap:.45rem; width:78px; }
 .menu-circle{
   width:54px; height:54px; border-radius:9999px; position:relative;
   display:grid; place-items:center;
@@ -85,10 +132,7 @@ body {
     radial-gradient(140% 140% at 30% 25%, rgba(120,255,240,.14), rgba(95,120,160,.1) 40%, rgba(20,25,45,.9) 75%),
     linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
   border:1px solid rgba(160,210,255,.35);
-  box-shadow:
-    inset 0 2px 5px rgba(255,255,255,.08),
-    inset 0 -4px 10px rgba(0,0,0,.35),
-    0 3px 8px rgba(0,0,0,.4);
+  box-shadow:inset 0 2px 5px rgba(255,255,255,.08), inset 0 -4px 10px rgba(0,0,0,.35), 0 3px 8px rgba(0,0,0,.4);
   backdrop-filter:blur(3px);
   transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease;
 }
@@ -100,433 +144,130 @@ body {
 .menu-item:hover .menu-circle{
   transform:translateY(-2px);
   border-color:rgba(180,240,255,.55);
-  box-shadow:
-    inset 0 2px 7px rgba(255,255,255,.1),
-    inset 0 -6px 12px rgba(0,0,0,.4),
-    0 8px 14px rgba(0,0,0,.5);
+  box-shadow:inset 0 2px 7px rgba(255,255,255,.1), inset 0 -6px 12px rgba(0,0,0,.4), 0 8px 14px rgba(0,0,0,.5);
 }
-
 .menu-icon{ width:30px; height:30px; filter:drop-shadow(0 1px 2px rgba(0,0,0,.6)); }
-.menu-icon path,
-.menu-icon circle,
-.menu-icon rect,
-.menu-icon polyline,
-.menu-icon line{
+.menu-icon path,.menu-icon circle,.menu-icon rect,.menu-icon polyline,.menu-icon line{
   stroke:url(#icGrad); stroke-width:2.3; stroke-linecap:round; stroke-linejoin:round; fill:none;
 }
 .menu-icon .fill{ fill:url(#icGrad); stroke:none; }
 
-/* label rapi 2 baris */
+/* Label menu kecil + kotak transparan */
 .menu-title{
-  font-size:.78rem; line-height:1.15; color:#f8fafc;
-  text-shadow:0 1px 2px rgba(0,0,0,.55);
-  text-align:center; white-space:normal; word-break:keep-all;
-  max-width:78px; min-height:2.4em;   /* tinggi cadangan 2 baris */
-}
-/* ===== FARM (Akun Kuantitatif) ===== */
-.farm-card{
-  position: relative;
-  border-radius: 1rem;
-  overflow: hidden;
-  background: #0e1626;
-  border: 1px solid rgba(255,255,255,.08);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.06),
-    0 8px 30px rgba(0,0,0,.35);
+  font-size:.74rem; line-height:1.15; color:#f8fafc;
+  text-shadow:0 1px 2px rgba(0,0,0,.45);
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:.5rem;
+  padding:.25rem .4rem;
+  margin-top:.1rem;
 }
 
-.farm-card__overlay{
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35)),
-    url('https://images.unsplash.com/photo-1621416894569-0f7cb37f1e88?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
-  opacity: .9;
-  filter: saturate(1.06) contrast(1.04);
-}
+/* ========================================================================
+   FARM — HEADER & METRICS
+   ======================================================================== */
 
-/* Teks kecil “judul statistik” */
-.stat-title{
-  font-size: .78rem;
-  color: rgba(241,245,249,.9);
-}
-
-/* Angka/stat utama */
-.stat-value{
-  margin-top: .15rem;
-  font-weight: 800;
-  font-size: 1.15rem;
-  letter-spacing: .3px;
-  color: #fff;
-  text-shadow: 0 2px 6px rgba(0,0,0,.35);
-}
-
-/* Baris info di bawah (hari dapat dihitung, hitung mundur) */
-.info-line{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: .75rem;
-  padding: .55rem .7rem;
-  background: rgba(15,23,42,.55);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: .9rem;
-  color: #e2e8f0;
-}
-
-/* Tombol “Catatan transaksi” */
-.pill-dark{
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.12);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
-}
-
-/* Sedikit rapikan spacing global pada container home/farm */
-.tab-content{
-  margin-top: .5rem;
-}
-/* ---------- FARM styles ---------- */
 .section-title{
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: .2px;
-  margin-bottom: .6rem;
+  font-size:1.05rem; font-weight:700; letter-spacing:.2px;
+  margin-bottom:.6rem;
 }
 
-/* kartu utama farm */
 .farm-card{
-  padding: 14px;
-  border-radius: 1rem;
-  position: relative;
-  overflow: hidden;
+  position:relative; border-radius:1rem; padding:.9rem;
 }
 
-/* header saldo */
 .farm-head{
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: .6rem;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:.75rem; margin-bottom:.6rem;
 }
 .farm-balance{
-  font-size: 1.6rem;       /* tidak terlalu besar */
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: .3px;
+  font-size:1.45rem; font-weight:900; letter-spacing:.2px;
+  color:#eaf2ff; text-shadow:0 1px 2px rgba(0,0,0,.35);
 }
 
-/* grid metrik */
+/* Metrics grid: 2 kolom di HP → 3 kolom >=640px */
 .metric-grid{
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0,1fr));
-  gap: 8px 10px;
+  display:grid; grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:.55rem; margin-top:.35rem;
 }
-@media (max-width: 420px){
-  .metric-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+@media (min-width:640px){
+  .metric-grid{ grid-template-columns:repeat(3, minmax(0,1fr)); }
 }
-
 .metric{
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:.9rem;
+  padding:.55rem .7rem;
+  background:rgba(255,255,255,.035);
 }
 .metric-label{
-  font-size: .72rem;
-  font-weight: 500;
-  opacity: .95;
+  font-size:.72rem; color:#cfe2ff;
 }
 .metric-value{
-  font-size: 1rem;
-  font-weight: 700;
-  text-shadow: 0 1px 1px rgba(0,0,0,.35);
-}
-
-/* chip (kotak transparan) serbaguna */
-.chip{
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 9999px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.10);
-  color: #e5e7eb;
-  font-size: .76rem;
-  white-space: nowrap;
-}
-.chip.subtle{
-  background: rgba(255,255,255,.04);
-  border-color: rgba(255,255,255,.08);
-  font-weight: 600;
-}
-.chip.strong{
-  background: linear-gradient(180deg, rgba(146,197,255,.15), rgba(100,180,255,.08));
-  border-color: rgba(163,210,255,.25);
-  font-weight: 700;
-}
-
-/* footer */
-.farm-footer{
-  margin-top: 12px;
-}
-.farm-footer .sep{
-  opacity: .85;
-  margin: 0 .25rem;
-}
-
-/* supaya tab non-home tidak ketiban jarak dari header home */
-.tab-content + .tab-content{
-  margin-top: 0;
-}
-/* =====================[ FARM: Header & Metrics ]===================== */
-
-/* Judul kecil elegan */
-.section-title{
-  font-size: .95rem;
-  font-weight: 800;
-  letter-spacing: .2px;
-  color: #e7ecff;
-  margin-bottom: .6rem;
-  text-shadow: 0 1px 2px rgba(0,0,0,.35);
-}
-
-/* Kartu Farm (saldo + metrik) */
-.farm-card{
-  position: relative;
-  border-radius: 1rem;
-  padding: .9rem;
-}
-
-/* Header saldo */
-.farm-head{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: .75rem;
-  margin-bottom: .6rem;
-}
-.farm-balance{
-  font-size: 1.45rem;
-  font-weight: 900;
-  letter-spacing: .2px;
-  color: #eaf2ff;
-  text-shadow: 0 1px 2px rgba(0,0,0,.35);
-}
-
-/* Chip */
-.chip{
-  display: inline-flex;
-  align-items: center;
-  gap: .35rem;
-  height: 28px;
-  padding: 0 .6rem;
-  border-radius: 9999px;
-  font-size: .78rem;
-  line-height: 1;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.06);
-  color: #e7efff;
-}
-.chip.subtle{
-  background: rgba(163,210,255,.08);
-  border-color: rgba(163,210,255,.22);
-}
-.chip.strong{
-  height: 42px;
-  font-weight: 800;
-  font-size: .9rem;
-  background: linear-gradient(180deg, #9bd2ff, #6fb5ff);
-  color: #071223;
-  border: none;
-}
-
-/* Grid metrik 2 kolom (HP) → 3 kolom (>=640px) */
-.metric-grid{
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0,1fr));
-  gap: .55rem;
-  margin-top: .35rem;
-}
-@media (min-width: 640px){
-  .metric-grid{
-    grid-template-columns: repeat(3, minmax(0,1fr));
-  }
-}
-
-/* Kotak metrik */
-.metric{
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: .9rem;
-  padding: .55rem .7rem;
-  background: rgba(255,255,255,.035);
-}
-.metric-label{
-  font-size: .72rem;
-  color: #cfe2ff;
-  background: transparent;
-  border-color: rgba(255,255,255,.12);
-  height: auto;
-  padding: .25rem .5rem;
-}
-.metric-value{
-  margin-top: .45rem;
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #f4f8ff;
-  text-shadow: 0 1px 2px rgba(0,0,0,.35);
+  margin-top:.45rem; font-size:1.05rem; font-weight:800;
+  color:#f4f8ff; text-shadow:0 1px 2px rgba(0,0,0,.35);
 }
 
 /* Footer transaksi */
-.farm-footer{
-  margin-top: .75rem;
-}
-.farm-footer .chip{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
-.farm-footer .sep{
-  opacity: .8;
-  margin: 0 .35rem;
+.farm-footer{ margin-top:.75rem; }
+.farm-footer .chip{ display:flex; align-items:center; justify-content:center; width:100%; }
+.farm-footer .sep{ opacity:.8; margin:0 .35rem; }
+
+/* ========================================================================
+   FARM — PASAR TERNAK (STYLE MIRIP CONTOH, TETAP DARK/GLASS)
+   ======================================================================== */
+
+/* Daftar kartu (list tegak satu kolom) */
+.market-list{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
 }
 
-/* =====================[ FARM: Pasar Ternak ]===================== */
-
-/* Grid kartu ternak: 2 kolom (HP) → 3 kolom (>=640px) */
-.animal-grid{
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0,1fr));
-  gap: .75rem;
-}
-@media (min-width: 640px){
-  .animal-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
-}
-
-.animal-card{
-  position: relative;
-  border-radius: 1rem;
-  padding: .85rem;
-  display: flex;
-  flex-direction: column;
-  gap: .6rem;
-}
-
-.animal-head{
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-}
-.animal-img{
-  width: 52px; height: 52px;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,.35));
-}
-.animal-name{
-  font-weight: 900;
-  letter-spacing: .2px;
-  font-size: .95rem;
-}
-
-/* Baris info harga/harian/kontrak/total */
-.animal-body{
-  display: grid;
-  gap: .55rem;
-  padding-top: .15rem;
-}
-.animal-body .row{
-  display: flex; align-items: center; justify-content: space-between;
-  gap: .75rem;
-  font-size: .88rem;
-  background: rgba(255,255,255,.035);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: .75rem;
-  padding: .5rem .65rem;
-}
-.animal-body .row.total{
-  background: rgba(163,210,255,.08);
-  border-color: rgba(163,210,255,.22);
-}
-.animal-body .row strong{
-  font-weight: 900;
-  color: #f2f7ff;
-}
-
-/* Tombol Beli */
-.buy-btn{
-  width: 100%;
-  border-radius: .9rem;
-  padding: .6rem .9rem;
-  font-weight: 800;
-  margin-top: .1rem;
-  text-align: center;
-}
-/* ===== Animal Card v2 (mirip contoh) ===== */
-.animal-card.v2{
+/* Kartu pasar ternak gelap */
+.market-card{
   border-radius:20px;
-  padding:16px 16px 14px;
+  padding:16px;
+  backdrop-filter:blur(12px);          /* efek glass */
+}
+
+/* Bagian atas: gambar + judul + harga */
+.mc-top{ display:flex; align-items:center; gap:12px; }
+.mc-img{ width:64px; height:64px; object-fit:contain; filter:drop-shadow(0 2px 6px rgba(0,0,0,.35)); }
+.mc-title{ font-weight:800; font-size:1.15rem; letter-spacing:.5px; }
+.mc-price{ color:#cbd5e1; font-size:.92rem; }
+.mc-price b{ color:#fbbf24; } /* Kuning harga */
+
+/* Stats 3 kolom */
+.mc-stats{
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:8px; margin:12px 0 10px; text-align:center;
+}
+.mc-big{ font-weight:800; font-size:1.05rem; color:#f8fafc; }
+.mc-sub{ margin-top:2px; font-size:.82rem; color:#cbd5e1; }
+
+/* Tombol beli hijau */
+.market-card .buy-btn-green{
+  width:100%; height:44px; border:none; border-radius:12px;
+  background:linear-gradient(180deg,#4ade80,#22c55e);
+  color:#fff; font-weight:700; font-size:1rem;
+}
+.market-card .buy-btn-green:active{ transform:translateY(1px); }
+
+/* ========================================================================
+   (Opsional) Animal Card v2 bila kamu masih memakainya di HTML lama
+   ======================================================================== */
+.animal-card.v2{
+  border-radius:20px; padding:16px 16px 14px;
   background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
   border:1px solid rgba(255,255,255,.10);
 }
-
-.ac-head{
-  display:flex; align-items:center; gap:10px;
-  margin-bottom:4px;
-}
+.ac-head{ display:flex; align-items:center; gap:10px; margin-bottom:4px; }
 .ac-img{ width:48px; height:48px; object-fit:contain; }
-.ac-title{
-  font-weight:800; letter-spacing:.5px;
-  font-size:1.15rem; text-transform:uppercase;
-}
-
-/* "Harga: Rp ..." */
-.ac-price-line{
-  display:flex; align-items:baseline; gap:6px;
-  margin:6px 0 10px;
-  font-size:.95rem;
-}
+.ac-title{ font-weight:800; letter-spacing:.5px; font-size:1.15rem; text-transform:uppercase; }
+.ac-price-line{ display:flex; align-items:baseline; gap:6px; margin:6px 0 10px; font-size:.95rem; }
 .ac-price-line span{ color:#cbd5e1; }
-.ac-price{ color:#fbbf24; } /* oranye lembut */
-
-.ac-stats{
-  display:grid;
-  grid-template-columns: repeat(3,1fr);
-  gap:8px;
-  padding:8px 0 10px;
-}
+.ac-price{ color:#fbbf24; }
+.ac-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:8px 0 10px; }
 .ac-stat{ text-align:center; }
-.ac-big{
-  font-weight:800; font-size:1.05rem; color:#f8fafc;
-}
-.ac-sub{
-  margin-top:2px; font-size:.82rem; color:#cbd5e1;
-}
-
-/* Tombol hijau panjang */
-.btn-success{
-  width:100%;
-  margin-top:10px;
-  border-radius:14px;
-  padding:12px 14px;
-  color:#052e16;
-  font-weight:700;
-  background:linear-gradient(180deg, #8ef58a, #56d35a);
-  box-shadow: 0 6px 18px rgba(34,197,94,.25);
-}
-.btn-success:active{ transform:translateY(1px); }
-/* =====================[ HOME MENU: perapian ringan ]===================== */
-
-/* Biar label menu kecil, rapi, dan punya “kotak transparan” */
-.menu-title{
-  font-size: .74rem;
-  line-height: 1.15;
-  color: #f8fafc;
-  text-shadow: 0 1px 2px rgba(0,0,0,.45);
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: .5rem;
-  padding: .25rem .4rem;
-  margin-top: .1rem;
-}
+.ac-big{ font-weight:800; font-size:1.05rem; color:#f8fafc; }
+.ac-sub{ margin-top:2px; font-size:.82rem; color:#cbd5e1; }
