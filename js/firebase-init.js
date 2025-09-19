@@ -1,9 +1,10 @@
+// js/firebase-init.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  updateProfile
+  updateProfile,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 /* =========================
@@ -15,13 +16,13 @@ const firebaseConfig = {
   projectId: "peternakan-29e74",
   storageBucket: "peternakan-29e74.firebasestorage.app",
   messagingSenderId: "1823968365",
-  appId: "1:1823968365:web:aede4c3b7eaa93bc464364"
+  appId: "1:1823968365:web:aede4c3b7eaa93bc464364",
 };
 
 // Init
-const app  = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-auth.languageCode = 'id';
+auth.languageCode = "id";
 
 /* =========================
    Phone → email mapping
@@ -29,14 +30,14 @@ auth.languageCode = 'id';
    ========================= */
 const PHONE_EMAIL_DOMAIN = "phone.user";
 
-function normalizePhone(phone){
-  if(!phone) return "";
-  const digits = phone.replace(/[^\d+]/g, '');
-  return digits.startsWith('+') ? digits.slice(1) : digits;
+function normalizePhone(phone) {
+  if (!phone) return "";
+  const digits = phone.replace(/[^\d+]/g, "");
+  return digits.startsWith("+") ? digits.slice(1) : digits;
 }
-function phoneToEmail(phone){
+function phoneToEmail(phone) {
   const d = normalizePhone(phone);
-  if(!d) throw new Error('Nomor telepon tidak valid.');
+  if (!d) throw new Error("Nomor telepon tidak valid.");
   return `${d}@${PHONE_EMAIL_DOMAIN}`;
 }
 
@@ -46,8 +47,7 @@ function phoneToEmail(phone){
 window.App = window.App || {};
 window.App.firebase = {
   auth,
-// Beritahu semua halaman bahwa Firebase sudah siap
-window.dispatchEvent(new Event('firebase-ready'));
+
   // EMAIL
   signInEmail: (email, pass) =>
     signInWithEmailAndPassword(auth, email, pass),
@@ -68,8 +68,11 @@ window.dispatchEvent(new Event('firebase-ready'));
     const uc = await createUserWithEmailAndPassword(auth, email, pass);
     await updateProfile(uc.user, { displayName: `tel:${normalizePhone(phone)}` });
     return uc;
-  }
+  },
 };
 
-// Beri sinyal bahwa Firebase siap (untuk listener di register.js / index.js)
-window.dispatchEvent(new CustomEvent('firebase-ready'));
+// 🔔 Beri sinyal ke halaman lain bahwa Firebase siap
+window.dispatchEvent(new Event("firebase-ready"));
+
+// (opsional, supaya modul murni dan tidak dianggap script biasa oleh bundler)
+export {};
