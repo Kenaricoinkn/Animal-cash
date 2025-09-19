@@ -137,4 +137,125 @@ body{
 .cc-divider{
   color:#8fb5ff; margin-left:6px; margin-right:2px; opacity:.7;
 }
-```0
+/* =========================================================
+   Bottom Tabbar
+   ========================================================= */
+nav {
+  font-size: 13px;
+}
+.tabbtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 0;
+  color: #9ca3af; /* slate-400 */
+  transition: all .25s ease;
+}
+.tabbtn div:first-child {
+  font-size: 18px;
+  line-height: 1;
+}
+.tabbtn:hover {
+  color: #d1d5db; /* slate-300 */
+}
+.tabbtn.tab-active {
+  color: #a5b4fc; /* indigo-300 */
+  font-weight: 600;
+  transform: scale(1.05);
+}
+
+/* =========================================================
+   Grid Menu (Home page icons)
+   ========================================================= */
+#homeGrid a {
+  transition: transform .2s ease, background .2s ease;
+}
+#homeGrid a div {
+  font-size: 18px;
+}
+#homeGrid a span {
+  color: #d1d5db;
+}
+#homeGrid a:hover div {
+  background: linear-gradient(180deg,#82b1ff,#5aa2ff);
+  color: #0b1020;
+  transform: scale(1.1);
+}
+#homeGrid a:hover span {
+  color: #fff;
+  font-weight: 500;
+}
+
+/* =========================================================
+   Section Headings
+   ========================================================= */
+main section h2 {
+  color: #f3f4f6; /* slate-100 */
+  font-weight: 600;
+}
+
+/* =========================================================
+   Invite Link Box
+   ========================================================= */
+#inviteLink {
+  font-size: 13px;
+  color: #e5e7eb;
+}
+#copyInvite {
+  transition: background .25s ease, transform .2s ease;
+}
+#copyInvite:hover {
+  background: linear-gradient(180deg,#93c5fd,#60a5fa);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   Farm Pools Cards
+   ========================================================= */
+#farmTab .glass {
+  transition: transform .2s ease, border-color .2s ease;
+}
+#farmTab .glass:hover {
+  transform: translateY(-2px);
+  border-color: rgba(129,140,248,.5); /* indigo-400 */
+}
+#farmTab button {
+  transition: transform .2s ease;
+}
+#farmTab button:hover {
+  transform: scale(1.05);
+}
+/* =========================================================
+   Transisi Tab & Reveal App
+   ========================================================= */
+
+/* setiap konten tab punya kelas .tab-content */
+.tab-content{
+  opacity: 0;
+  transform: translateY(6px);
+}
+.tab-content.is-active{
+  animation: tabIn .28s ease both;
+}
+@keyframes tabIn{
+  from{ opacity:0; transform: translateY(6px); }
+  to  { opacity:1; transform: translateY(0); }
+}
+
+/* efek muncul saat halaman siap setelah auth */
+#app.app-reveal{
+  animation: appIn .25s ease both;
+}
+@keyframes appIn{
+  from{ opacity:0; transform: scale(.995); }
+  to  { opacity:1; transform: scale(1); }
+}
+
+/* hormati preferensi user */
+@media (prefers-reduced-motion: reduce){
+  .tab-content{ opacity:1; transform:none; }
+  .tab-content.is-active{ animation:none; }
+  #app.app-reveal{ animation:none; }
+}
