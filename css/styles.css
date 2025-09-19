@@ -1,50 +1,53 @@
-/* =========================================================
-   Global & Background
-   ========================================================= */
-* { box-sizing: border-box; }
-html, body { height: 100%; }
-body{
-  -webkit-tap-highlight-color: transparent;
+/* ===== Background umum ===== */
+body {
   background:
     radial-gradient(1200px 600px at 20% -10%, rgba(56,189,248,.15), transparent 60%),
     radial-gradient(1000px 700px at 110% 10%, rgba(99,102,241,.18), transparent 60%),
     linear-gradient(180deg, #0b1020 0%, #0a0f1a 100%);
-  color: #e5e7eb;
   min-height: 100vh;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #f8fafc;
 }
 
-/* =========================================================
-   Reusable UI
-   ========================================================= */
-.glass{
+/* ===== Glass Effect ===== */
+.glass {
   background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,.08);
-  border-radius: 1rem;
 }
 
-.pill{
+/* ===== Buttons & Tabs ===== */
+.tab-active {
+  color: #a5b4fc;
+  border-bottom: 2px solid #93c5fd;
+}
+.btn-primary {
+  background: linear-gradient(180deg, #82b1ff, #5aa2ff);
+  color: #0b1020;
+}
+.btn-primary:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+.pill {
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.12);
-  border-radius: 9999px;
 }
 
-.btn-primary{
-  background: linear-gradient(180deg,#82b1ff,#5aa2ff);
-  color:#0b1020;
-  border-radius: 0.75rem;
-  font-weight: 600;
+/* ===== Eye Button (toggle password) ===== */
+.eye-btn {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; opacity: .85;
 }
-.btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
+.eye-btn::before {
+  content: "";
+  display: block; width: 24px; height: 24px;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/></svg>') center/contain no-repeat;
+  background: #cbd5e1;
+}
 
-.tab-active{ color:#a5b4fc; border-bottom:2px solid #93c5fd; }
-.tabbtn.tab-active { color:#a5b4fc; }
-
-/* =========================================================
-   Header chips & search
-   ========================================================= */
-.icon-chip{
+/* ===== Icon chip & language chip ===== */
+.icon-chip {
   width: 36px; height: 36px;
   display: grid; place-items: center;
   background: rgba(255,255,255,.08);
@@ -52,8 +55,7 @@ body{
   border-radius: 9999px;
   font-size: 16px;
 }
-
-.lang-chip{
+.lang-chip {
   display: inline-flex; align-items: center; gap: .35rem;
   height: 36px; padding: 0 12px;
   font-size: 13px; color: #e5e7eb;
@@ -61,284 +63,117 @@ body{
   border: 1px solid rgba(255,255,255,.12);
   border-radius: 9999px;
 }
-
-.search-pill{
+.search-pill {
   height: 44px;
   border-radius: 9999px;
   background: rgba(255,255,255,.05);
   border: 1px solid rgba(255,255,255,.15);
 }
 
-/* =========================================================
-   Brand Title (gradient + shimmer + breathe)
-   ========================================================= */
-.brand-title{
-  display:inline-block;
-  font-weight:800;
-  letter-spacing:.3px;
-
-  /* gradient pelangi */
+/* ===== Brand Title: warna-warni + shimmer ===== */
+.brand-title {
+  display: inline-block;
+  font-weight: 800;
+  letter-spacing: .3px;
   background: linear-gradient(90deg,
-    #60a5fa, #a78bfa, #f472b6, #f59e0b, #34d399, #60a5fa);
+      #60a5fa, #a78bfa, #f472b6, #f59e0b, #34d399, #60a5fa);
   background-size: 300% 100%;
-  background-clip: text;
   -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
-  -webkit-text-fill-color: transparent; /* penting untuk WebKit */
-
-  /* glow halus */
   filter: drop-shadow(0 0 6px rgba(99,102,241,.22));
-
-  /* animasi: shimmer + kedip lembut */
   animation: brand-shimmer 14s linear infinite,
              brand-breathe 3.6s ease-in-out infinite;
 }
-@keyframes brand-shimmer{
+@keyframes brand-shimmer {
   0%   { background-position:   0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position:   0% 50%; }
 }
-@keyframes brand-breathe{
+@keyframes brand-breathe {
   0%,100% { opacity: .92; }
   50%     { opacity: 1; }
 }
-@media (prefers-reduced-motion: reduce){
-  .brand-title{ animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .brand-title { animation: none; }
 }
 
-/* =========================================================
-   Eye toggle icon (password visibility)
-   ========================================================= */
-.eye-btn{
-  position:absolute; right:12px; top:50%; transform:translateY(-50%);
-  width:24px; height:24px; opacity:.85;
+/* ===== Country Code Input ===== */
+.cc-wrap {
+  display: flex; align-items: center;
+  padding: 0 10px; border-radius: .75rem;
+  background: rgba(15,23,42,.6);
+  border: 1px solid rgba(255,255,255,.1);
+  height: 48px;
 }
-.eye-btn::before{
-  content:"";
-  display:block; width:24px; height:24px;
-  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/></svg>') center/contain no-repeat;
-  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/></svg>') center/contain no-repeat;
-  background:#cbd5e1;
+.cc-select {
+  background: transparent; color: #e5e7eb; outline: none; border: none;
+  appearance: none; padding-right: 4px; font-size: 14px;
 }
+.cc-divider { color: #8fb5ff; margin: 0 4px; opacity: .7; }
 
-/* =========================================================
-   Country code select (register/login telepon)
-   ========================================================= */
-.cc-wrap{
-  display:flex; align-items:center;
-  padding:0 10px; border-radius:0.75rem;
-  background:rgba(15,23,42,.6);
-  border:1px solid rgba(255,255,255,.1);
-  height:48px;
-}
-.cc-select{
-  background:transparent; color:#e5e7eb; outline:none; border:none;
-  appearance:none; padding-right:4px; font-size:14px;
-}
-.cc-divider{
-  color:#8fb5ff; margin-left:6px; margin-right:2px; opacity:.7;
-}
-
-/* =========================================================
-   Bottom Tabbar
-   ========================================================= */
-nav {
-  font-size: 13px;
-}
-.tabbtn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  padding: 6px 0;
-  color: #9ca3af; /* slate-400 */
-  transition: all .25s ease;
-}
-.tabbtn div:first-child {
-  font-size: 18px;
-  line-height: 1;
-}
-.tabbtn:hover {
-  color: #d1d5db; /* slate-300 */
-}
-.tabbtn.tab-active {
-  color: #a5b4fc; /* indigo-300 */
-  font-weight: 600;
-  transform: scale(1.05);
-}
-
-/* =========================================================
-   Grid Menu (Home page icons)
-   ========================================================= */
-#homeGrid a {
-  transition: transform .2s ease, background .2s ease;
-}
-#homeGrid a div {
-  font-size: 18px;
-}
-#homeGrid a span {
-  color: #d1d5db;
-}
-#homeGrid a:hover div {
-  background: linear-gradient(180deg,#82b1ff,#5aa2ff);
-  color: #0b1020;
-  transform: scale(1.1);
-}
-#homeGrid a:hover span {
-  color: #fff;
-  font-weight: 500;
-}
-/* ===== GRID MENU (fix bulat kecil + ikon jelas) ===== */
+/* ===== GRID MENU (circle kecil + ikon jelas) ===== */
 .menu-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: .55rem;
+  gap: .45rem;
 }
-
 .menu-title {
-  font-size: .8rem;
+  font-size: .75rem;
   line-height: 1.2;
-  color: #f8fafc;               /* lebih terang */
-  text-shadow: 0 1px 2px rgba(0,0,0,.5);
+  color: #f8fafc;
+  text-shadow: 0 1px 2px rgba(0,0,0,.55);
+  white-space: nowrap;
 }
-
-/* Bulat lebih kecil (mirip awal) */
 .menu-circle {
-  width: 64px; height: 64px;    /* kecil rapi */
+  width: 54px; height: 54px;
   border-radius: 9999px;
   position: relative;
   display: grid;
   place-items: center;
-
   background:
-    radial-gradient(140% 140% at 30% 25%, rgba(120,255,240,.16), rgba(95,120,160,.1) 40%, rgba(20,25,45,.9) 75%),
+    radial-gradient(140% 140% at 30% 25%, rgba(120,255,240,.14), rgba(95,120,160,.1) 40%, rgba(20,25,45,.9) 75%),
     linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-  border: 1.2px solid rgba(160,210,255,.35);
+  border: 1px solid rgba(160,210,255,.35);
   box-shadow:
-    inset 0 2px 6px rgba(255,255,255,.08),
-    inset 0 -6px 12px rgba(0,0,0,.35),
-    0 4px 10px rgba(0,0,0,.4);
-  backdrop-filter: blur(4px);
-
+    inset 0 2px 5px rgba(255,255,255,.08),
+    inset 0 -4px 10px rgba(0,0,0,.35),
+    0 3px 8px rgba(0,0,0,.4);
+  backdrop-filter: blur(3px);
   transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
 }
-
-/* Highlight kaca atas */
 .menu-circle::after {
   content: "";
-  position: absolute;
-  inset: 3px;
+  position: absolute; inset: 3px;
   border-radius: inherit;
-  background: radial-gradient(90% 70% at 70% 25%, rgba(255,255,255,.18), transparent 60%);
+  background: radial-gradient(80% 60% at 70% 25%, rgba(255,255,255,.18), transparent 70%);
   pointer-events: none;
 }
-
-/* Hover effect */
 .menu-item:hover .menu-circle {
   transform: translateY(-2px);
   border-color: rgba(180,240,255,.55);
   box-shadow:
-    inset 0 2px 8px rgba(255,255,255,.1),
-    inset 0 -8px 14px rgba(0,0,0,.4),
-    0 10px 16px rgba(0,0,0,.5);
+    inset 0 2px 7px rgba(255,255,255,.1),
+    inset 0 -6px 12px rgba(0,0,0,.4),
+    0 8px 14px rgba(0,0,0,.5);
 }
-
-/* Ikon di dalam lebih besar & tebal */
 .menu-icon {
-  width: 34px; height: 34px;    /* perbesar icon */
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.55));
+  width: 30px; height: 30px;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.6));
 }
-
 .menu-icon path,
 .menu-icon circle,
 .menu-icon rect,
 .menu-icon polyline,
 .menu-icon line {
   stroke: url(#icGrad);
-  stroke-width: 2.4;            /* lebih tebal */
+  stroke-width: 2.3;
   stroke-linecap: round;
   stroke-linejoin: round;
   fill: none;
 }
-
 .menu-icon .fill {
   fill: url(#icGrad);
   stroke: none;
-}
-
-/* Gradient ikon */
-svg#ic-defs {
-  position: absolute;
-  width: 0; height: 0;
-  pointer-events: none;
-}
-/* =========================================================
-   Section Headings
-   ========================================================= */
-main section h2 {
-  color: #f3f4f6; /* slate-100 */
-  font-weight: 600;
-}
-
-/* =========================================================
-   Invite Link Box
-   ========================================================= */
-#inviteLink {
-  font-size: 13px;
-  color: #e5e7eb;
-}
-#copyInvite {
-  transition: background .25s ease, transform .2s ease;
-}
-#copyInvite:hover {
-  background: linear-gradient(180deg,#93c5fd,#60a5fa);
-  transform: translateY(-1px);
-}
-
-/* =========================================================
-   Farm Pools Cards
-   ========================================================= */
-#farmTab .glass {
-  transition: transform .2s ease, border-color .2s ease;
-}
-#farmTab .glass:hover {
-  transform: translateY(-2px);
-  border-color: rgba(129,140,248,.5); /* indigo-400 */
-}
-#farmTab button {
-  transition: transform .2s ease;
-}
-#farmTab button:hover {
-  transform: scale(1.05);
-}
-
-/* =========================================================
-   Transisi Tab & Reveal App
-   ========================================================= */
-.tab-content{
-  opacity: 0;
-  transform: translateY(6px);
-}
-.tab-content.is-active{
-  animation: tabIn .28s ease both;
-}
-@keyframes tabIn{
-  from{ opacity:0; transform: translateY(6px); }
-  to  { opacity:1; transform: translateY(0); }
-}
-
-#app.app-reveal{
-  animation: appIn .25s ease both;
-}
-@keyframes appIn{
-  from{ opacity:0; transform: scale(.995); }
-  to  { opacity:1; transform: scale(1); }
-}
-
-@media (prefers-reduced-motion: reduce){
-  .tab-content{ opacity:1; transform:none; }
-  .tab-content.is-active{ animation:none; }
-  #app.app-reveal{ animation:none; }
 }
