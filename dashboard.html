@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>KIEON — Dashboard</title>
+  <title>Animals Cash — Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css"/>
   <link rel="stylesheet" href="css/bg-anim.css"/>
@@ -13,28 +13,25 @@
   <!-- Top bar -->
   <header class="px-4 pt-4">
     <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3 min-w-0">
-        <img src="https://i.imgur.com/0mGv0cN.png" alt="logo" class="w-8 h-8 rounded-xl ring-1 ring-white/10">
-        <div class="min-w-0">
-          <div class="text-sm font-semibold truncate">KIEON Quantitative Robot</div>
-        </div>
+      <!-- Judul tanpa logo -->
+      <div class="min-w-0">
+        <div class="text-sm sm:text-base font-semibold truncate">Animals Cash</div>
       </div>
+      <!-- Aksi: chat + bahasa -->
       <div class="flex items-center gap-2">
         <button class="icon-chip" aria-label="pesan">💬</button>
-        <button class="icon-chip relative" aria-label="notifikasi">
-          🔔
-          <span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+        <button id="btnLanguage" class="lang-chip">
+          <span>🌐</span><span id="langLabel">bahasa Indonesia</span>
         </button>
-        <button id="btnLanguage" class="lang-chip"><span>🌐</span><span id="langLabel">bahasa Indonesia</span></button>
       </div>
     </div>
-    <!-- search bar lonjong -->
+    <!-- Search bar lonjong -->
     <div class="mt-3 search-pill"></div>
   </header>
 
   <!-- Scroll area -->
   <main class="flex-1 px-4 pb-28">
-    <!-- Carousel/banner -->
+    <!-- Banner -->
     <section class="rounded-2xl overflow-hidden mb-4 ring-1 ring-white/10">
       <img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1400&auto=format&fit=crop"
            alt="banner" class="w-full h-40 object-cover opacity-90">
@@ -92,7 +89,7 @@
       </div>
     </section>
 
-    <!-- FARM tab content -->
+    <!-- FARM -->
     <section id="farmTab" class="hidden">
       <h2 class="text-lg font-semibold mb-3" data-i18n="farm">Farm</h2>
       <div class="glass p-4 rounded-2xl text-sm text-slate-300">
@@ -100,7 +97,7 @@
       </div>
     </section>
 
-    <!-- INVITE tab content -->
+    <!-- INVITE -->
     <section id="inviteTab" class="hidden">
       <h2 class="text-lg font-semibold mb-2" data-i18n="inviteFriends">Mengundang teman-teman</h2>
       <div class="glass p-4 rounded-2xl">
@@ -112,7 +109,7 @@
       </div>
     </section>
 
-    <!-- PROFILE tab content -->
+    <!-- PROFILE -->
     <section id="profileTab" class="hidden">
       <h2 class="text-lg font-semibold mb-2" data-i18n="me">Aku</h2>
       <div class="glass p-4 rounded-2xl">
