@@ -189,71 +189,91 @@ nav {
   color: #fff;
   font-weight: 500;
 }
-/* ====== GRID MENU: versi glossy high-contrast ====== */
-.menu-item{display:flex;flex-direction:column;align-items:center;gap:.65rem}
-.menu-title{
-  font-size:.9rem;           /* lebih besar */
-  line-height:1.1;
-  color:#eaf2ff;             /* lebih terang */
-  text-shadow:0 1px 2px rgba(0,0,0,.45);
+/* ===== GRID MENU (fix bulat kecil + ikon jelas) ===== */
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .55rem;
 }
 
-/* Lingkaran glossy */
-.menu-circle{
-  width:72px;height:72px;border-radius:9999px;
-  position:relative;display:grid;place-items:center;
-  /* dasar lebih gelap biar kontras */
+.menu-title {
+  font-size: .8rem;
+  line-height: 1.2;
+  color: #f8fafc;               /* lebih terang */
+  text-shadow: 0 1px 2px rgba(0,0,0,.5);
+}
+
+/* Bulat lebih kecil (mirip awal) */
+.menu-circle {
+  width: 64px; height: 64px;    /* kecil rapi */
+  border-radius: 9999px;
+  position: relative;
+  display: grid;
+  place-items: center;
+
   background:
-    radial-gradient(140% 140% at 30% 25%, rgba(120,255,240,.18), rgba(95,120,160,.14) 40%, rgba(18,28,48,.85) 75%),
-    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-  border:1.2px solid rgba(166,206,255,.35);  /* ring luar */
+    radial-gradient(140% 140% at 30% 25%, rgba(120,255,240,.16), rgba(95,120,160,.1) 40%, rgba(20,25,45,.9) 75%),
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  border: 1.2px solid rgba(160,210,255,.35);
   box-shadow:
-    inset 0 2px 10px rgba(255,255,255,.08), /* glow dalam */
-    inset 0 -10px 18px rgba(0,0,0,.35),     /* depth bawah */
-    0 10px 24px rgba(0,0,0,.45);            /* bayangan luar */
-  backdrop-filter: blur(6px);
-  transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease;
-}
-/* highlight kaca atas */
-.menu-circle::after{
-  content:""; position:absolute; inset:3px; border-radius:inherit;
-  background:
-    radial-gradient(90% 70% at 70% 25%, rgba(255,255,255,.22), transparent 60%);
-  pointer-events:none;
-}
-/* rim kedua lembut */
-.menu-circle::before{
-  content:""; position:absolute; inset:-1px; border-radius:inherit;
-  box-shadow:0 0 0 1px rgba(20,160,255,.18) inset;
-  pointer-events:none;
+    inset 0 2px 6px rgba(255,255,255,.08),
+    inset 0 -6px 12px rgba(0,0,0,.35),
+    0 4px 10px rgba(0,0,0,.4);
+  backdrop-filter: blur(4px);
+
+  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
 }
 
-/* interaksi */
-.menu-item:hover .menu-circle{
-  transform:translateY(-2px);
-  border-color:rgba(160,225,255,.6);
-  box-shadow:
-    inset 0 2px 12px rgba(255,255,255,.12),
-    inset 0 -12px 22px rgba(0,0,0,.4),
-    0 16px 28px rgba(0,0,0,.55);
+/* Highlight kaca atas */
+.menu-circle::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: inherit;
+  background: radial-gradient(90% 70% at 70% 25%, rgba(255,255,255,.18), transparent 60%);
+  pointer-events: none;
 }
 
-/* Ikon SVG: tebal + glow */
-.menu-icon{width:30px;height:30px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
+/* Hover effect */
+.menu-item:hover .menu-circle {
+  transform: translateY(-2px);
+  border-color: rgba(180,240,255,.55);
+  box-shadow:
+    inset 0 2px 8px rgba(255,255,255,.1),
+    inset 0 -8px 14px rgba(0,0,0,.4),
+    0 10px 16px rgba(0,0,0,.5);
+}
+
+/* Ikon di dalam lebih besar & tebal */
+.menu-icon {
+  width: 34px; height: 34px;    /* perbesar icon */
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.55));
+}
+
 .menu-icon path,
 .menu-icon circle,
 .menu-icon rect,
 .menu-icon polyline,
-.menu-icon line{
-  stroke:url(#icGrad);
-  stroke-width:2.2;      /* lebih tebal agar jelas */
-  stroke-linecap:round; stroke-linejoin:round;
-  fill:none;
+.menu-icon line {
+  stroke: url(#icGrad);
+  stroke-width: 2.4;            /* lebih tebal */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
 }
-.menu-icon .fill{fill:url(#icGrad);stroke:none}
 
-/* Gradient ikon – lebih “mint/cyan” */
-svg#ic-defs{position:absolute;width:0;height:0;pointer-events:none}
+.menu-icon .fill {
+  fill: url(#icGrad);
+  stroke: none;
+}
+
+/* Gradient ikon */
+svg#ic-defs {
+  position: absolute;
+  width: 0; height: 0;
+  pointer-events: none;
+}
 /* =========================================================
    Section Headings
    ========================================================= */
