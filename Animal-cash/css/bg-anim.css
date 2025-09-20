@@ -1,0 +1,87 @@
+/* =========================================================
+   Background Animation (soft blobs + twinkle)
+   Apply on: <body class="bg-anim">
+   ========================================================= */
+
+/* Layer container */
+.bg-anim{
+  position: relative;
+  overflow-x: hidden; /* antisipasi blur spill */
+}
+
+/* ===== moving blobs (soft radial gradients) ===== */
+.bg-anim::before,
+.bg-anim::after{
+  content: "";
+  position: fixed;
+  inset: -20vmax;              /* lebih besar dari viewport biar mulus */
+  pointer-events: none;
+  z-index: -1;                 /* di belakang konten */
+  background-repeat: no-repeat;
+  filter: blur(40px) saturate(120%);
+  opacity: .45;
+  transform: translateZ(0);    /* anti-jitter */
+}
+
+/* Blob layer A */
+.bg-anim::before{
+  background-image:
+    radial-gradient(30vmax 30vmax at 20% 30%, rgba(56,189,248,.22), transparent 60%),
+    radial-gradient(28vmax 28vmax at 80% 10%, rgba(129,140,248,.20), transparent 60%),
+    radial-gradient(24vmax 24vmax at 60% 80%, rgba(244,114,182,.18), transparent 60%);
+  animation: blobFloatA 28s linear infinite;
+}
+
+/* Blob layer B (lebih pelan & offset) */
+.bg-anim::after{
+  background-image:
+    radial-gradient(26vmax 26vmax at 10% 80%, rgba(52,211,153,.18), transparent 60%),
+    radial-gradient(30vmax 30vmax at 90% 60%, rgba(251,191,36,.16), transparent 60%);
+  animation: blobFloatB 36s linear infinite reverse;
+  opacity: .35;
+}
+
+@keyframes blobFloatA{
+  0%   { transform: translate3d(0,   0,   0) scale(1); }
+  25%  { transform: translate3d(2vmax,-1vmax,0) scale(1.02); }
+  50%  { transform: translate3d(-1vmax,1.5vmax,0) scale(1.01); }
+  75%  { transform: translate3d(1vmax, 1vmax,0) scale(1.03); }
+  100% { transform: translate3d(0,   0,   0) scale(1); }
+}
+
+@keyframes blobFloatB{
+  0%   { transform: translate3d(0,   0,   0) scale(1); }
+  33%  { transform: translate3d(-1.5vmax,1vmax,0) scale(1.02); }
+  66%  { transform: translate3d(1vmax,-1.5vmax,0) scale(1.01); }
+  100% { transform: translate3d(0,   0,   0) scale(1); }
+}
+
+/* ===== tiny twinkle dots (very subtle) ===== */
+.bg-anim .twinkle{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    radial-gradient(2px 2px at 15% 20%, rgba(255,255,255,.12), transparent 60%),
+    radial-gradient(2px 2px at 35% 70%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(2px 2px at 75% 30%, rgba(255,255,255,.09),  transparent 60%),
+    radial-gradient(2px 2px at 55% 50%, rgba(255,255,255,.11), transparent 60%),
+    radial-gradient(2px 2px at 85% 80%, rgba(255,255,255,.10), transparent 60%);
+  animation: twinkle 3.8s ease-in-out infinite;
+  opacity: .45;
+}
+
+@keyframes twinkle{
+  0%,100% { opacity: .35; }
+  50%     { opacity: .55; }
+}
+
+/* ===== Reduce motion ===== */
+@media (prefers-reduced-motion: reduce){
+  .bg-anim::before,
+  .bg-anim::after,
+  .bg-anim .twinkle{
+    animation: none !important;
+  }
+}
