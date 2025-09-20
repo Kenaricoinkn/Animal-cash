@@ -14,3 +14,11 @@ export function initInvite() {
     }
   });
 }
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('inviteLink');
+  if (!el) return;
+  // otomatis pakai domain tempat situs dibuka
+  const base = `${window.location.origin}/Animal-cash/invite/`;
+  const code = 'ABC123'; // TODO: ganti/dinamis sesuai sistem kamu
+  el.value = base + code;
+});
