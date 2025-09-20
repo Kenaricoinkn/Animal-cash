@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Daftar - Animal Cash</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -11,51 +11,63 @@
     <section class="crdglass">
       <h1 class="brand-title">Daftar Akun</h1>
 
-      <!-- FORM DAFTAR SEDERHANA -->
-      <form id="registerForm">
+      <!-- Tabs -->
+      <div class="tabs">
+        <button id="tab-reg-email" class="tab tab-active">Email</button>
+        <button id="tab-reg-phone" class="tab">Telepon</button>
+      </div>
+
+      <!-- Form Register Email -->
+      <form id="form-reg-email" class="form-tab">
         <div class="input-group">
-          <label class="label" for="regEmail">Email</label>
-          <input class="input" type="email" id="regEmail" autocomplete="email" required />
+          <label for="reg-email">Email</label>
+          <input id="reg-email" type="email" class="input" required>
         </div>
 
         <div class="input-group">
-          <label class="label" for="regPassword">Kata sandi</label>
-          <input class="input" type="password" id="regPassword" autocomplete="new-password" required />
+          <label for="reg-pass">Kata sandi</label>
+          <div style="display:flex;align-items:center;">
+            <input id="reg-pass" type="password" class="input flex-1" required>
+            <button type="button" id="toggleRegPwd">👁</button>
+          </div>
         </div>
 
-        <div class="input-group">
-          <label class="label" for="refCode">Kode Referral (opsional)</label>
-          <input class="input" type="text" id="refCode" placeholder="Masukkan kode jika ada" />
-        </div>
+        <div id="reg-email-alert" class="alert" style="display:none;"></div>
 
-        <button class="btn" type="submit">Daftar</button>
+        <button id="btn-reg-email" type="submit" class="btn">Daftar dengan Email</button>
       </form>
 
-      <p class="helper" style="margin-top:12px">
-        Sudah punya akun?
-        <a href="./index.html" rel="external">Kembali ke Masuk</a>
-      </p>
+      <!-- Form Register Telepon -->
+      <form id="form-reg-phone" class="form-tab" style="display:none;">
+        <div class="input-group">
+          <label for="cc">Kode Negara</label>
+          <input id="cc" type="text" value="+62" class="input" required>
+        </div>
+
+        <div class="input-group">
+          <label for="reg-phone">Nomor Telepon</label>
+          <input id="reg-phone" type="tel" class="input" required>
+        </div>
+
+        <div class="input-group">
+          <label for="reg-phone-pass">Kata sandi</label>
+          <div style="display:flex;align-items:center;">
+            <input id="reg-phone-pass" type="password" class="input flex-1" required>
+            <button type="button" id="toggleRegPhonePwd">👁</button>
+          </div>
+        </div>
+
+        <div id="reg-phone-alert" class="alert" style="display:none;"></div>
+
+        <button id="btn-reg-phone" type="submit" class="btn">Daftar dengan Telepon</button>
+      </form>
+
+      <p class="helper">Sudah punya akun? <a href="index.html">Masuk</a></p>
     </section>
   </main>
-
-  <!-- Auto-isi referral dari ?ref= -->
-  <script>
-    (function(){
-      try {
-        const p=new URLSearchParams(location.search);
-        const ref=p.get('ref');
-        if(ref){
-          const el=document.getElementById('refCode');
-          if(el){ el.value=ref; el.dispatchEvent(new Event('input',{bubbles:true})); }
-          localStorage.setItem('ref_from_link', ref);
-        }
-      }catch(e){}
-    })();
-  </script>
 
   <!-- Scripts -->
   <script type="module" src="js/firebase-init.js"></script>
   <script type="module" src="js/register.js"></script>
-  <script type="module" src="js/app-core.js"></script>
 </body>
 </html>
