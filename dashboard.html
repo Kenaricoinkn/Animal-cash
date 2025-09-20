@@ -40,19 +40,42 @@
 
     <!-- ===================== HOME ===================== -->
     <section id="homeHeader" class="tab-content">
-      <div class="rounded-2xl overflow-hidden mb-2 ring-1 ring-white/10">
-        <img loading="lazy"
-             src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=800&auto=format&fit=crop"
-             srcset="
-               https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=480&auto=format&fit=crop 480w,
-               https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=800&auto=format&fit=crop 800w,
-               https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1200&auto=format&fit=crop 1200w
-             "
-             sizes="(max-width:640px) 100vw, 800px"
-             alt="banner"
-             class="w-full h-40 object-cover opacity-90">
+      <!-- Banner Slider -->
+      <div class="relative overflow-hidden rounded-2xl mb-2 ring-1 ring-white/10">
+        <!-- Track -->
+        <div id="homeSlider" class="flex transition-transform duration-700 ease-in-out">
+          <!-- Cow -->
+          <div class="w-full flex-shrink-0 relative">
+            <img src="img/cow.png" alt="Cow" class="w-full h-40 object-cover opacity-90">
+            <div class="absolute bottom-2 left-2 bg-black/45 backdrop-blur px-3 py-1 rounded-lg text-sm">
+              🐄 <b>Cow</b> — Bonus <b>20%</b>
+            </div>
+          </div>
+          <!-- Chicken -->
+          <div class="w-full flex-shrink-0 relative">
+            <img src="img/chicken.png" alt="Chicken" class="w-full h-40 object-cover opacity-90">
+            <div class="absolute bottom-2 left-2 bg-black/45 backdrop-blur px-3 py-1 rounded-lg text-sm">
+              🐔 <b>Chicken</b> — Bonus <b>10%</b>
+            </div>
+          </div>
+          <!-- Sheep -->
+          <div class="w-full flex-shrink-0 relative">
+            <img src="img/sheep.png" alt="Sheep" class="w-full h-40 object-cover opacity-90">
+            <div class="absolute bottom-2 left-2 bg-black/45 backdrop-blur px-3 py-1 rounded-lg text-sm">
+              🐑 <b>Sheep</b> — Bonus <b>15%</b>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dots -->
+        <div id="homeDots" class="absolute bottom-2 right-2 flex gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-white/70"></span>
+          <span class="w-2 h-2 rounded-full bg-white/30"></span>
+          <span class="w-2 h-2 rounded-full bg-white/30"></span>
+        </div>
       </div>
 
+      <!-- Kartu saldo ringkas -->
       <div class="grid grid-cols-2 gap-3 mb-2">
         <div class="glass p-4 rounded-2xl">
           <div class="text-slate-300 text-sm">Total aset</div>
@@ -180,6 +203,25 @@
   <script type="module" src="js/firebase-init.js"></script>
   <script type="module" src="js/i18n.js"></script>
   <script type="module" src="js/dashboard.js"></script>
-<script type="module" src="js/features/invite.v2.js"></script>
+  <script type="module" src="js/features/invite.v2.js"></script>
+
+  <!-- Slider logic ringan (inline biar langsung jalan) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const track = document.getElementById('homeSlider');
+      if (!track) return;
+      const dots  = Array.from((document.getElementById('homeDots')||{}).children || []);
+      let i = 0;
+      const total = track.children.length;
+
+      function go(idx) {
+        i = (idx + total) % total;
+        track.style.transform = `translateX(-${i * 100}%)`;
+        dots.forEach((d, k) => d.className = 'w-2 h-2 rounded-full ' + (k===i ? 'bg-white/70' : 'bg-white/30'));
+      }
+
+      setInterval(() => go(i + 1), 2000); // ganti setiap 2 detik
+    });
+  </script>
 </body>
 </html>
