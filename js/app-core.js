@@ -1,3 +1,4 @@
+document.addEventListener("click",function(e){var a=e.target&&e.target.closest&&e.target.closest("a[rel=external]");if(a){return;}});
 // helpers + tab switch (2 tab)
 window.App = window.App || {};
 (function(){
