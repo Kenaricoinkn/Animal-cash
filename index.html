@@ -1,41 +1,73 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Masuk - Animal Cash</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <main class="glass-wrap">
     <section class="crdglass">
-      <h1 class="brand-title">Animals Cash</h1>
+      <h1 class="brand-title">Masuk</h1>
 
-      <!-- FORM LOGIN -->
-      <form id="loginForm">
+      <!-- Tabs -->
+      <div class="tabs">
+        <button id="tab-log-email" class="tab tab-active">Email</button>
+        <button id="tab-log-phone" class="tab">Telepon</button>
+      </div>
+
+      <!-- Form Login Email -->
+      <form id="form-log-email" class="form-tab">
         <div class="input-group">
-          <label class="label" for="email">Email</label>
-          <input class="input" type="email" id="email" autocomplete="email" required />
+          <label for="log-email">Email</label>
+          <input id="log-email" type="email" class="input" required>
         </div>
 
         <div class="input-group">
-          <label class="label" for="password">Kata sandi</label>
-          <input class="input" type="password" id="password" autocomplete="current-password" required />
+          <label for="log-pass">Kata sandi</label>
+          <div style="display:flex;align-items:center;">
+            <input id="log-pass" type="password" class="input flex-1" required>
+            <button type="button" id="toggleLogPwd">👁</button>
+          </div>
         </div>
 
-        <button class="btn" type="submit">Masuk</button>
+        <div id="log-email-alert" class="alert" style="display:none;"></div>
+
+        <button id="btn-log-email" type="submit" class="btn">Masuk dengan Email</button>
       </form>
 
-      <p class="helper">
-        Tidak ada akun?
-        <a id="gotoRegister" href="./register.html" rel="external">Daftar</a>
-      </p>
+      <!-- Form Login Telepon -->
+      <form id="form-log-phone" class="form-tab" style="display:none;">
+        <div class="input-group">
+          <label for="cc">Kode Negara</label>
+          <input id="cc" type="text" value="+62" class="input" required>
+        </div>
+
+        <div class="input-group">
+          <label for="log-phone">Nomor Telepon</label>
+          <input id="log-phone" type="tel" class="input" required>
+        </div>
+
+        <div class="input-group">
+          <label for="log-phone-pass">Kata sandi</label>
+          <div style="display:flex;align-items:center;">
+            <input id="log-phone-pass" type="password" class="input flex-1" required>
+            <button type="button" id="toggleLogPhonePwd">👁</button>
+          </div>
+        </div>
+
+        <div id="log-phone-alert" class="alert" style="display:none;"></div>
+
+        <button id="btn-log-phone" type="submit" class="btn">Masuk dengan Telepon</button>
+      </form>
+
+      <p class="helper">Belum punya akun? <a href="register.html">Daftar</a></p>
     </section>
   </main>
 
   <!-- Scripts -->
   <script type="module" src="js/firebase-init.js"></script>
-  <script type="module" src="js/auth-email.js"></script>
-  <script type="module" src="js/app-core.js"></script>
+  <script type="module" src="js/login.js"></script>
 </body>
 </html>
