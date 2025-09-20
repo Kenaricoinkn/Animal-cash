@@ -399,3 +399,7 @@ html, body{
   margin:10px 0; background:#ff4d4f22; color:#ffb3b3; border:1px solid #ff4d4f33;
   padding:10px 12px; border-radius:10px;
 }
+/* Hilangkan search pill yang nutup banner */
+.search-pill {
+  display: none !important;
+}
