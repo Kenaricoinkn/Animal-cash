@@ -1,45 +1,36 @@
-(function () {
-  const { $, show, hide, toast, firebase } = window.App;
-  const emailInput = $('#email');
-  if (!emailInput) return;
+// js/features/auth-email.js
+(() => {
+  const MODE = (window.AUTH_MODE || 'login').toLowerCase();
+  const isReg = MODE === 'register';
 
-  const passInput  = $('#password');
-  const emailAlert = $('#email-alert');
-  const btnEmail   = $('#btn-email');
+  const { signInEmail, signUpEmail, ensureUserDoc, auth } = window.App.firebase;
+  const form   = document.getElementById('emailForm');
+  if (!form) return;
 
-  $('#togglePwd').onclick = () => {
-    passInput.type = passInput.type === 'password' ? 'text' : 'password';
-  };
-
-  $('#form-email').addEventListener('submit', async (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    hide(emailAlert); 
-    btnEmail.disabled = true;
+
+    const email = (document.getElementById('emailInput')?.value || '').trim();
+    const pass  = (document.getElementById('passInput')?.value  || '').trim();
+    const pass2 = (document.getElementById('passConfirmInput')?.value || '').trim();
+
+    if (!email || !pass) return toast('Lengkapi email dan kata sandi.');
+    if (isReg && pass !== pass2) return toast('Kata sandi tidak sama.');
 
     try {
-      const cred = await firebase.signInEmail(emailInput.value.trim(), passInput.value);
-      toast('Masuk sebagai ' + (cred.user.email || 'user'));
-
-      // ✅ setelah sukses login, arahkan ke dashboard
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 800);
-
+      let cred;
+      if (isReg) {
+        cred = await signUpEmail(email, pass);
+        try { await ensureUserDoc(cred.user.uid); } catch {}
+      } else {
+        cred = await signInEmail(email, pass);
+      }
+      location.href = 'dashboard.html';
     } catch (err) {
-      emailAlert.textContent = pretty(err?.message || '');
-      show(emailAlert);
-    } finally { 
-      btnEmail.disabled = false; 
+      console.error(err);
+      toast(err.message || 'Gagal memproses email.');
     }
   });
 
-  function pretty(msg){
-    if (msg.includes('auth/invalid-email')) return 'Email tidak valid.';
-    if (msg.includes('auth/invalid-credential') || msg.includes('auth/wrong-password')) return 'Email atau kata sandi salah.';
-    if (msg.includes('auth/user-not-found')) return 'Akun tidak ditemukan.';
-    if (msg.includes('auth/too-many-requests')) return 'Terlalu banyak percobaan. Coba lagi nanti.';
-    return 'Gagal masuk: ' + msg.replace('Firebase: ','');
-  }
+  function toast(m){ window.App?.toast ? window.App.toast(m) : alert(m); }
 })();
-
-// ---- glue: expose to global for tab controller ----
