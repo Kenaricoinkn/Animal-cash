@@ -1,137 +1,42 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>KIEON — Daftar</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Masuk - Animal Cash</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="text-slate-100 min-h-screen flex flex-col">
-  <header class="px-4 sm:px-6 py-4">
-    <h1 class="text-base sm:text-lg font-semibold">KIEON Quantitative Robot</h1>
-    <p class="text-xs text-slate-400">Buat akun baru</p>
-  </header>
+<body>
+  <main class="glass-wrap">
+    <section class="crdglass">
+      <h1 class="brand-title">Animals Cash</h1>
 
-  <main class="flex-1 flex items-start sm:items-center justify-center px-4 pb-10">
-    <div class="glass w-full max-w-md rounded-2xl shadow-2xl px-5 sm:px-7 py-6 sm:py-8">
-
-      <!-- Tabs -->
-      <div class="grid grid-cols-2 text-center text-sm">
-        <button id="tab-reg-email" class="py-3 tab-active">Daftar Email</button>
-        <button id="tab-reg-phone" class="py-3 text-slate-300 hover:text-white">Daftar Telepon</button>
-      </div>
-
-      <!-- ====== DAFTAR EMAIL ====== -->
-      <form id="formEmail" id="form-reg-email" class="mt-4 space-y-4" novalidate>
-        <div>
-          <label class="text-xs text-slate-300">Surel</label>
-          <input id="reg-email" type="email" placeholder="nama@domain.com"
-                 class="mt-1 w-full rounded-xl bg-slate-900/60 border border-white/10 px-4 py-3 outline-none focus:border-sky-400" />
+      <!-- FORM LOGIN -->
+      <form id="loginForm">
+        <div class="input-group">
+          <label class="label" for="email">Email</label>
+          <input class="input" type="email" id="email" autocomplete="email" required />
         </div>
-        <div>
-          <label class="text-xs text-slate-300">Kata sandi</label>
-          <div class="mt-1 relative">
-            <input id="reg-pass" type="password" placeholder="min 6 karakter"
-                   class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-4 py-3 pr-12 outline-none focus:border-sky-400" />
-            <button type="button" id="toggleRegPwd" class="eye-btn" aria-label="lihat sandi">
-              <!-- icon dibuat via CSS .eye-btn -->
-            </button>
-          </div>
-        </div>
-        <button id="btn-reg-email" class="btn-primary w-full py-3 rounded-xl font-semibold shadow-lg" type="submit">Daftar</button>
-        <div id="reg-email-alert" class=" text-sm mt-2 p-3 rounded-lg bg-red-500/10 border border-red-400/30 text-red-200"></div>
 
-        <p class="text-center text-sm text-slate-400 mt-2">
-          Sudah memiliki akun? <a href="index.html" class="text-sky-300 hover:underline">Gabung</a>
-        </p>
+        <div class="input-group">
+          <label class="label" for="password">Kata sandi</label>
+          <input class="input" type="password" id="password" autocomplete="current-password" required />
+        </div>
+
+        <button class="btn" type="submit">Masuk</button>
       </form>
 
-      <!-- ====== DAFTAR TELEPON ====== -->
-      <form id="form-reg-phone" class=" mt-4 space-y-4" novalidate>
-        <div>
-          <label class="text-xs text-slate-300">Telepon</label>
-          <div class="mt-1 flex items-stretch gap-2">
-            <!-- Kode negara -->
-            <div class="cc-wrap">
-              <select id="cc" class="cc-select">
-                <option value="+62">+62</option>
-                <option value="+60">+60</option>
-                <option value="+65">+65</option>
-                <option value="+63">+63</option>
-                <option value="+1">+1</option>
-                <option value="+44">+44</option>
-                <option value="+91">+91</option>
-              </select>
-              <span class="cc-divider">|</span>
-            </div>
-            <!-- Nomor -->
-            <input id="reg-phone" type="tel" inputmode="numeric" placeholder="Telepon"
-                   class="flex-1 rounded-xl bg-slate-900/60 border border-white/10 px-4 py-3 outline-none focus:border-sky-400" />
-          </div>
-        </div>
-
-        <div>
-          <label class="text-xs text-slate-300">Kata sandi</label>
-          <div class="mt-1 relative">
-            <input id="reg-phone-pass" type="password" placeholder="min 6 karakter"
-                   class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-4 py-3 pr-12 outline-none focus:border-sky-400" />
-            <button type="button" id="toggleRegPhonePwd" class="eye-btn" aria-label="lihat sandi telepon"></button>
-          </div>
-        </div>
-
-        <button id="btn-reg-phone" class="btn-primary w-full py-3 rounded-xl font-semibold shadow-lg" type="submit">Daftar</button>
-        <div id="reg-phone-alert" class=" text-sm mt-2 p-3 rounded-lg bg-red-500/10 border border-red-400/30 text-red-200"></div>
-
-        <p class="text-center text-sm text-slate-400 mt-2">
-          Sudah memiliki akun? <a href="index.html" class="text-sky-300 hover:underline">Gabung</a>
-        </p>
-      </form>
-
-      <div class="mt-6 text-center">
-        <a href="index.html" class="text-slate-300 hover:underline">Buka beranda</a>
-      </div>
-    </div>
+      <p class="helper">
+        Tidak ada akun? <a href="register.html">Daftar</a>
+      </p>
+    </section>
   </main>
 
-  <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-5  bg-slate-900/95 border border-white/10 px-4 py-2 rounded-xl text-sm shadow-2xl"></div>
-
-  <!-- Jalankan semua script setelah HTML selesai (defer).
-     Pastikan firebase-init.js dieksekusi lebih dulu. -->
-<script src="js/app-core.js" defer></script>
-<script type="module" src="js/firebase-init.js"></script>
-<script type="module" src="js/register.js"></script>
-<script>
-
-  // Auto fill referral from ?ref (root)
-
-  (function(){
-
-    try {
-
-      var p=new URLSearchParams(location.search), ref=p.get("ref");
-
-      if(!ref) return;
-
-      var el = document.getElementById("refCode")
-
-            || document.querySelector("[name=refCode]")
-
-            || document.querySelector("input[type=text][placeholder*=ref]")
-
-            || document.querySelector("input[type=text][name*=ref]");
-
-      if (el) { el.value = ref; el.dispatchEvent(new Event("input",{bubbles:true})); }
-
-      localStorage.setItem("ref_from_link", ref);
-
-    } catch(e){}
-
-  })();
-
-</script>
-  <script type="module" src="js/auth-tabs.js"></script>
+  <!-- Scripts -->
+  <script type="module" src="js/firebase-init.js"></script>
   <script type="module" src="js/auth-email.js"></script>
-  <script type="module" src="js/auth-phone.js"></script>
+  <script type="module" src="js/app-core.js"></script>
 </body>
 </html>
