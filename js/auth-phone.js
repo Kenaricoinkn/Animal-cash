@@ -1,49 +1,41 @@
-(function(){
-  const { $, show, hide, toast, firebase } = window.App;
-  const phoneInput = $('#phone');
-  if (!phoneInput) return;
+// js/features/auth-phone.js
+(() => {
+  const MODE = (window.AUTH_MODE || 'login').toLowerCase();
+  const isReg = MODE === 'register';
 
-  const passInput  = $('#phone-password');
-  const phoneAlert = $('#phone-alert');
-  const btnPhone   = $('#btn-phone');
+  const { signInPhonePass, signUpPhonePass, ensureUserDoc } = window.App.firebase;
+  const form = document.getElementById('phoneForm');
+  if (!form) return;
 
-  $('#togglePhonePwd').onclick = () => {
-    passInput.type = passInput.type === 'password' ? 'text' : 'password';
-  };
+  const cc     = document.getElementById('ccSelect');
+  const phone  = document.getElementById('phoneInput');
+  const pass   = document.getElementById('phonePassInput');
+  const pass2  = document.getElementById('phonePassConfirm');
 
-  $('#form-phone').addEventListener('submit', async (e)=>{
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    hide(phoneAlert); 
-    btnPhone.disabled = true;
 
-    try{
-      const phone = (phoneInput.value||'').trim();
-      const pass  = (passInput.value||'');
+    const phoneFull = `${cc.value || '+62'}${(phone.value || '').replace(/\D/g,'')}`;
+    const pwd = (pass.value || '').trim();
+    const pwd2 = (pass2?.value || '').trim();
 
-      if(!phone || !pass) throw new Error('Nomor telepon & kata sandi wajib diisi.');
+    if (phoneFull.length < 7 || !pwd) return toast('Nomor/sandi tidak valid.');
+    if (isReg && pwd !== pwd2) return toast('Kata sandi tidak sama.');
 
-      const cred = await firebase.signInPhonePass(phone, pass);
-      toast('Masuk telepon: ' + (cred.user.displayName || phone));
-
-      // ✅ setelah sukses login → arahkan ke dashboard
-      setTimeout(()=>{
-        window.location.href = 'dashboard.html';
-      }, 800);
-
-    }catch(err){
-      phoneAlert.textContent = pretty(err?.message || '');
-      show(phoneAlert);
-    }finally{ 
-      btnPhone.disabled=false; 
+    try {
+      let cred;
+      if (isReg) {
+        cred = await signUpPhonePass(phoneFull, pwd);
+        try { await ensureUserDoc(cred.user.uid); } catch {}
+      } else {
+        cred = await signInPhonePass(phoneFull, pwd);
+      }
+      location.href = 'dashboard.html';
+    } catch (err) {
+      console.error(err);
+      toast(err.message || 'Gagal memproses telepon.');
     }
   });
 
-  function pretty(msg){
-    if (msg.includes('auth/invalid-credential') || msg.includes('auth/wrong-password')) return 'Nomor atau kata sandi salah.';
-    if (msg.includes('auth/user-not-found')) return 'Akun telepon belum terdaftar.';
-    if (msg.includes('auth/too-many-requests')) return 'Terlalu banyak percobaan. Coba lagi nanti.';
-    return 'Gagal masuk: ' + msg.replace('Firebase: ','');
-  }
+  function toast(m){ window.App?.toast ? window.App.toast(m) : alert(m); }
 })();
-
-// ---- glue: expose to global for tab controller ----
