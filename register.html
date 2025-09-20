@@ -3,94 +3,68 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Daftar — KIEON</title>
+  <title>Animals Cash — Daftar</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css"/>
   <link rel="stylesheet" href="css/bg-anim.css"/>
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col bg-anim">
 
-  <section class="px-4 pt-8 pb-24 max-w-md mx-auto w-full">
-    <div class="text-center mb-5">
-      <h1 class="brand-title text-2xl font-extrabold">KIEON Quantitative Robot</h1>
-    </div>
+  <main class="flex-1 px-5 pt-8 pb-20 max-w-md mx-auto">
+    <h1 class="brand-title text-2xl mb-6">Buat Akun</h1>
 
-    <div class="glass rounded-3xl p-5">
+    <div class="glass p-5 rounded-2xl">
       <div class="flex items-end gap-6 mb-4">
-        <button id="tabEmail" class="tabbtn-auth tab-active">Daftar Email</button>
-        <button id="tabPhone" class="tabbtn-auth">Daftar Telepon</button>
+        <button id="tabEmail" type="button" class="tabbtn-auth tab-active">Daftar Email</button>
+        <button id="tabPhone" type="button" class="tabbtn-auth">Daftar Telepon</button>
       </div>
 
       <!-- Email -->
       <form id="emailForm" class="space-y-3">
         <div>
-          <label class="block text-sm text-slate-300 mb-1">Email</label>
-          <input id="emailInput" type="email" required
-                 class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3">
+          <label class="text-sm text-slate-300">Email</label>
+          <input id="emailInput" type="email" class="input" placeholder="nama@email.com" required>
         </div>
-        <div>
-          <label class="block text-sm text-slate-300 mb-1">Kata sandi</label>
-          <div class="relative">
-            <input id="passInput" type="password" required
-                   class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3 pr-10">
-            <span class="eye-btn" data-toggle="#passInput"></span>
-          </div>
+        <div class="relative">
+          <label class="text-sm text-slate-300">Kata sandi</label>
+          <input id="emailPass" type="password" class="input" placeholder="••••••••" required>
+          <button type="button" class="eye-btn" data-toggle="#emailPass">👁️</button>
         </div>
         <div id="passConfirmWrapEmail">
-          <label class="block text-sm text-slate-300 mb-1">Ulangi kata sandi</label>
-          <input id="passConfirmInput" type="password" required
-                 class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3">
+          <label class="text-sm text-slate-300">Ulangi kata sandi</label>
+          <input id="emailPass2" type="password" class="input" placeholder="••••••••" required>
         </div>
-        <button id="emailSubmit" class="btn-primary w-full rounded-2xl py-3 font-semibold">Daftar</button>
+        <button id="emailSubmit" class="btn-primary w-full py-3 rounded-xl font-semibold" type="submit">Daftar</button>
       </form>
 
       <!-- Telepon -->
-      <form id="phoneForm" class="space-y-3 hidden">
-        <div class="cc-wrap">
-          <select id="ccSelect" class="cc-select">
-            <option value="+62">+62</option>
-            <option value="+60">+60</option>
-            <option value="+65">+65</option>
-            <option value="+1">+1</option>
-          </select>
-          <span class="cc-divider">|</span>
-          <input id="phoneInput" type="tel" inputmode="tel" placeholder="Telepon"
-                 class="flex-1 bg-transparent outline-none text-slate-100">
-        </div>
-
+      <form id="phoneForm" class="space-y-3 hidden" novalidate>
         <div>
-          <label class="block text-sm text-slate-300 mb-1">Kata sandi</label>
-          <div class="relative">
-            <input id="phonePassInput" type="password" required
-                   class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3 pr-10">
-            <span class="eye-btn" data-toggle="#phonePassInput"></span>
-          </div>
+          <label class="text-sm text-slate-300">Telepon (format internasional)</label>
+          <input id="phoneInput" type="tel" class="input" placeholder="+62xxxxxxxxxx" required>
         </div>
-
+        <div class="relative">
+          <label class="text-sm text-slate-300">Kata sandi</label>
+          <input id="phonePass" type="password" class="input" placeholder="••••••••" required>
+          <button type="button" class="eye-btn" data-toggle="#phonePass">👁️</button>
+        </div>
         <div id="passConfirmWrapPhone">
-          <label class="block text-sm text-slate-300 mb-1">Ulangi kata sandi</label>
-          <input id="phonePassConfirm" type="password" required
-                 class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3">
+          <label class="text-sm text-slate-300">Ulangi kata sandi</label>
+          <input id="phonePass2" type="password" class="input" placeholder="••••••••" required>
         </div>
-
-        <button id="phoneSubmit" class="btn-primary w-full rounded-2xl py-3 font-semibold">Daftar</button>
+        <button id="phoneSubmit" class="btn-primary w-full py-3 rounded-xl font-semibold" type="submit">Daftar</button>
       </form>
 
-      <div class="text-center text-sm mt-3">
+      <p class="text-center text-sm mt-4">
         <span id="switchLine">Sudah memiliki akun?</span>
         <a id="switchLink" class="text-sky-300 underline" href="index.html">Gabung</a>
-      </div>
+      </p>
     </div>
-  </section>
+  </main>
 
-  <!-- MODE -->
-  <script>window.AUTH_MODE = 'register';</script>
-
-  <!-- Script order -->
-  <script src="js/app-core.js" defer></script>
+  <script>window.AUTH_MODE='register';</script>
   <script type="module" src="js/firebase-init.js"></script>
   <script type="module" src="js/features/auth-tabs.js"></script>
-  <script type="module" src="js/features/auth-email.js"></script>
-  <script type="module" src="js/features/auth-phone.js"></script>
+  <script type="module" src="js/register.js"></script>
 </body>
 </html>
