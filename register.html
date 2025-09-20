@@ -23,7 +23,7 @@
       </div>
 
       <!-- ====== DAFTAR EMAIL ====== -->
-      <form id="formEmail" data-view="email" id="form-reg-email" class="mt-4 space-y-4" novalidate>
+      <form id="formEmail" id="form-reg-email" class="mt-4 space-y-4" novalidate>
         <div>
           <label class="text-xs text-slate-300">Surel</label>
           <input id="reg-email" type="email" placeholder="nama@domain.com"
@@ -40,7 +40,7 @@
           </div>
         </div>
         <button id="btn-reg-email" class="btn-primary w-full py-3 rounded-xl font-semibold shadow-lg" type="submit">Daftar</button>
-        <div id="reg-email-alert" class="hidden text-sm mt-2 p-3 rounded-lg bg-red-500/10 border border-red-400/30 text-red-200"></div>
+        <div id="reg-email-alert" class=" text-sm mt-2 p-3 rounded-lg bg-red-500/10 border border-red-400/30 text-red-200"></div>
 
         <p class="text-center text-sm text-slate-400 mt-2">
           Sudah memiliki akun? <a href="index.html" class="text-sky-300 hover:underline">Gabung</a>
@@ -48,7 +48,7 @@
       </form>
 
       <!-- ====== DAFTAR TELEPON ====== -->
-      <form id="form-reg-phone" class="hidden mt-4 space-y-4" novalidate>
+      <form id="form-reg-phone" class=" mt-4 space-y-4" novalidate>
         <div>
           <label class="text-xs text-slate-300">Telepon</label>
           <div class="mt-1 flex items-stretch gap-2">
@@ -81,7 +81,7 @@
         </div>
 
         <button id="btn-reg-phone" class="btn-primary w-full py-3 rounded-xl font-semibold shadow-lg" type="submit">Daftar</button>
-        <div id="reg-phone-alert" class="hidden text-sm mt-2 p-3 rounded-lg bg-red-500/10 border border-red-400/30 text-red-200"></div>
+        <div id="reg-phone-alert" class=" text-sm mt-2 p-3 rounded-lg bg-red-500/10 border border-red-400/30 text-red-200"></div>
 
         <p class="text-center text-sm text-slate-400 mt-2">
           Sudah memiliki akun? <a href="index.html" class="text-sky-300 hover:underline">Gabung</a>
@@ -94,7 +94,7 @@
     </div>
   </main>
 
-  <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-5 hidden bg-slate-900/95 border border-white/10 px-4 py-2 rounded-xl text-sm shadow-2xl"></div>
+  <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-5  bg-slate-900/95 border border-white/10 px-4 py-2 rounded-xl text-sm shadow-2xl"></div>
 
   <!-- Jalankan semua script setelah HTML selesai (defer).
      Pastikan firebase-init.js dieksekusi lebih dulu. -->
@@ -133,6 +133,5 @@
   <script type="module" src="js/auth-tabs.js"></script>
   <script type="module" src="js/auth-email.js"></script>
   <script type="module" src="js/auth-phone.js"></script>
-  <script type="module" src="js/login-tabs.js"></script>
 </body>
 </html>
