@@ -23,7 +23,7 @@
       </div>
 
       <!-- ====== DAFTAR EMAIL ====== -->
-      <form id="form-reg-email" class="mt-4 space-y-4" novalidate>
+      <form id="formEmail" data-view="email" id="form-reg-email" class="mt-4 space-y-4" novalidate>
         <div>
           <label class="text-xs text-slate-300">Surel</label>
           <input id="reg-email" type="email" placeholder="nama@domain.com"
@@ -130,5 +130,8 @@
   })();
 
 </script>
+  <script type="module" src="js/auth-tabs.js"></script>
+  <script type="module" src="js/auth-email.js"></script>
+  <script type="module" src="js/auth-phone.js"></script>
 </body>
 </html>
