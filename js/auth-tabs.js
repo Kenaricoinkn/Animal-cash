@@ -1,4 +1,4 @@
-// js/features/auth-tabs.js
+// js/auth-tabs.js
 document.addEventListener('DOMContentLoaded', () => {
   const MODE = (window.AUTH_MODE || 'login').toLowerCase(); // 'login' | 'register'
   const isReg = MODE === 'register';
@@ -10,18 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!tabEmail || !tabPhone || !emailForm || !phoneForm) return;
 
-  // Label & tombol
+  // Label tab
   tabEmail.textContent = isReg ? 'Daftar Email'   : 'Masuk Email';
   tabPhone.textContent = isReg ? 'Daftar Telepon' : 'Masuk Telepon';
   tabEmail.type = 'button'; tabPhone.type = 'button';
 
-  // Tombol submit label
+  // Label tombol submit
   const emailSubmit = document.getElementById('emailSubmit');
   const phoneSubmit = document.getElementById('phoneSubmit');
   if (emailSubmit) emailSubmit.textContent = isReg ? 'Daftar' : 'Masuk';
   if (phoneSubmit) phoneSubmit.textContent = isReg ? 'Daftar' : 'Masuk';
 
-  // Show/Hide konfirmasi sandi
+  // Field konfirmasi (hanya register)
   document.getElementById('passConfirmWrapEmail')?.classList.toggle('hidden', !isReg);
   document.getElementById('passConfirmWrapPhone')?.classList.toggle('hidden', !isReg);
 
@@ -32,14 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
     emailForm.classList.toggle('hidden', !emailActive);
     phoneForm.classList.toggle('hidden', emailActive);
   }
-
   tabEmail.addEventListener('click', e => { e.preventDefault(); activate('email'); });
   tabPhone.addEventListener('click', e => { e.preventDefault(); activate('phone'); });
-
-  // default tab
   activate('email');
 
-  // toggle eye
+  // Toggle “mata”
   document.querySelectorAll('.eye-btn').forEach(btn=>{
     const sel = btn.getAttribute('data-toggle');
     const inp = sel ? document.querySelector(sel) : null;
@@ -50,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // switch link
+  // Switch link bawah
   const switchLine = document.getElementById('switchLine');
   const switchLink = document.getElementById('switchLink');
   if (switchLine && switchLink) {
