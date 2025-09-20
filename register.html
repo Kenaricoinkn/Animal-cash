@@ -8,63 +8,83 @@
   <link rel="stylesheet" href="css/styles.css"/>
   <link rel="stylesheet" href="css/bg-anim.css"/>
 </head>
-<body class="text-slate-100 min-h-screen flex flex-col bg-anim">
+<body class="min-h-screen text-slate-100 bg-anim">
+  <header class="px-4 pt-6">
+    <h1 class="brand-title text-3xl">Animals Cash</h1>
+  </header>
 
-  <main class="flex-1 px-5 pt-8 pb-20 max-w-md mx-auto">
-    <h1 class="brand-title text-2xl mb-6">Buat Akun</h1>
-
-    <div class="glass p-5 rounded-2xl">
-      <div class="flex items-end gap-6 mb-4">
-        <button id="tabEmail" type="button" class="tabbtn-auth tab-active">Daftar Email</button>
-        <button id="tabPhone" type="button" class="tabbtn-auth">Daftar Telepon</button>
+  <main class="px-4 pb-10 pt-6">
+    <section class="glass rounded-2xl p-5 max-w-md mx-auto">
+      <!-- Tabs -->
+      <div class="flex gap-6 mb-4 border-b border-white/10">
+        <button type="button" class="auth-tab tab-active pb-2" data-auth-tab="email">Daftar Email</button>
+        <button type="button" class="auth-tab pb-2" data-auth-tab="phone">Daftar Telepon</button>
       </div>
 
-      <!-- Email -->
-      <form id="emailForm" class="space-y-3">
-        <div>
-          <label class="text-sm text-slate-300">Email</label>
-          <input id="emailInput" type="email" class="input" placeholder="nama@email.com" required>
-        </div>
+      <!-- ===== Pane: EMAIL ===== -->
+      <form id="formRegEmail" data-auth-pane="email" class="space-y-3">
+        <label class="block text-sm text-slate-300">Email</label>
+        <input id="regEmail" type="email"
+               class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3"
+               placeholder="nama@email.com" autocomplete="email" required/>
+
+        <label class="block text-sm text-slate-300">Kata sandi</label>
         <div class="relative">
-          <label class="text-sm text-slate-300">Kata sandi</label>
-          <input id="emailPass" type="password" class="input" placeholder="••••••••" required>
-          <button type="button" class="eye-btn" data-toggle="#emailPass">👁️</button>
+          <input id="regPassword" type="password"
+                 class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3 pr-10"
+                 placeholder="Minimal 6 karakter" autocomplete="new-password" required/>
+          <button type="button" class="eye-btn" aria-label="Tampilkan/ sembunyikan sandi" data-eye="#regPassword"></button>
         </div>
-        <div id="passConfirmWrapEmail">
-          <label class="text-sm text-slate-300">Ulangi kata sandi</label>
-          <input id="emailPass2" type="password" class="input" placeholder="••••••••" required>
-        </div>
-        <button id="emailSubmit" class="btn-primary w-full py-3 rounded-xl font-semibold" type="submit">Daftar</button>
+
+        <button id="btnRegEmail" type="submit"
+                class="btn-primary w-full mt-2 rounded-xl px-4 py-3 font-semibold">
+          Daftar
+        </button>
       </form>
 
-      <!-- Telepon -->
-      <form id="phoneForm" class="space-y-3 hidden" novalidate>
-        <div>
-          <label class="text-sm text-slate-300">Telepon (format internasional)</label>
-          <input id="phoneInput" type="tel" class="input" placeholder="+62xxxxxxxxxx" required>
-        </div>
+      <!-- ===== Pane: PHONE ===== -->
+      <form id="formRegPhone" data-auth-pane="phone" class="space-y-3 hidden">
+        <label class="block text-sm text-slate-300">Telepon</label>
+        <input id="regPhone" type="tel" inputmode="tel"
+               class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3"
+               placeholder="+62 812xxxxxxx" autocomplete="tel" required/>
+
+        <label class="block text-sm text-slate-300">Kata sandi</label>
         <div class="relative">
-          <label class="text-sm text-slate-300">Kata sandi</label>
-          <input id="phonePass" type="password" class="input" placeholder="••••••••" required>
-          <button type="button" class="eye-btn" data-toggle="#phonePass">👁️</button>
+          <input id="regPhonePass" type="password"
+                 class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3 pr-10"
+                 placeholder="Minimal 6 karakter" autocomplete="new-password" required/>
+          <button type="button" class="eye-btn" aria-label="Tampilkan/ sembunyikan sandi" data-eye="#regPhonePass"></button>
         </div>
-        <div id="passConfirmWrapPhone">
-          <label class="text-sm text-slate-300">Ulangi kata sandi</label>
-          <input id="phonePass2" type="password" class="input" placeholder="••••••••" required>
-        </div>
-        <button id="phoneSubmit" class="btn-primary w-full py-3 rounded-xl font-semibold" type="submit">Daftar</button>
+
+        <button id="btnRegPhone" type="submit"
+                class="btn-primary w-full mt-2 rounded-xl px-4 py-3 font-semibold">
+          Daftar
+        </button>
       </form>
 
       <p class="text-center text-sm mt-4">
-        <span id="switchLine">Sudah memiliki akun?</span>
-        <a id="switchLink" class="text-sky-300 underline" href="index.html">Gabung</a>
+        Sudah punya akun? <a href="index.html" class="text-sky-300 underline">Masuk</a>
       </p>
-    </div>
+    </section>
   </main>
 
-  <script>window.AUTH_MODE='register';</script>
+  <!-- Scripts (URUTAN PENTING) -->
+  <script src="js/app-core.js" defer></script>
   <script type="module" src="js/firebase-init.js"></script>
-  <script type="module" src="js/features/auth-tabs.js"></script>
+  <script type="module" src="js/auth-tabs.js"></script>
   <script type="module" src="js/register.js"></script>
+
+  <!-- Fallback kecil untuk tombol mata -->
+  <script>
+    document.addEventListener('click', (e)=>{
+      const t = e.target.closest('.eye-btn');
+      if(!t) return;
+      const sel = t.getAttribute('data-eye');
+      const inp = document.querySelector(sel);
+      if(!inp) return;
+      inp.type = (inp.type === 'password') ? 'text' : 'password';
+    });
+  </script>
 </body>
 </html>
