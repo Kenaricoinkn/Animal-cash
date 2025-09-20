@@ -12,6 +12,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return `+${ccDigits}${ph}`;
   };
 
+  const showError = (err) => {
+    const code = (err?.code || '').toLowerCase();
+    if (code.includes('email-already-in-use')) {
+      alert('Nomor sudah terdaftar, silakan masuk.');
+    } else {
+      alert(err?.message || 'Gagal proses.');
+    }
+  };
+
   // ===== Email register =====
   document.getElementById('emailForm')?.addEventListener('submit', async (e)=>{
     e.preventDefault();
@@ -20,13 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const pass2 = document.getElementById('password2')?.value || '';
     if (!email || !pass) { alert('Isi email dan sandi.'); return; }
     if (pass !== pass2) { alert('Ulangi sandi harus sama.'); return; }
-    try{
+    try {
       const uc = await fb.signUpEmail(email, pass);
-      await fb.ensureUserDoc(uc.user.uid, {}); // buat dokumen user
+      await fb.ensureUserDoc(uc.user.uid, {});
       location.href = 'dashboard.html';
-    }catch(err){
+    } catch(err) {
       console.error(err);
-      alert(err?.message || 'Gagal daftar dengan email.');
+      showError(err);
     }
   });
 
@@ -38,13 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const pass2 = document.getElementById('phonePass2')?.value || '';
     if (!phone || !pass) { alert('Isi telepon dan sandi.'); return; }
     if (pass !== pass2) { alert('Ulangi sandi harus sama.'); return; }
-    try{
+    try {
       const uc = await fb.signUpPhonePass(phone, pass);
       await fb.ensureUserDoc(uc.user.uid, {});
       location.href = 'dashboard.html';
-    }catch(err){
+    } catch(err) {
       console.error(err);
-      alert(err?.message || 'Gagal daftar dengan telepon.');
+      showError(err);
     }
   });
 });
