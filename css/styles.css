@@ -363,3 +363,39 @@ html, body{
 }
 .helper a{ color: var(--accent); text-decoration: none; }
 .helper a:hover{ text-decoration: underline }
+
+/* --- Register screen tweaks --- */
+.crd-register { max-width: 720px; }
+.page-title { font-size: 22px; font-weight: 700; margin: 4px 0 2px; }
+.page-sub   { opacity: .85; margin: 0 0 20px; }
+
+.tabs { display:flex; gap:24px; margin: 6px 0 10px; }
+.tab {
+  background: transparent; border: 0; color: #cfe0ff; padding: 10px 2px;
+  font-weight: 600; letter-spacing:.2px; cursor:pointer; position:relative;
+}
+.tab.tab-active { color: #ffffff; }
+.tab.tab-active::after{
+  content:""; position:absolute; left:0; right:0; bottom:-2px; height:3px;
+  border-radius:2px; background: linear-gradient(90deg,#6aa4ff,#a3b8ff);
+}
+
+.input-row { display:flex; gap:12px; }
+.w-28{ width:88px; }
+.flex-1{ flex:1 1 auto; }
+
+.pw-wrap{ position:relative; display:flex; align-items:center; }
+.eye-btn{
+  margin-left:8px; border:0; background:#ffffff14; color:#fff; width:42px; height:42px;
+  border-radius:10px; cursor:pointer;
+}
+
+.btn-primary{
+  background: linear-gradient(180deg, #84b6ff, #77a9ff);
+  color:#131a2a; font-weight:800;
+}
+.btn-primary:disabled{ opacity:.6; }
+.alert{
+  margin:10px 0; background:#ff4d4f22; color:#ffb3b3; border:1px solid #ff4d4f33;
+  padding:10px 12px; border-radius:10px;
+}

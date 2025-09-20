@@ -1,68 +1,71 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar - Animal Cash</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daftar - KIEON Quantitative Robot</title>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <main class="glass-wrap">
-    <section class="crdglass">
-      <h1 class="brand-title">Daftar Akun</h1>
+    <section class="crdglass crd-register">
+      <h2 class="page-title">KIEON Quantitative Robot</h2>
+      <p class="page-sub">Buat akun baru</p>
 
       <!-- Tabs -->
       <div class="tabs">
-        <button id="tab-reg-email" class="tab tab-active">Email</button>
-        <button id="tab-reg-phone" class="tab">Telepon</button>
+        <button id="tab-reg-email"  class="tab tab-active">Daftar Email</button>
+        <button id="tab-reg-phone"  class="tab">Daftar Telepon</button>
       </div>
 
-      <!-- Form Register Email -->
+      <!-- Email form -->
       <form id="form-reg-email" class="form-tab">
         <div class="input-group">
-          <label for="reg-email">Email</label>
-          <input id="reg-email" type="email" class="input" required>
+          <label class="label" for="reg-email">Surel</label>
+          <input id="reg-email" type="email" class="input" placeholder="nama@domain.com" required />
         </div>
 
         <div class="input-group">
-          <label for="reg-pass">Kata sandi</label>
-          <div style="display:flex;align-items:center;">
-            <input id="reg-pass" type="password" class="input flex-1" required>
-            <button type="button" id="toggleRegPwd">👁</button>
+          <label class="label" for="reg-pass">Kata sandi</label>
+          <div class="pw-wrap">
+            <input id="reg-pass" type="password" class="input" placeholder="min 6 karakter" required />
+            <button type="button" id="toggleRegPwd" class="eye-btn" aria-label="lihat sandi">👁</button>
           </div>
         </div>
 
         <div id="reg-email-alert" class="alert" style="display:none;"></div>
-
-        <button id="btn-reg-email" type="submit" class="btn">Daftar dengan Email</button>
+        <button id="btn-reg-email" type="submit" class="btn btn-primary">Daftar</button>
       </form>
 
-      <!-- Form Register Telepon -->
+      <!-- Phone form (hidden by default) -->
       <form id="form-reg-phone" class="form-tab" style="display:none;">
-        <div class="input-group">
-          <label for="cc">Kode Negara</label>
-          <input id="cc" type="text" value="+62" class="input" required>
-        </div>
+        <div id="reg-phone-alert" class="alert" style="display:none;"></div>
 
-        <div class="input-group">
-          <label for="reg-phone">Nomor Telepon</label>
-          <input id="reg-phone" type="tel" class="input" required>
-        </div>
-
-        <div class="input-group">
-          <label for="reg-phone-pass">Kata sandi</label>
-          <div style="display:flex;align-items:center;">
-            <input id="reg-phone-pass" type="password" class="input flex-1" required>
-            <button type="button" id="toggleRegPhonePwd">👁</button>
+        <div class="input-row">
+          <div class="input-group w-28">
+            <label class="label" for="cc">Telepon</label>
+            <input id="cc" type="text" class="input" value="+62" />
+          </div>
+          <div class="input-group flex-1">
+            <label class="label">&nbsp;</label>
+            <input id="reg-phone" type="tel" class="input" placeholder="Telepon" />
           </div>
         </div>
 
-        <div id="reg-phone-alert" class="alert" style="display:none;"></div>
+        <div class="input-group">
+          <label class="label" for="reg-phone-pass">Kata sandi</label>
+          <div class="pw-wrap">
+            <input id="reg-phone-pass" type="password" class="input" placeholder="min 6 karakter" required />
+            <button type="button" id="toggleRegPhonePwd" class="eye-btn" aria-label="lihat sandi">👁</button>
+          </div>
+        </div>
 
-        <button id="btn-reg-phone" type="submit" class="btn">Daftar dengan Telepon</button>
+        <button id="btn-reg-phone" type="submit" class="btn btn-primary">Daftar</button>
       </form>
 
-      <p class="helper">Sudah punya akun? <a href="index.html">Masuk</a></p>
+      <p class="helper">
+        Sudah memiliki akun? <a href="index.html">Gabung</a>
+      </p>
     </section>
   </main>
 
