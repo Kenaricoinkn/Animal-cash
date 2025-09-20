@@ -1,37 +1,45 @@
 // js/login.js
 document.addEventListener('DOMContentLoaded', () => {
-  const F = window.App?.firebase;
-  if (!F) return;
+  const fb = window.App?.firebase;
+  if (!fb) return;
 
-  // ---- EMAIL LOGIN ----
-  const emailForm = document.getElementById('emailForm');
-  emailForm?.addEventListener('submit', async (e)=>{
+  // ===== Helper =====
+  const onlyDigits = s => (s || '').replace(/[^\d]/g,'');
+  const buildPhone = () => {
+    const cc  = document.getElementById('country')?.value || '';
+    const ph  = onlyDigits(document.getElementById('phone')?.value || '');
+    if (!cc || !ph) return '';
+    const ccDigits = onlyDigits(cc);
+    return `+${ccDigits}${ph}`;
+  };
+
+  // ===== Email login =====
+  document.getElementById('emailForm')?.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    const email = (document.getElementById('emailInput')?.value || '').trim();
-    const pass  = document.getElementById('emailPass')?.value || '';
-    if (!email || !pass) return alert('Isi email dan sandi.');
+    const email = document.getElementById('email')?.value?.trim() || '';
+    const pass  = document.getElementById('password')?.value || '';
+    if (!email || !pass) { alert('Isi email dan sandi.'); return; }
     try{
-      await F.signInEmail(email, pass);
+      await fb.signInEmail(email, pass);
       location.href = 'dashboard.html';
     }catch(err){
       console.error(err);
-      alert(err.message || 'Gagal masuk email.');
+      alert(err?.message || 'Gagal masuk dengan email.');
     }
   });
 
-  // ---- PHONE LOGIN ----
-  const phoneForm = document.getElementById('phoneForm');
-  phoneForm?.addEventListener('submit', async (e)=>{
+  // ===== Phone login (phone@domain mapping, tanpa OTP) =====
+  document.getElementById('phoneForm')?.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    const phone = (document.getElementById('phoneInput')?.value || '').trim();
+    const phone = buildPhone();
     const pass  = document.getElementById('phonePass')?.value || '';
-    if (!phone || !pass) return alert('Isi telepon dan sandi.');
+    if (!phone || !pass) { alert('Isi telepon dan sandi.'); return; }
     try{
-      await F.signInPhonePass(phone, pass);
+      await fb.signInPhonePass(phone, pass);
       location.href = 'dashboard.html';
     }catch(err){
       console.error(err);
-      alert(err.message || 'Gagal masuk telepon.');
+      alert(err?.message || 'Gagal masuk dengan telepon.');
     }
   });
 });
