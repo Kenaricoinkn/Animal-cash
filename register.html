@@ -1,84 +1,96 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Daftar - KIEON Quantitative Robot</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/glass-theme.css" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Daftar — KIEON</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/bg-anim.css"/>
 </head>
-<body>
-  <header class="header">
-    <div class="brand-row">
-      <img src="img/cow.png" alt="logo"/>
-      <h1 class="brand-title">KIEON <span class="grad">Quantitative Robot</span></h1>
-    </div>
-    <div class="lang-pill">🌐 bahasa Indonesia</div>
-  </header>
-  <main class="glass-wrap">
-    <section class="crdglass crd-register">
-      <h2 class="page-title">KIEON Quantitative Robot</h2>
-      <p class="page-sub">Buat akun baru</p>
+<body class="text-slate-100 min-h-screen flex flex-col bg-anim">
 
-      <!-- Tabs -->
-      <div class="tabs">
-        <button id="tab-reg-email"  class="tab tab-active">Daftar Email</button>
-        <button id="tab-reg-phone"  class="tab">Daftar Telepon</button>
+  <section class="px-4 pt-8 pb-24 max-w-md mx-auto w-full">
+    <div class="text-center mb-5">
+      <h1 class="brand-title text-2xl font-extrabold">KIEON Quantitative Robot</h1>
+    </div>
+
+    <div class="glass rounded-3xl p-5">
+      <div class="flex items-end gap-6 mb-4">
+        <button id="tabEmail" class="tabbtn-auth tab-active">Daftar Email</button>
+        <button id="tabPhone" class="tabbtn-auth">Daftar Telepon</button>
       </div>
 
-      <!-- Email form -->
-      <form id="form-reg-email" class="form-tab">
-        <div class="input-group">
-          <label class="label" for="reg-email">Surel</label>
-          <input id="reg-email" type="email" class="input" placeholder="nama@domain.com" required />
+      <!-- Email -->
+      <form id="emailForm" class="space-y-3">
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Email</label>
+          <input id="emailInput" type="email" required
+                 class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3">
         </div>
-
-        <div class="input-group">
-          <label class="label" for="reg-pass">Kata sandi</label>
-          <div class="pw-wrap">
-            <input id="reg-pass" type="password" class="input" placeholder="min 6 karakter" required />
-            <button type="button" id="toggleRegPwd" class="eye-btn" aria-label="lihat sandi">👁</button>
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Kata sandi</label>
+          <div class="relative">
+            <input id="passInput" type="password" required
+                   class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3 pr-10">
+            <span class="eye-btn" data-toggle="#passInput"></span>
           </div>
         </div>
-
-        <div id="reg-email-alert" class="alert" style="display:none;"></div>
-        <button id="btn-reg-email" type="submit" class="btn btn-primary">Daftar</button>
+        <div id="passConfirmWrapEmail">
+          <label class="block text-sm text-slate-300 mb-1">Ulangi kata sandi</label>
+          <input id="passConfirmInput" type="password" required
+                 class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3">
+        </div>
+        <button id="emailSubmit" class="btn-primary w-full rounded-2xl py-3 font-semibold">Daftar</button>
       </form>
 
-      <!-- Phone form (hidden by default) -->
-      <form id="form-reg-phone" class="form-tab" style="display:none;">
-        <div id="reg-phone-alert" class="alert" style="display:none;"></div>
+      <!-- Telepon -->
+      <form id="phoneForm" class="space-y-3 hidden">
+        <div class="cc-wrap">
+          <select id="ccSelect" class="cc-select">
+            <option value="+62">+62</option>
+            <option value="+60">+60</option>
+            <option value="+65">+65</option>
+            <option value="+1">+1</option>
+          </select>
+          <span class="cc-divider">|</span>
+          <input id="phoneInput" type="tel" inputmode="tel" placeholder="Telepon"
+                 class="flex-1 bg-transparent outline-none text-slate-100">
+        </div>
 
-        <div class="input-row">
-          <div class="input-group w-28">
-            <label class="label" for="cc">Telepon</label>
-            <input id="cc" type="text" class="input" value="+62" />
-          </div>
-          <div class="input-group flex-1">
-            <label class="label">&nbsp;</label>
-            <input id="reg-phone" type="tel" class="input" placeholder="Telepon" />
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Kata sandi</label>
+          <div class="relative">
+            <input id="phonePassInput" type="password" required
+                   class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3 pr-10">
+            <span class="eye-btn" data-toggle="#phonePassInput"></span>
           </div>
         </div>
 
-        <div class="input-group">
-          <label class="label" for="reg-phone-pass">Kata sandi</label>
-          <div class="pw-wrap">
-            <input id="reg-phone-pass" type="password" class="input" placeholder="min 6 karakter" required />
-            <button type="button" id="toggleRegPhonePwd" class="eye-btn" aria-label="lihat sandi">👁</button>
-          </div>
+        <div id="passConfirmWrapPhone">
+          <label class="block text-sm text-slate-300 mb-1">Ulangi kata sandi</label>
+          <input id="phonePassConfirm" type="password" required
+                 class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3">
         </div>
 
-        <button id="btn-reg-phone" type="submit" class="btn btn-primary">Daftar</button>
+        <button id="phoneSubmit" class="btn-primary w-full rounded-2xl py-3 font-semibold">Daftar</button>
       </form>
 
-      <p class="helper">
-        Sudah memiliki akun? <a href="index.html">Gabung</a>
-      </p>
-    </section>
-  </main>
+      <div class="text-center text-sm mt-3">
+        <span id="switchLine">Sudah memiliki akun?</span>
+        <a id="switchLink" class="text-sky-300 underline" href="index.html">Gabung</a>
+      </div>
+    </div>
+  </section>
 
-  <!-- Scripts -->
+  <!-- MODE -->
+  <script>window.AUTH_MODE = 'register';</script>
+
+  <!-- Script order -->
+  <script src="js/app-core.js" defer></script>
   <script type="module" src="js/firebase-init.js"></script>
-  <script type="module" src="js/register.js"></script>
+  <script type="module" src="js/features/auth-tabs.js"></script>
+  <script type="module" src="js/features/auth-email.js"></script>
+  <script type="module" src="js/features/auth-phone.js"></script>
 </body>
 </html>
