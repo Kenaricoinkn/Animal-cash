@@ -1,0 +1,32 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Redirecting…</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+  // Ambil kode dari URL terakhir (/invite/<CODE>)
+  var parts = location.pathname.replace(/\/+$/,'').split('/');
+  var code = parts.pop() || '';               // <CODE>
+  // (Opsional) aktifkan logging klik ke Firestore
+  var ENABLE_LOG = false;
+
+  async function logClick(code){
+    try {
+      if (!window.__FIREBASE_CONFIG__ || !ENABLE_LOG) return;
+      const app = await import("https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js")
+        .then(m => m.initializeApp(window.__FIREBASE_CONFIG__));
+      const { getFirestore, collection, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js");
+      const db = getFirestore(app);
+      await addDoc(collection(db, "referralClicks"), {
+        code, ts: serverTimestamp(), ua: navigator.userAgent
+      });
+    } catch(e) { /* silent */ }
+  }
+
+  (async function go(){
+    code = encodeURIComponent(code || '');
+    if (code) await logClick(code);
+    // redirect ke register.html dengan ?ref=
+    location.replace("../register.html?ref=" + code);
+  })();
+</script>
+<p>Mengarahkan…</p>

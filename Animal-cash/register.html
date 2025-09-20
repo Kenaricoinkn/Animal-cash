@@ -101,5 +101,34 @@
 <script src="js/app-core.js" defer></script>
 <script type="module" src="js/firebase-init.js"></script>
 <script type="module" src="js/register.js"></script>
+<script>
+
+  // Auto fill referral from ?ref (subfolder)
+
+  (function(){
+
+    try {
+
+      var p=new URLSearchParams(location.search), ref=p.get("ref");
+
+      if(!ref) return;
+
+      var el = document.getElementById("refCode")
+
+            || document.querySelector("[name=refCode]")
+
+            || document.querySelector("input[type=text][placeholder*=ref]")
+
+            || document.querySelector("input[type=text][name*=ref]");
+
+      if (el) { el.value = ref; el.dispatchEvent(new Event("input",{bubbles:true})); }
+
+      localStorage.setItem("ref_from_link", ref);
+
+    } catch(e){}
+
+  })();
+
+</script>
 </body>
 </html>
