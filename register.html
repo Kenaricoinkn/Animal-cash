@@ -3,41 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Masuk - Animal Cash</title>
-
-  <!-- Styles -->
+  <title>Daftar - Animal Cash</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <main class="glass-wrap">
     <section class="crdglass">
-      <h1 class="brand-title">Animals Cash</h1>
+      <h1 class="brand-title">Daftar Akun</h1>
 
-      <!-- FORM LOGIN -->
-      <form id="loginForm">
+      <!-- FORM DAFTAR SEDERHANA -->
+      <form id="registerForm">
         <div class="input-group">
-          <label class="label" for="email">Email</label>
-          <input class="input" type="email" id="email" autocomplete="email" required />
+          <label class="label" for="regEmail">Email</label>
+          <input class="input" type="email" id="regEmail" autocomplete="email" required />
         </div>
 
         <div class="input-group">
-          <label class="label" for="password">Kata sandi</label>
-          <input class="input" type="password" id="password" autocomplete="current-password" required />
+          <label class="label" for="regPassword">Kata sandi</label>
+          <input class="input" type="password" id="regPassword" autocomplete="new-password" required />
         </div>
 
-        <button class="btn" type="submit">Masuk</button>
+        <div class="input-group">
+          <label class="label" for="refCode">Kode Referral (opsional)</label>
+          <input class="input" type="text" id="refCode" placeholder="Masukkan kode jika ada" />
+        </div>
+
+        <button class="btn" type="submit">Daftar</button>
       </form>
 
-      <p class="helper">
-        Tidak ada akun? <a href="register.html">Daftar</a>
+      <p class="helper" style="margin-top:12px">
+        Sudah punya akun?
+        <a href="./index.html" rel="external">Kembali ke Masuk</a>
       </p>
     </section>
   </main>
 
+  <!-- Auto-isi referral dari ?ref= -->
+  <script>
+    (function(){
+      try {
+        const p=new URLSearchParams(location.search);
+        const ref=p.get('ref');
+        if(ref){
+          const el=document.getElementById('refCode');
+          if(el){ el.value=ref; el.dispatchEvent(new Event('input',{bubbles:true})); }
+          localStorage.setItem('ref_from_link', ref);
+        }
+      }catch(e){}
+    })();
+  </script>
+
   <!-- Scripts -->
   <script type="module" src="js/firebase-init.js"></script>
-  <script type="module" src="js/auth-email.js"></script>
+  <script type="module" src="js/register.js"></script>
   <script type="module" src="js/app-core.js"></script>
 </body>
-<p style="text-align:center;margin:16px 0"><a href="./index.html" rel="external">Kembali ke Masuk</a></p>
 </html>
