@@ -1,51 +1,59 @@
-/* Toggle Email/Phone tab + arahkan submit ke handler yang benar */
-const $ = (s, r=document) => r.querySelector(s);
-const on = (el, ev, fn) => el && el.addEventListener(ev, fn);
+// js/features/auth-tabs.js
+(() => {
+  const MODE = (window.AUTH_MODE || 'login').toLowerCase(); // 'login' | 'register'
+  const isReg = MODE === 'register';
 
-function show(view){
-  const emailView = $('[data-view="email"]');
-  const phoneView = $('[data-view="phone"]');
-  const tabEmail  = $('[data-tab="email"]');
-  const tabPhone  = $('[data-tab="phone"]');
+  // Elemen umum
+  const tabEmail  = document.getElementById('tabEmail');
+  const tabPhone  = document.getElementById('tabPhone');
+  const emailForm = document.getElementById('emailForm');
+  const phoneForm = document.getElementById('phoneForm');
 
-  if (view === 'phone') {
-    emailView?.classList.add('hidden');
-    phoneView?.classList.remove('hidden');
-    tabEmail?.classList.remove('active');
-    tabPhone?.classList.add('active');
-  } else {
-    phoneView?.classList.add('hidden');
-    emailView?.classList.remove('hidden');
-    tabPhone?.classList.remove('active');
-    tabEmail?.classList.add('active');
+  // Label sesuai mode
+  tabEmail.textContent = isReg ? 'Daftar Email'   : 'Masuk Email';
+  tabPhone.textContent = isReg ? 'Daftar Telepon' : 'Masuk Telepon';
+
+  document.getElementById('emailSubmit').textContent = isReg ? 'Daftar' : 'Masuk';
+  document.getElementById('phoneSubmit').textContent = isReg ? 'Daftar' : 'Masuk';
+
+  // Kolom konfirmasi password hanya saat daftar
+  const pass2WrapEmail = document.getElementById('passConfirmWrapEmail');
+  const pass2WrapPhone = document.getElementById('passConfirmWrapPhone');
+  (isReg ? pass2WrapEmail.classList.remove('hidden') : pass2WrapEmail.classList.add('hidden'));
+  (isReg ? pass2WrapPhone.classList.remove('hidden') : pass2WrapPhone.classList.add('hidden'));
+
+  // Switch tab
+  function activate(which) {
+    const emailActive = which === 'email';
+    tabEmail.classList.toggle('tab-active', emailActive);
+    tabPhone.classList.toggle('tab-active', !emailActive);
+    emailForm.classList.toggle('hidden', !emailActive);
+    phoneForm.classList.toggle('hidden', emailActive);
   }
-  localStorage.setItem('last_login_tab', view);
-}
+  tabEmail.addEventListener('click', () => activate('email'));
+  tabPhone.addEventListener('click', () => activate('phone'));
+  activate('email'); // default
 
-document.addEventListener('DOMContentLoaded', () => {
-  // tombol tab
-  on($('[data-tab="email"]'), 'click', (e)=>{e.preventDefault(); show('email')});
-  on($('[data-tab="phone"]'), 'click', (e)=>{e.preventDefault(); show('phone')});
+  // Toggle “lihat sandi”
+  document.querySelectorAll('.eye-btn').forEach(btn => {
+    const sel = btn.getAttribute('data-toggle');
+    const inp = document.querySelector(sel);
+    btn.addEventListener('click', () => {
+      if (!inp) return;
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    });
+  });
 
-  // default tab
-  const q = new URLSearchParams(location.search);
-  show(q.get('mode')==='phone' ? 'phone' : (localStorage.getItem('last_login_tab') || 'email'));
-
-  // wiring submit → FORM TERPISAH
-  const formEmail = $('#formEmail');
-  const formPhone = $('#formPhone');
-
-  // handler dari file yang sudah ada
-  // (pastikan fungsi ini memang diexport default/named di file kamu)
-  import('./auth-email.js').then(mod=>{
-    formEmail && on(formEmail,'submit', (ev)=>mod.handleEmailLogin
-      ? mod.handleEmailLogin(ev)
-      : mod.default?.(ev));
-  }).catch(console.error);
-
-  import('./auth-phone.js').then(mod=>{
-    formPhone && on(formPhone,'submit', (ev)=>mod.handlePhoneLogin
-      ? mod.handlePhoneLogin(ev)
-      : mod.default?.(ev));
-  }).catch(console.error);
-});
+  // Teks link pindah halaman
+  const switchLine = document.getElementById('switchLine');
+  const switchLink = document.getElementById('switchLink');
+  if (isReg) {
+    switchLine.textContent = 'Sudah memiliki akun?';
+    switchLink.textContent  = 'Gabung';
+    switchLink.href         = 'index.html';
+  } else {
+    switchLine.textContent = 'Belum punya akun?';
+    switchLink.textContent  = 'Daftar';
+    switchLink.href         = 'register.html';
+  }
+})();
