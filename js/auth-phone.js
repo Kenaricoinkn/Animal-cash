@@ -45,3 +45,7 @@
     return 'Gagal masuk: ' + msg.replace('Firebase: ','');
   }
 })();
+
+// ---- glue: expose to global for tab controller ----
+if (typeof handlePhoneLogin === 'function') { window.handlePhoneLogin = handlePhoneLogin; }
+else if (typeof defaultExport === 'function') { window.handlePhoneLogin = defaultExport; }

@@ -271,3 +271,7 @@ body{
 .ac-stat{ text-align:center; }
 .ac-big{ font-weight:800; font-size:1.05rem; color:#f8fafc; }
 .ac-sub{ margin-top:2px; font-size:.82rem; color:#cbd5e1; }
+
+/* util */
+.hidden { display: none !important; }
+.active { /* opsional gaya tab aktif */ filter: brightness(1.2); }
