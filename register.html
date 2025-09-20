@@ -2,89 +2,94 @@
 <html lang="id">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Animals Cash — Daftar</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css"/>
-  <link rel="stylesheet" href="css/bg-anim.css"/>
 </head>
-<body class="min-h-screen text-slate-100 bg-anim">
-  <header class="px-4 pt-6">
-    <h1 class="brand-title text-3xl">Animals Cash</h1>
-  </header>
+<body class="min-h-screen bg-slate-950 text-slate-100">
 
-  <main class="px-4 pb-10 pt-6">
-    <section class="glass rounded-2xl p-5 max-w-md mx-auto">
+  <main class="max-w-md mx-auto px-4 pt-10 pb-16">
+    <h1 class="brand-title text-2xl mb-6">Animals Cash</h1>
+
+    <section class="glass rounded-2xl p-4 sm:p-5">
       <!-- Tabs -->
-      <div class="flex gap-6 mb-4 border-b border-white/10">
-        <button type="button" class="auth-tab tab-active pb-2" data-auth-tab="email">Daftar Email</button>
-        <button type="button" class="auth-tab pb-2" data-auth-tab="phone">Daftar Telepon</button>
+      <div class="flex gap-6 text-lg mb-4">
+        <button id="tabEmail" class="tab-active">Daftar Email</button>
+        <button id="tabPhone">Daftar Telepon</button>
       </div>
 
-      <!-- ===== Pane: EMAIL ===== -->
-      <form id="formRegEmail" data-auth-pane="email" class="space-y-3">
+      <!-- ==== Email form ==== -->
+      <form id="emailForm" class="space-y-3">
         <label class="block text-sm text-slate-300">Email</label>
-        <input id="regEmail" type="email"
-               class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3"
-               placeholder="nama@email.com" autocomplete="email" required/>
+        <input id="email" type="email" class="w-full rounded-xl bg-slate-900/70 border border-white/10 px-3 py-3"
+               placeholder="nama@email.com" autocomplete="email" />
 
-        <label class="block text-sm text-slate-300">Kata sandi</label>
+        <label class="block text-sm text-slate-300 mt-2">Kata sandi</label>
         <div class="relative">
-          <input id="regPassword" type="password"
-                 class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3 pr-10"
-                 placeholder="Minimal 6 karakter" autocomplete="new-password" required/>
-          <button type="button" class="eye-btn" aria-label="Tampilkan/ sembunyikan sandi" data-eye="#regPassword"></button>
+          <input id="password" type="password"
+                 class="w-full rounded-xl bg-slate-900/70 border border-white/10 px-3 py-3 pr-10"
+                 autocomplete="new-password" />
+          <button type="button" class="eye-btn" aria-label="toggle" data-toggle="#password"></button>
         </div>
 
-        <button id="btnRegEmail" type="submit"
-                class="btn-primary w-full mt-2 rounded-xl px-4 py-3 font-semibold">
-          Daftar
-        </button>
+        <div id="passConfirmWrapEmail" class="relative">
+          <input id="password2" type="password"
+                 class="w-full rounded-xl bg-slate-900/70 border border-white/10 px-3 py-3 pr-10"
+                 placeholder="Ulangi kata sandi" autocomplete="new-password" />
+          <button type="button" class="eye-btn" aria-label="toggle" data-toggle="#password2"></button>
+        </div>
+
+        <button id="emailSubmit" type="submit"
+                class="btn-primary w-full mt-3 rounded-xl py-3 font-semibold">Daftar</button>
       </form>
 
-      <!-- ===== Pane: PHONE ===== -->
-      <form id="formRegPhone" data-auth-pane="phone" class="space-y-3 hidden">
+      <!-- ==== Phone form ==== -->
+      <form id="phoneForm" class="space-y-3 hidden">
         <label class="block text-sm text-slate-300">Telepon</label>
-        <input id="regPhone" type="tel" inputmode="tel"
-               class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3"
-               placeholder="+62 812xxxxxxx" autocomplete="tel" required/>
-
-        <label class="block text-sm text-slate-300">Kata sandi</label>
-        <div class="relative">
-          <input id="regPhonePass" type="password"
-                 class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3 pr-10"
-                 placeholder="Minimal 6 karakter" autocomplete="new-password" required/>
-          <button type="button" class="eye-btn" aria-label="Tampilkan/ sembunyikan sandi" data-eye="#regPhonePass"></button>
+        <div class="flex gap-2">
+          <select id="country" class="rounded-xl bg-slate-900/70 border border-white/10 px-2">
+            <option value="+62">+62</option>
+            <option value="+60">+60</option>
+            <option value="+65">+65</option>
+            <option value="+1">+1</option>
+          </select>
+          <input id="phone" type="tel" class="flex-1 rounded-xl bg-slate-900/70 border border-white/10 px-3 py-3"
+                 placeholder="812xxxxxxx" autocomplete="tel" />
         </div>
 
-        <button id="btnRegPhone" type="submit"
-                class="btn-primary w-full mt-2 rounded-xl px-4 py-3 font-semibold">
-          Daftar
-        </button>
+        <label class="block text-sm text-slate-300 mt-2">Kata sandi</label>
+        <div class="relative">
+          <input id="phonePass" type="password"
+                 class="w-full rounded-xl bg-slate-900/70 border border-white/10 px-3 py-3 pr-10"
+                 autocomplete="new-password" />
+          <button type="button" class="eye-btn" aria-label="toggle" data-toggle="#phonePass"></button>
+        </div>
+
+        <div id="passConfirmWrapPhone" class="relative">
+          <input id="phonePass2" type="password"
+                 class="w-full rounded-xl bg-slate-900/70 border border-white/10 px-3 py-3 pr-10"
+                 placeholder="Ulangi kata sandi" autocomplete="new-password" />
+          <button type="button" class="eye-btn" aria-label="toggle" data-toggle="#phonePass2"></button>
+        </div>
+
+        <button id="phoneSubmit" type="submit"
+                class="btn-primary w-full mt-3 rounded-xl py-3 font-semibold">Daftar</button>
       </form>
 
-      <p class="text-center text-sm mt-4">
-        Sudah punya akun? <a href="index.html" class="text-sky-300 underline">Masuk</a>
+      <!-- switch ke login -->
+      <p class="text-center text-sm text-slate-300 mt-4">
+        <span id="switchLine">Sudah memiliki akun?</span>
+        <a id="switchLink" href="index.html" class="text-blue-300 font-semibold">Gabung</a>
       </p>
     </section>
   </main>
 
-  <!-- Scripts (URUTAN PENTING) -->
+  <!-- ORDER SCRIPTS PENTING -->
   <script src="js/app-core.js" defer></script>
+  <script>window.AUTH_MODE='register';</script>
   <script type="module" src="js/firebase-init.js"></script>
   <script type="module" src="js/auth-tabs.js"></script>
   <script type="module" src="js/register.js"></script>
-
-  <!-- Fallback kecil untuk tombol mata -->
-  <script>
-    document.addEventListener('click', (e)=>{
-      const t = e.target.closest('.eye-btn');
-      if(!t) return;
-      const sel = t.getAttribute('data-eye');
-      const inp = document.querySelector(sel);
-      if(!inp) return;
-      inp.type = (inp.type === 'password') ? 'text' : 'password';
-    });
-  </script>
 </body>
 </html>
