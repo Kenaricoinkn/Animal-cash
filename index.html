@@ -7,77 +7,83 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css"/>
   <link rel="stylesheet" href="css/bg-anim.css"/>
-  <style>
-    .tabbtn-auth{cursor:pointer;background:transparent;padding:.25rem .5rem;border-radius:.5rem}
-    .tabbtn-auth.tab-active{border-bottom:2px solid #93c5fd;color:#a5b4fc}
-    .input{background:rgba(15,23,42,.65);border:1px solid rgba(255,255,255,.12);border-radius:.9rem;padding:.75rem .9rem;width:100%}
-    .eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:24px;height:24px;opacity:.85}
-  </style>
 </head>
-<body class="text-slate-100 min-h-screen flex flex-col bg-anim">
+<body class="min-h-screen text-slate-100 bg-anim">
+  <header class="px-4 pt-6">
+    <h1 class="brand-title text-3xl">Animals Cash</h1>
+  </header>
 
-  <main class="flex-1 px-5 pt-8 pb-20 max-w-md mx-auto">
-    <h1 class="brand-title text-2xl mb-6">Animals Cash</h1>
-
-    <div class="glass p-5 rounded-2xl">
-      <div class="flex items-end gap-6 mb-4">
-        <button id="tabEmail" type="button"  class="tabbtn-auth tab-active">Masuk Email</button>
-        <button id="tabPhone" type="button"  class="tabbtn-auth">Masuk Telepon</button>
+  <main class="px-4 pb-10 pt-6">
+    <section class="glass rounded-2xl p-5 max-w-md mx-auto">
+      <!-- Tabs -->
+      <div class="flex gap-6 mb-4 border-b border-white/10">
+        <button type="button" class="auth-tab tab-active pb-2" data-auth-tab="email">Masuk Email</button>
+        <button type="button" class="auth-tab pb-2" data-auth-tab="phone">Masuk Telepon</button>
       </div>
 
-      <!-- ===== Form Email ===== -->
-      <form id="emailForm" class="space-y-3">
-        <div>
-          <label class="text-sm text-slate-300">Email</label>
-          <input id="emailInput" type="email" autocomplete="email" class="input" placeholder="nama@email.com" required>
-        </div>
+      <!-- ===== Pane: EMAIL ===== -->
+      <form id="formLoginEmail" data-auth-pane="email" class="space-y-3">
+        <label class="block text-sm text-slate-300">Email</label>
+        <input id="loginEmail" type="email" class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3"
+               placeholder="nama@email.com" autocomplete="email" required/>
 
+        <label class="block text-sm text-slate-300">Kata sandi</label>
         <div class="relative">
-          <label class="text-sm text-slate-300">Kata sandi</label>
-          <input id="emailPass" type="password" autocomplete="current-password" class="input" placeholder="••••••••" required>
-          <button type="button" class="eye-btn" data-toggle="#emailPass">👁️</button>
+          <input id="loginPassword" type="password"
+                 class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3 pr-10"
+                 placeholder="••••••••" autocomplete="current-password" required/>
+          <button type="button" class="eye-btn" aria-label="Tampilkan/ sembunyikan sandi" data-eye="#loginPassword"></button>
         </div>
 
-        <!-- konfirmasi hanya untuk Register; disembunyikan oleh JS di halaman login -->
-        <div id="passConfirmWrapEmail" class="hidden">
-          <label class="text-sm text-slate-300">Ulangi kata sandi</label>
-          <input id="emailPass2" type="password" class="input" placeholder="••••••••">
-        </div>
-
-        <button id="emailSubmit" class="btn-primary w-full py-3 rounded-xl font-semibold" type="submit">Masuk</button>
+        <button id="btnLoginEmail" type="submit"
+                class="btn-primary w-full mt-2 rounded-xl px-4 py-3 font-semibold">
+          Masuk
+        </button>
       </form>
 
-      <!-- ===== Form Telepon ===== -->
-      <form id="phoneForm" class="space-y-3 hidden" novalidate>
-        <div>
-          <label class="text-sm text-slate-300">Telepon (format internasional)</label>
-          <input id="phoneInput" type="tel" class="input" placeholder="+62xxxxxxxxxx" required>
-        </div>
+      <!-- ===== Pane: PHONE ===== -->
+      <form id="formLoginPhone" data-auth-pane="phone" class="space-y-3 hidden">
+        <label class="block text-sm text-slate-300">Telepon</label>
+        <input id="loginPhone" type="tel" inputmode="tel"
+               class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3"
+               placeholder="+62 812xxxxxxx" autocomplete="tel" required/>
 
+        <label class="block text-sm text-slate-300">Kata sandi</label>
         <div class="relative">
-          <label class="text-sm text-slate-300">Kata sandi</label>
-          <input id="phonePass" type="password" class="input" placeholder="••••••••" required>
-          <button type="button" class="eye-btn" data-toggle="#phonePass">👁️</button>
+          <input id="loginPhonePass" type="password"
+                 class="w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-3 pr-10"
+                 placeholder="••••••••" autocomplete="current-password" required/>
+          <button type="button" class="eye-btn" aria-label="Tampilkan/ sembunyikan sandi" data-eye="#loginPhonePass"></button>
         </div>
 
-        <div id="passConfirmWrapPhone" class="hidden">
-          <label class="text-sm text-slate-300">Ulangi kata sandi</label>
-          <input id="phonePass2" type="password" class="input" placeholder="••••••••">
-        </div>
-
-        <button id="phoneSubmit" class="btn-primary w-full py-3 rounded-xl font-semibold" type="submit">Masuk</button>
+        <button id="btnLoginPhone" type="submit"
+                class="btn-primary w-full mt-2 rounded-xl px-4 py-3 font-semibold">
+          Masuk
+        </button>
       </form>
 
       <p class="text-center text-sm mt-4">
-        <span id="switchLine">Belum punya akun?</span>
-        <a id="switchLink" class="text-sky-300 underline" href="register.html">Daftar</a>
+        Belum punya akun? <a href="register.html" class="text-sky-300 underline">Daftar</a>
       </p>
-    </div>
+    </section>
   </main>
 
-  <script>window.AUTH_MODE='login';</script>
+  <!-- Scripts (URUTAN PENTING) -->
+  <script src="js/app-core.js" defer></script>
   <script type="module" src="js/firebase-init.js"></script>
-  <script type="module" src="js/features/auth-tabs.js"></script>
+  <script type="module" src="js/auth-tabs.js"></script>
   <script type="module" src="js/login.js"></script>
+
+  <!-- Fallback kecil untuk tombol mata bila CSS/JS belum termuat -->
+  <script>
+    document.addEventListener('click', (e)=>{
+      const t = e.target.closest('.eye-btn');
+      if(!t) return;
+      const sel = t.getAttribute('data-eye');
+      const inp = document.querySelector(sel);
+      if(!inp) return;
+      inp.type = (inp.type === 'password') ? 'text' : 'password';
+    });
+  </script>
 </body>
 </html>
