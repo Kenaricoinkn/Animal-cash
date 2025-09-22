@@ -38,8 +38,8 @@
   <!-- Konten utama -->
   <main id="app" class="hidden flex-1 px-4 pb-20 pt-1">
 
-    <!-- ===================== HOME ===================== -->
-    <section id="homeHeader" class="tab-content">
+    <!-- ===================== HOME (khusus tab Home) ===================== -->
+<section id="homePane" class="tab-content">
   <!-- Banner Slider -->
   <div class="relative overflow-hidden rounded-2xl mb-2 ring-1 ring-white/10">
     <!-- Track -->
@@ -71,31 +71,29 @@
         </div>
       </div>
     </div>
+
+    <!-- Dots -->
+    <div id="homeDots" class="absolute bottom-2 right-2 flex gap-1.5">
+      <span class="w-2 h-2 rounded-full bg-white/70"></span>
+      <span class="w-2 h-2 rounded-full bg-white/30"></span>
+      <span class="w-2 h-2 rounded-full bg-white/30"></span>
+    </div>
+  </div>
+
+  <!-- Kartu saldo ringkas (HANYA tampil di Home) -->
+  <div class="grid grid-cols-2 gap-3 mb-2">
+    <div class="glass p-4 rounded-2xl">
+      <div class="text-slate-300 text-sm">Total aset</div>
+      <div class="text-2xl font-bold">0 <span class="text-sm">IDR</span></div>
+      <div class="text-xs text-slate-400">≈ Rp 0</div>
+    </div>
+    <div class="glass p-4 rounded-2xl">
+      <div class="text-slate-300 text-sm">Akun Kuantitatif</div>
+      <div class="text-2xl font-bold">0.00 <span class="text-sm">IDR</span></div>
+      <div class="text-xs text-slate-400">≈ Rp 0.00</div>
+    </div>
   </div>
 </section>
-
-        <!-- Dots -->
-        <div id="homeDots" class="absolute bottom-2 right-2 flex gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-white/70"></span>
-          <span class="w-2 h-2 rounded-full bg-white/30"></span>
-          <span class="w-2 h-2 rounded-full bg-white/30"></span>
-        </div>
-      </div>
-
-      <!-- Kartu saldo ringkas -->
-      <div class="grid grid-cols-2 gap-3 mb-2">
-        <div class="glass p-4 rounded-2xl">
-          <div class="text-slate-300 text-sm">Total aset</div>
-          <div class="text-2xl font-bold">0 <span class="text-sm">IDR</span></div>
-          <div class="text-xs text-slate-400">≈ Rp 0</div>
-        </div>
-        <div class="glass p-4 rounded-2xl">
-          <div class="text-slate-300 text-sm">Akun Kuantitatif</div>
-          <div class="text-2xl font-bold">0.00 <span class="text-sm">IDR</span></div>
-          <div class="text-xs text-slate-400">≈ Rp 0.00</div>
-        </div>
-      </div>
-    </section>
 
     <section id="homeGrid" class="glass p-4 rounded-2xl tab-content">
       <div class="menu-grid grid grid-cols-4 gap-x-3 gap-y-4 place-items-center text-center">
