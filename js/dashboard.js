@@ -61,41 +61,35 @@
       applyInitialTab();
     });
 
-    // ---------- Tabs logic ----------
-    const tabBtns    = document.querySelectorAll('.tabbtn');
+// ----- Tabs logic -----
+const tabBtns   = document.querySelectorAll('.tabbtn');
 
-    const homeHeader = document.querySelector('#homeHeader'); // banner + saldo (khusus Home)
-    const homeGrid   = document.querySelector('#homeGrid');   // grid ikon (khusus Home)
-    const farmTab    = document.querySelector('#farmTab');
-    const inviteTab  = document.querySelector('#inviteTab');
-    const profileTab = document.querySelector('#profileTab');
+const homePane  = document.querySelector('#homePane');   // <— satu section untuk Home
+const farmTab   = document.querySelector('#farmTab');
+const inviteTab = document.querySelector('#inviteTab');
+const profileTab= document.querySelector('#profileTab');
 
-    // Semua view yang bisa di-show/hide
-    const ALL_VIEWS = [homeHeader, homeGrid, farmTab, inviteTab, profileTab].filter(Boolean);
+// Semua view yang bisa di-show/hide
+const ALL_VIEWS = [homePane, farmTab, inviteTab, profileTab].filter(Boolean);
 
-    // View aktif per tab
-    const VIEWS_BY_TAB = {
-      home:   [homeHeader, homeGrid],
-      farm:   [farmTab],
-      invite: [inviteTab],
-      profile:[profileTab],
-    };
+// View aktif per tab
+const VIEWS_BY_TAB = {
+  home:   [homePane],
+  farm:   [farmTab],
+  invite: [inviteTab],
+  profile:[profileTab],
+};
 
-    function showOnly(els) {
-      ALL_VIEWS.forEach(el => el?.classList.add('hidden'));
-      els?.forEach(el => el?.classList.remove('hidden'));
-    }
+function showOnly(els) {
+  ALL_VIEWS.forEach(el => el?.classList.add('hidden'));
+  els?.forEach(el => el?.classList.remove('hidden'));
+}
 
-    function switchTab(tabKey) {
-      // Update tombol aktif
-      tabBtns.forEach(b => b.classList.toggle('tab-active', b.dataset.tab === tabKey));
-      // Tampilkan hanya view milik tab
-      showOnly(VIEWS_BY_TAB[tabKey] || []);
-      // Scroll ke atas supaya header tidak “tertinggal”
-      try { window.scrollTo({ top: 0, behavior: 'instant' }); } catch { window.scrollTo(0, 0); }
-      // Simpan di hash agar refresh tetap di tab yang sama
-      try { history.replaceState(null, '', `#${tabKey}`); } catch {}
-    }
+function switchTab(tabKey) {
+  tabBtns.forEach(b => b.classList.toggle('tab-active', b.dataset.tab === tabKey));
+  showOnly(VIEWS_BY_TAB[tabKey] || []);
+  try { history.replaceState(null, '', `#${tabKey}`); } catch {}
+}
 
     // Klik pada tombol tab bawah
     tabBtns.forEach(btn => {
