@@ -1,4 +1,4 @@
-// js/dashboard.js — sinkron dengan dashboard.html (homeHeader + homeGrid)
+// js/dashboard.js — sinkron dengan dashboard.html (homeHeader + homeGrid + withdrawTab)
 (() => {
   // ---------- Helper: tunggu DOM & Firebase siap ----------
   const whenDOMReady = new Promise(res => {
@@ -16,12 +16,16 @@
   async function init() {
     // ---------- Import modul opsional ----------
     let applyLang = () => {}, buildLanguageSheet = () => {};
-    let initFarm = () => {}, initInvite = () => {}, initProfile = () => {};
+    let initFarm = () => {}, initInvite = () => {}, initProfile = () => {}, initWithdraw = () => {};
 
-    try { const m = await import('./i18n.js'); applyLang = m.applyLang || applyLang; buildLanguageSheet = m.buildLanguageSheet || buildLanguageSheet; } catch {}
+    try { const m = await import('./i18n.js'); 
+      applyLang = m.applyLang || applyLang; 
+      buildLanguageSheet = m.buildLanguageSheet || buildLanguageSheet; 
+    } catch {}
     try { const m = await import('./features/farm.js'); initFarm = m.initFarm || initFarm; } catch {}
     try { const m = await import('./features/invite.js'); initInvite = m.initInvite || initInvite; } catch {}
     try { const m = await import('./features/profile.js'); initProfile = m.initProfile || initProfile; } catch {}
+    try { const m = await import('./features/withdraw.js'); initWithdraw = m.initWithdraw || initWithdraw; } catch {}
 
     // ---------- Auth guard ----------
     const { auth } = window.App.firebase;
@@ -39,6 +43,7 @@
       try { initProfile(user); } catch {}
       try { initInvite(); } catch {}
       try { initFarm(); } catch {}
+      try { initWithdraw(); } catch {}
 
       applyInitialTab();
     });
@@ -47,20 +52,22 @@
     const tabBtns    = document.querySelectorAll('.tabbtn');
 
     // Home terdiri dari 2 section:
-    const homeHeader = document.querySelector('#homeHeader'); // ✅ sesuai HTML kamu
+    const homeHeader = document.querySelector('#homeHeader');
     const homeGrid   = document.querySelector('#homeGrid');
     const farmTab    = document.querySelector('#farmTab');
     const inviteTab  = document.querySelector('#inviteTab');
+    const withdrawTab= document.querySelector('#withdrawTab'); // ✅ baru
     const profileTab = document.querySelector('#profileTab');
 
     // Semua view yang bisa di-show/hide
-    const ALL_VIEWS = [homeHeader, homeGrid, farmTab, inviteTab, profileTab].filter(Boolean);
+    const ALL_VIEWS = [homeHeader, homeGrid, farmTab, inviteTab, withdrawTab, profileTab].filter(Boolean);
 
     // View aktif per tab
     const VIEWS_BY_TAB = {
       home:   [homeHeader, homeGrid],
       farm:   [farmTab],
       invite: [inviteTab],
+      withdraw: [withdrawTab],  // ✅ baru
       profile:[profileTab],
     };
 
@@ -68,7 +75,6 @@
       ALL_VIEWS.forEach(el => el?.classList.add('hidden'));
       els?.forEach(el => {
         el?.classList.remove('hidden');
-        // efek fade ringan
         try {
           el.style.opacity = 0;
           el.style.transition = 'opacity .25s ease';
@@ -103,7 +109,7 @@
     // Default ke tab dari hash atau 'home'
     function applyInitialTab() {
       const hash = (location.hash || '').replace('#','');
-      const first = ['home','farm','invite','profile'].includes(hash) ? hash : 'home';
+      const first = ['home','farm','invite','withdraw','profile'].includes(hash) ? hash : 'home';
       switchTab(first);
     }
     applyInitialTab();
