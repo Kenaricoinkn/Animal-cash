@@ -1,4 +1,4 @@
-// js/dashboard.js — robust, sinkron, dan aman dari error kecil
+// js/dashboard.js — sinkron dgn dashboard.html (homeHeader + homeGrid)
 (() => {
   // ---------- Helper: tunggu DOM & Firebase siap ----------
   const whenDOMReady = new Promise(res => {
@@ -61,35 +61,40 @@
       applyInitialTab();
     });
 
-// ----- Tabs logic -----
-const tabBtns   = document.querySelectorAll('.tabbtn');
+    // ---------- Tabs logic ----------
+    const tabBtns   = document.querySelectorAll('.tabbtn');
 
-const homePane  = document.querySelector('#homePane');   // <— satu section untuk Home
-const farmTab   = document.querySelector('#farmTab');
-const inviteTab = document.querySelector('#inviteTab');
-const profileTab= document.querySelector('#profileTab');
+    // Home terdiri dari 2 view terpisah: header & grid
+    const homeHeader = document.querySelector('#homeHeader');
+    const homeGrid   = document.querySelector('#homeGrid');
+    const farmTab    = document.querySelector('#farmTab');
+    const inviteTab  = document.querySelector('#inviteTab');
+    const profileTab = document.querySelector('#profileTab');
 
-// Semua view yang bisa di-show/hide
-const ALL_VIEWS = [homePane, farmTab, inviteTab, profileTab].filter(Boolean);
+    // Semua view yang bisa di-show/hide
+    const ALL_VIEWS = [homeHeader, homeGrid, farmTab, inviteTab, profileTab].filter(Boolean);
 
-// View aktif per tab
-const VIEWS_BY_TAB = {
-  home:   [homePane],
-  farm:   [farmTab],
-  invite: [inviteTab],
-  profile:[profileTab],
-};
+    // View aktif per tab
+    const VIEWS_BY_TAB = {
+      home:   [homeHeader, homeGrid],
+      farm:   [farmTab],
+      invite: [inviteTab],
+      profile:[profileTab],
+    };
 
-function showOnly(els) {
-  ALL_VIEWS.forEach(el => el?.classList.add('hidden'));
-  els?.forEach(el => el?.classList.remove('hidden'));
-}
+    function showOnly(els) {
+      ALL_VIEWS.forEach(el => el?.classList.add('hidden'));
+      els?.forEach(el => el?.classList.remove('hidden'));
+    }
 
-function switchTab(tabKey) {
-  tabBtns.forEach(b => b.classList.toggle('tab-active', b.dataset.tab === tabKey));
-  showOnly(VIEWS_BY_TAB[tabKey] || []);
-  try { history.replaceState(null, '', `#${tabKey}`); } catch {}
-}
+    function switchTab(tabKey) {
+      // Update tombol aktif
+      tabBtns.forEach(b => b.classList.toggle('tab-active', b.dataset.tab === tabKey));
+      // Tampilkan hanya view milik tab
+      showOnly(VIEWS_BY_TAB[tabKey] || []);
+      // Simpan di hash agar refresh tetap di tab yang sama
+      try { history.replaceState(null, '', `#${tabKey}`); } catch {}
+    }
 
     // Klik pada tombol tab bawah
     tabBtns.forEach(btn => {
@@ -102,10 +107,11 @@ function switchTab(tabKey) {
       if (!t) return;
       const key = t.getAttribute('data-tab');
       if (!key) return;
-      // Kalau elemen ini bukan tombol tab bar, tetap lakukan switch
       if (!t.classList.contains('tabbtn')) {
         e.preventDefault();
         switchTab(key);
+        // optional: scroll ke atas saat pindah tab via menu
+        try { window.scrollTo({ top: 0, behavior: 'instant' }); } catch { window.scrollTo(0, 0); }
       }
     });
 
@@ -115,7 +121,7 @@ function switchTab(tabKey) {
       const first = ['home','farm','invite','profile'].includes(hash) ? hash : 'home';
       switchTab(first);
     }
-    applyInitialTab(); // juga berlaku bila user sudah login sebelum ini
+    applyInitialTab();
 
     // ---------- Language sheet (opsional) ----------
     const langSheet = document.querySelector('#langSheet');
