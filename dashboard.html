@@ -190,35 +190,20 @@
     </section>
 
     <!-- ===================== FARM ===================== -->
-    <section id="farmTab" class="hidden tab-content">
-      <h2 class="section-title">Farm</h2>
+<section id="farmTab" class="hidden tab-content">
+  <h2 class="section-title">Farm</h2>
 
-      <div class="farm-card glass">
-        <div class="farm-head">
-          <span class="chip subtle">Akun Kuantitatif</span>
-          <div class="farm-balance">0.00</div>
-        </div>
+  <div class="farm-card glass">
+    <div class="farm-head">
+      <span class="chip subtle">Akun Kuantitatif</span>
+      <div class="farm-balance">0.00</div>
+    </div>
 
-        <!-- Pasar Ternak (SATU versi saja) -->
-        <h3 class="section-title mt-3">Pasar Ternak</h3>
-        <div id="marketList" class="market-list"></div>
-
-        <!-- Metrik ringkas -->
-        <div class="metric-grid mt-3">
-          <div class="metric"><span class="metric-label chip">Aset Keuntungan</span><div class="metric-value">0.00</div></div>
-          <div class="metric"><span class="metric-label chip">Penghasilan Hari Ini</span><div class="metric-value">0</div></div>
-          <div class="metric"><span class="metric-label chip">Total Pendapatan</span><div class="metric-value">0.00</div></div>
-          <div class="metric"><span class="metric-label chip">Jumlah Hari yang Dapat Dihitung</span><div class="metric-value">210</div></div>
-          <div class="metric"><span class="metric-label chip">Hari Hitung Mundur</span><div class="metric-value">210</div></div>
-        </div>
-
-        <div class="farm-footer">
-          <button class="chip strong w-full justify-center">
-            <span>Catatan transaksi</span><span class="sep">››</span><span>0 / 0</span>
-          </button>
-        </div>
-      </div>
-    </section>
+    <!-- Pasar Ternak (SATU versi saja) -->
+    <h3 class="section-title mt-3">Pasar Ternak</h3>
+    <div id="marketList" class="market-list"></div>
+  </div>
+</section>
 
     <!-- ===================== INVITE ===================== -->
     <section id="inviteTab" class="hidden tab-content">
@@ -232,15 +217,69 @@
       </div>
     </section>
 
-    <!-- ===================== PROFILE ===================== -->
-    <section id="profileTab" class="hidden tab-content">
-      <h2 class="text-lg font-semibold mb-2">Aku</h2>
+<!-- ===================== PROFILE ===================== -->
+<section id="profileTab" class="hidden tab-content">
+  <h2 class="text-lg font-semibold mb-2">Aku</h2>
+
+  <!-- Rincian akun -->
+  <div class="glass p-4 rounded-2xl mb-3">
+    <div class="text-sm">
+      <span class="text-slate-400">UID:</span>
+      <span id="uid">—</span>
+    </div>
+    <div class="text-sm">
+      <span class="text-slate-400">Masuk sebagai</span>:
+      <span id="who">—</span>
+    </div>
+  </div>
+
+  <!-- Ringkasan Farm dipindah ke Profil -->
+  <div class="glass p-4 rounded-2xl">
+    <h3 class="text-base font-semibold mb-3">Ringkasan Farm</h3>
+
+    <div class="grid grid-cols-2 gap-3 mb-3">
       <div class="glass p-4 rounded-2xl">
-        <div class="text-sm"><span class="text-slate-400">UID:</span> <span id="uid">—</span></div>
-        <div class="text-sm"><span class="text-slate-400">Masuk sebagai</span>: <span id="who">—</span></div>
+        <div class="text-slate-300 text-sm">Saldo Kuantitatif</div>
+        <div class="text-2xl font-bold farm-balance">0.00</div>
       </div>
-    </section>
-  </main>
+      <div class="glass p-4 rounded-2xl">
+        <div class="text-slate-300 text-sm">—</div>
+        <div class="text-2xl font-bold">&nbsp;</div>
+      </div>
+    </div>
+
+    <div class="metric-grid">
+      <div class="metric">
+        <span class="metric-label chip">Aset Keuntungan</span>
+        <div class="metric-value">0.00</div>
+      </div>
+      <div class="metric">
+        <span class="metric-label chip">Penghasilan Hari Ini</span>
+        <div class="metric-value">0</div>
+      </div>
+      <div class="metric">
+        <span class="metric-label chip">Total Pendapatan</span>
+        <div class="metric-value">0.00</div>
+      </div>
+      <div class="metric">
+        <span class="metric-label chip">Jumlah Hari yang Dapat Dihitung</span>
+        <div class="metric-value">210</div>
+      </div>
+      <div class="metric">
+        <span class="metric-label chip">Hari Hitung Mundur</span>
+        <div class="metric-value">210</div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <button class="chip strong w-full justify-center">
+        <span>Catatan transaksi</span>
+        <span class="sep">››</span>
+        <span>0 / 0</span>
+      </button>
+    </div>
+  </div>
+</section>
 
   <!-- Bottom Tabbar -->
   <nav class="fixed left-0 right-0 bottom-0 px-4 py-2 bg-slate-900/80 backdrop-blur border-t border-white/10">
