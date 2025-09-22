@@ -403,3 +403,13 @@ html, body{
 .search-pill {
   display: none !important;
 }
+/* posisi bullet slider */
+.home-bullets{
+  position:absolute; right:.65rem; bottom:.6rem;
+  display:flex; gap:.35rem; z-index:5;
+}
+.home-bullets > span{
+  width:6px; height:6px; border-radius:9999px;
+  background:rgba(255,255,255,.35);
+}
+.home-bullets > span.is-active{ background:#fff; }
