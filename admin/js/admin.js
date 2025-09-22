@@ -11,7 +11,7 @@ import {
 /* =================== CONFIG =================== */
 // Kalau belum pakai custom claim admin, whitelist sementara UID di sini:
 const FALLBACK_ADMIN_UIDS = [
-  // "UID_ADMIN_KAMU_1", "UID_ADMIN_KAMU_2"
+  // "ZuUvoL3bDPNSLJ1ogTdcxXcb5Pi1", "UID_ADMIN_KAMU_2"
 ];
 
 /* =================== HELPERS =================== */
