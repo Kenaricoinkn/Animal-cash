@@ -1,10 +1,10 @@
 // js/features/farm.js
 
-// ---------- Helpers ----------
+// Helper ringkas
 const $  = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-// Format Rupiah
+// Formatter Rupiah
 const fmtRp = (n, opt = {}) =>
   new Intl.NumberFormat('id-ID', {
     style: 'currency',
@@ -13,21 +13,10 @@ const fmtRp = (n, opt = {}) =>
     ...opt
   }).format(Number(n || 0));
 
-/* =======================================================================
- *  DATA MARKET (bisa kamu ambil dari backend nanti)
- * ======================================================================= */
-const MARKET_ITEMS = [
-  // nama, gambar, price, daily, contract (hari)
-  { animal: 'cow',     title: 'COW',     img: 'img/cow.png',     price: 160_000, daily: 17_000, contract: 90 },
-  { animal: 'chicken', title: 'CHICKEN', img: 'img/chicken.png', price: 90_000,  daily: 6_000,  contract: 60 },
-  { animal: 'sheep',   title: 'SHEEP',   img: 'img/sheep.png',   price: 250_000, daily: 11_000, contract: 75 },
-];
-
-/* =======================================================================
+/* =========================================================================
  *  PUBLIC API
- * ======================================================================= */
+ * ========================================================================= */
 
-// Dipanggil dari dashboard.js
 export function initFarm() {
   const farmTab = $('#farmTab');
   if (!farmTab || !window.App?.firebase) return;
@@ -36,114 +25,76 @@ export function initFarm() {
   const user = auth.currentUser;
   if (!user) return;
 
-  // Pastikan doc user ada, lalu dengarkan realtime stat Farm
+  // Pastikan dokumen user ada, lalu realtime listen
   ensureUserDoc(user.uid)
     .then(() => {
-      onUserDoc(user.uid, (snap) => {
+      onUserDoc(user.uid, snap => {
         if (!snap.exists()) return;
-        renderFarm(snap.data() || {});
+        const data = snap.data() || {};
+        renderFarm(data);
       });
     })
-    .catch(err => {
-      console.error('ensureUserDoc error', err);
+    .catch(e => {
+      console.error('ensureUserDoc error', e);
       toast('Gagal memuat Farm');
     });
 
-  // Render market (kartu hewan) sekali
-  buildMarketList();
-  // Isi angka + pasang handler tombol
+  // Inisialisasi kartu hewan (marketplace)
   initFarmCards();
 
-  // Tombol “Catatan transaksi”
-  farmTab.querySelector('.farm-footer .chip.strong')
-    ?.addEventListener('click', () => toast('Belum ada transaksi'));
+  // Tombol "Catatan transaksi" (bisa ada di Farm atau Profil)
+  $$('.chip.strong').forEach(btn => {
+    btn.addEventListener('click', () => toast('Belum ada transaksi'));
+  });
 }
 
-// Setter manual kalau mau update dari modul lain
+// Setter manual bila ingin update dari tempat lain
 export function setFarmStats(payload = {}) {
   renderFarm(payload);
 }
 
-/* =======================================================================
- *  PRIVATE: Build Market (kartu) + binding
- * ======================================================================= */
-
-function buildMarketList() {
-  const wrap = $('#marketList', $('#farmTab'));
-  if (!wrap) return;
-
-  // Bersihkan agar tidak dobel
-  wrap.innerHTML = '';
-
-  // Bangun markup menggunakan gaya .animal-card.v2 (CSS sudah ada)
-  const html = MARKET_ITEMS.map(item => {
-    return `
-<article class="animal-card v2 glass"
-         data-animal="${item.animal}"
-         data-price="${item.price}"
-         data-daily="${item.daily}"
-         data-contract="${item.contract}">
-  <header class="ac-head">
-    <img src="${item.img}" alt="${item.title}" class="ac-img">
-    <div class="ac-title">${item.title}</div>
-  </header>
-
-  <div class="ac-price-line">
-    <span>Harga:</span>
-    <strong class="ac-price">${fmtRp(item.price)}</strong>
-  </div>
-
-  <div class="ac-stats">
-    <div class="ac-stat">
-      <div class="ac-big ac-daily">${fmtRp(item.daily)}</div>
-      <div class="ac-sub">Pendapatan harian</div>
-    </div>
-    <div class="ac-stat">
-      <div class="ac-big ac-total">${fmtRp(item.daily * item.contract)}</div>
-      <div class="ac-sub">Total pendapatan</div>
-    </div>
-    <div class="ac-stat">
-      <div class="ac-big ac-cycle">${item.contract} hari</div>
-      <div class="ac-sub">Siklus</div>
-    </div>
-  </div>
-
-  <button class="buy-btn btn-success">Beli</button>
-</article>`;
-  }).join('');
-
-  wrap.insertAdjacentHTML('beforeend', html);
-}
-
-// Isi/ikat kartu hewan yang sudah dirender
-function initFarmCards() {
-  const cards = $$('.animal-card.v2', $('#farmTab'));
+// Inisialisasi kartu hewan (layout marketplace)
+export function initFarmCards() {
+  const cards = $$('#marketList .market-card, .animal-card.v2', document);
   if (!cards.length) return;
 
   cards.forEach(card => {
     const price    = Number(card.dataset.price || 0);
     const daily    = Number(card.dataset.daily || 0);
     const contract = Number(card.dataset.contract || 0);
+    const total    = daily * contract;
 
-    // Safety: sinkronkan angka lagi (kalau HTML diedit manual)
-    card.querySelector('.ac-price') ?.replaceChildren(document.createTextNode(fmtRp(price)));
-    card.querySelector('.ac-daily') ?.replaceChildren(document.createTextNode(fmtRp(daily)));
-    card.querySelector('.ac-total') ?.replaceChildren(document.createTextNode(fmtRp(daily * contract)));
-    const cycleEl = card.querySelector('.ac-cycle');
-    if (cycleEl) cycleEl.textContent = `${contract} hari`;
+    // Isi UI (coba cari selector versi v2 atau market)
+    const priceEl = card.querySelector('.ac-price, .mc-price b');
+    if (priceEl) priceEl.textContent = fmtRp(price);
 
-    // Aksi beli
-    card.querySelector('.buy-btn')?.addEventListener('click', () => {
-      const name = (card.dataset.animal || card.querySelector('.ac-title')?.textContent || 'Item').toUpperCase();
+    const dailyEl = card.querySelector('.ac-daily, .mc-stat .mc-big');
+    if (card.classList.contains('market-card')) {
+      const d = card.querySelectorAll('.mc-stat .mc-big')[0];
+      const t = card.querySelectorAll('.mc-stat .mc-big')[1];
+      if (d) d.textContent = fmtRp(daily);
+      if (t) t.textContent = fmtRp(total);
+      const c = card.querySelector('.mc-contract, .mc-stat .mc-big:nth-child(3)');
+      if (c) c.textContent = `${contract} hari`;
+    } else {
+      if (dailyEl) dailyEl.textContent = fmtRp(daily);
+      const totalEl = card.querySelector('.ac-total');
+      if (totalEl) totalEl.textContent = fmtRp(total);
+      const cycleEl = card.querySelector('.ac-cycle');
+      if (cycleEl) cycleEl.textContent = `${contract} hari`;
+    }
+
+    card.querySelector('.buy-btn, .buy-btn-green')?.addEventListener('click', () => {
+      const name = (card.dataset.animal || card.querySelector('.ac-title, .mc-title')?.textContent || 'Item').toUpperCase();
       toast(`Beli ${name} seharga ${fmtRp(price)} ✅`);
-      // TODO: di sini sambungkan ke flow/checkout Firestore kamu
-    });
+    }, { once: false });
   });
 }
 
-/* =======================================================================
- *  PRIVATE: Render header saldo + metrics
- * ======================================================================= */
+/* =========================================================================
+ *  PRIVATE: Render saldo + metrik (update ke Farm & Profil sekaligus)
+ * ========================================================================= */
+
 function renderFarm({
   balance = 0,
   profitAsset = 0,
@@ -152,14 +103,12 @@ function renderFarm({
   countableDays = 210,
   countdownDays = 210
 } = {}) {
-  const root = $('#farmTab');
-  if (!root) return;
+  // Update semua saldo kuantitatif (baik di Farm maupun di Profil)
+  $$('.farm-balance').forEach(el => {
+    el.textContent = Number(balance).toFixed(2);
+  });
 
-  // Header saldo
-  const balanceEl = root.querySelector('.farm-balance');
-  if (balanceEl) balanceEl.textContent = Number(balance).toFixed(2);
-
-  // Urutan sesuai markup metric
+  // Data metrik (urutannya mengikuti markup)
   const values = [
     Number(profitAsset).toFixed(2), // Aset Keuntungan
     String(earningToday),           // Penghasilan Hari Ini
@@ -168,15 +117,19 @@ function renderFarm({
     String(countdownDays)           // Hari Hitung Mundur
   ];
 
-  $$('.metric', root).forEach((m, i) => {
-    const v = m.querySelector('.metric-value');
-    if (v && values[i] != null) v.textContent = values[i];
+  // Untuk setiap grid metrik yang ada di halaman, isi sesuai urutan
+  $$('.metric-grid').forEach(grid => {
+    $$('.metric', grid).forEach((m, i) => {
+      const v = m.querySelector('.metric-value');
+      if (v && values[i] != null) v.textContent = values[i];
+    });
   });
 }
 
-/* =======================================================================
+/* =========================================================================
  *  Utils
- * ======================================================================= */
+ * ========================================================================= */
+
 function toast(msg) {
   if (window.App?.toast) window.App.toast(msg);
   else alert(msg);
