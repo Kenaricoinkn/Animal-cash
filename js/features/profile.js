@@ -1,11 +1,27 @@
 // js/features/profile.js
-// Modul UI untuk tab Profil: menampilkan UID & siapa yang login
-
 export function initProfile(user) {
-  const uidEl = document.querySelector('#uid');
-  const whoEl = document.querySelector('#who');
-  if (!uidEl || !whoEl) return;
+  try {
+    // UID
+    const uidEl = document.getElementById('uid');
+    if (uidEl) uidEl.textContent = user?.uid || '—';
 
-  uidEl.textContent = user?.uid || '—';
-  whoEl.textContent = user?.email || user?.displayName || '(user)';
+    // Tampilkan hanya nomor:
+    // Prioritas:
+    // 1) displayName = "tel:<digits>"
+    // 2) email yang di-map dari phone => "<digits>@phone.user"
+    // 3) fallback ke email biasa
+    let who = user?.email || '';
+    const dn = (user?.displayName || '').trim();
+
+    if (dn.startsWith('tel:')) {
+      who = dn.slice(4);
+    } else if (who.endsWith('@phone.user')) {
+      who = who.replace('@phone.user', '');
+    }
+
+    const whoEl = document.getElementById('who');
+    if (whoEl) whoEl.textContent = who || '—';
+  } catch (e) {
+    console.error('initProfile error', e);
+  }
 }
