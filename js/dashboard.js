@@ -1,4 +1,4 @@
-// js/dashboard.js — sinkron dengan dashboard.html (homePane + homeGrid)
+// js/dashboard.js — sinkron dengan dashboard.html (homeHeader + homeGrid)
 (() => {
   // ---------- Helper: tunggu DOM & Firebase siap ----------
   const whenDOMReady = new Promise(res => {
@@ -14,30 +14,14 @@
   Promise.all([whenDOMReady, whenFirebase]).then(init).catch(console.error);
 
   async function init() {
-    // ---------- Import modul opsional secara aman ----------
+    // ---------- Import modul opsional ----------
     let applyLang = () => {}, buildLanguageSheet = () => {};
     let initFarm = () => {}, initInvite = () => {}, initProfile = () => {};
 
-    try {
-      const m = await import('./i18n.js');
-      applyLang = m.applyLang || applyLang;
-      buildLanguageSheet = m.buildLanguageSheet || buildLanguageSheet;
-    } catch {}
-
-    try {
-      const m = await import('./features/farm.js');
-      initFarm = m.initFarm || initFarm;
-    } catch {}
-
-    try {
-      const m = await import('./features/invite.js');
-      initInvite = m.initInvite || initInvite;
-    } catch {}
-
-    try {
-      const m = await import('./features/profile.js');
-      initProfile = m.initProfile || initProfile;
-    } catch {}
+    try { const m = await import('./i18n.js'); applyLang = m.applyLang || applyLang; buildLanguageSheet = m.buildLanguageSheet || buildLanguageSheet; } catch {}
+    try { const m = await import('./features/farm.js'); initFarm = m.initFarm || initFarm; } catch {}
+    try { const m = await import('./features/invite.js'); initInvite = m.initInvite || initInvite; } catch {}
+    try { const m = await import('./features/profile.js'); initProfile = m.initProfile || initProfile; } catch {}
 
     // ---------- Auth guard ----------
     const { auth } = window.App.firebase;
@@ -53,42 +37,38 @@
       app?.classList.remove('hidden');
 
       try { initProfile(user); } catch {}
-      try { initInvite(); }   catch {}
-      try { initFarm(); }     catch {}
+      try { initInvite(); } catch {}
+      try { initFarm(); } catch {}
 
       applyInitialTab();
     });
 
     // ---------- Tabs logic ----------
-    const tabBtns   = document.querySelectorAll('.tabbtn');
+    const tabBtns    = document.querySelectorAll('.tabbtn');
 
-    // Home = 2 section terpisah
-    const homePane  = document.querySelector('#homePane');  // ✅ sesuai HTML
-    const homeGrid  = document.querySelector('#homeGrid');
-    const farmTab   = document.querySelector('#farmTab');
-    const inviteTab = document.querySelector('#inviteTab');
-    const profileTab= document.querySelector('#profileTab');
+    // Home terdiri dari 2 section:
+    const homeHeader = document.querySelector('#homeHeader'); // ✅ sesuai HTML kamu
+    const homeGrid   = document.querySelector('#homeGrid');
+    const farmTab    = document.querySelector('#farmTab');
+    const inviteTab  = document.querySelector('#inviteTab');
+    const profileTab = document.querySelector('#profileTab');
 
-    // Semua view
-    const ALL_VIEWS = [homePane, homeGrid, farmTab, inviteTab, profileTab].filter(Boolean);
+    // Semua view yang bisa di-show/hide
+    const ALL_VIEWS = [homeHeader, homeGrid, farmTab, inviteTab, profileTab].filter(Boolean);
 
-    // Mapping tab -> views
+    // View aktif per tab
     const VIEWS_BY_TAB = {
-      home:   [homePane, homeGrid],
+      home:   [homeHeader, homeGrid],
       farm:   [farmTab],
       invite: [inviteTab],
       profile:[profileTab],
     };
 
     function showOnly(els) {
-      ALL_VIEWS.forEach(el => {
-        if (!el) return;
-        el.classList.add('hidden');
-      });
+      ALL_VIEWS.forEach(el => el?.classList.add('hidden'));
       els?.forEach(el => {
         el?.classList.remove('hidden');
-
-        // efek fade ringan biar terasa “slide lembut”
+        // efek fade ringan
         try {
           el.style.opacity = 0;
           el.style.transition = 'opacity .25s ease';
@@ -108,7 +88,7 @@
       btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
 
-    // Elemen lain yang punya [data-tab] (mis. item menu)
+    // Delegasi: elemen lain yang punya [data-tab]
     document.addEventListener('click', (e) => {
       const t = e.target.closest('[data-tab]');
       if (!t) return;
@@ -120,6 +100,7 @@
       }
     });
 
+    // Default ke tab dari hash atau 'home'
     function applyInitialTab() {
       const hash = (location.hash || '').replace('#','');
       const first = ['home','farm','invite','profile'].includes(hash) ? hash : 'home';
