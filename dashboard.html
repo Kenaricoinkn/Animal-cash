@@ -276,7 +276,33 @@
         </ul>
       </div>
     </section>
+<!-- Modal Pembelian (QR Admin) -->
+<div id="buyModal" class="fixed inset-0 hidden items-center justify-center bg-black/70 z-50">
+  <div class="bg-slate-900 rounded-2xl p-4 w-[92%] max-w-md text-center relative">
+    <button id="closeBuy" class="absolute top-2 right-2 text-slate-400">✕</button>
 
+    <h3 class="text-lg font-semibold mb-1">Pembayaran</h3>
+    <p class="text-xs text-slate-400 mb-3">Scan QR berikut, lalu unggah bukti transfer.</p>
+
+    <!-- info pesanan -->
+    <div class="glass rounded-xl p-3 mb-3 text-left">
+      <div class="text-sm"><span class="text-slate-400">Hewan:</span> <b id="buyAnimal">-</b></div>
+      <div class="text-sm"><span class="text-slate-400">Harga:</span> <b id="buyPrice">Rp 0</b></div>
+      <div class="text-xs text-slate-400">Pastikan nominal transfer sesuai.</div>
+    </div>
+
+    <!-- QR Admin (statis) -->
+    <img id="buyQr" src="img/qr-admin.png" alt="QR Admin" class="mx-auto w-56 h-56 mb-2 rounded-lg bg-white p-2">
+    <a id="downloadQr" href="img/qr-admin.png" download="QR-Admin.png"
+       class="chip inline-flex items-center mb-3">⬇️ Download QR</a>
+
+    <!-- Form bukti transfer -->
+    <form id="buyForm" class="space-y-3">
+      <input type="file" id="proof" accept="image/*" class="w-full text-sm text-slate-300">
+      <button class="btn-primary w-full py-2 rounded-xl" type="submit">Kirim Bukti</button>
+    </form>
+  </div>
+</div>
     <!-- ===================== FARM ===================== -->
     <section id="farmTab" class="hidden tab-content">
       <h2 class="section-title">Farm</h2>
