@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Animals Cash — Admin Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="css/admin.css"/>
+</head>
+<body class="text-slate-100 min-h-screen bg-anim">
+  <header class="px-4 py-4 flex items-center justify-between border-b border-white/10">
+    <h1 class="text-lg font-extrabold tracking-wide">
+      <span class="brand-title">Admin Panel</span>
+    </h1>
+    <div class="text-sm">
+      <span id="adminEmail" class="opacity-80">—</span>
+      <button id="btnLogout" class="ml-3 px-3 py-1 rounded bg-rose-500 text-white text-xs">Logout</button>
+    </div>
+  </header>
+
+  <main class="p-4 space-y-6">
+    <!-- Gate -->
+    <div id="gate" class="glass p-4 rounded-xl hidden"></div>
+
+    <!-- Pending Topups -->
+    <section class="glass p-4 rounded-2xl">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-bold">Top-up Pending</h2>
+        <button id="btnRefreshPending" class="px-3 py-1 rounded bg-sky-400 text-black text-xs">Refresh</button>
+      </div>
+      <div class="overflow-auto">
+        <table class="w-full text-sm align-middle" id="tblPending">
+          <thead class="text-slate-300">
+            <tr>
+              <th class="text-left py-2">Waktu</th>
+              <th class="text-left">UID</th>
+              <th class="text-left">Nominal</th>
+              <th class="text-left">TXID/Ref</th>
+              <th class="text-left">Status</th>
+              <th class="text-left">Aksi</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Semua Topups (riwayat ringkas) -->
+    <section class="glass p-4 rounded-2xl">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-bold">Riwayat (50 terbaru)</h2>
+        <button id="btnRefreshAll" class="px-3 py-1 rounded bg-sky-400 text-black text-xs">Refresh</button>
+      </div>
+      <div class="overflow-auto">
+        <table class="w-full text-sm align-middle" id="tblAll">
+          <thead class="text-slate-300">
+            <tr>
+              <th class="text-left py-2">Waktu</th>
+              <th class="text-left">UID</th>
+              <th class="text-left">Nominal</th>
+              <th class="text-left">TXID/Ref</th>
+              <th class="text-left">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Firebase core (REUSE dari app utama) -->
+  <script type="module" src="../js/firebase-init.js"></script>
+  <!-- Admin logic -->
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
