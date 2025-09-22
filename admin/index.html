@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/admin.css"/>
 </head>
 <body class="text-slate-100 min-h-screen bg-anim">
+  <!-- HEADER -->
   <header class="px-4 py-4 flex items-center justify-between border-b border-white/10">
     <h1 class="text-lg font-extrabold tracking-wide">
       <span class="brand-title">Admin Panel</span>
@@ -20,52 +21,105 @@
   </header>
 
   <main class="p-4 space-y-6">
-    <!-- Gate -->
-    <div id="gate" class="glass p-4 rounded-xl hidden"></div>
+    <!-- LOGIN CARD -->
+    <section id="loginCard" class="glass p-4 rounded-2xl max-w-md mx-auto">
+      <h2 class="font-bold mb-3">Login Admin</h2>
+      <p class="text-sm text-slate-300 mb-3">Masuk dengan nomor HP yang terdaftar sebagai admin. Kamu akan menerima OTP (SMS).</p>
+      <form id="formLogin" class="space-y-3">
+        <div>
+          <label class="text-xs text-slate-400">Nomor HP (format internasional)</label>
+          <input id="phoneInput" class="input w-full" placeholder="+62XXXXXXXXX" type="tel" required />
+        </div>
+        <div id="recaptcha" class="my-2"></div>
+        <button id="btnSendOTP" class="btn-primary w-full py-2 rounded-xl" type="button">Kirim OTP</button>
 
-    <!-- Pending Topups -->
-    <section class="glass p-4 rounded-2xl">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="font-bold">Top-up Pending</h2>
-        <button id="btnRefreshPending" class="px-3 py-1 rounded bg-sky-400 text-black text-xs">Refresh</button>
-      </div>
-      <div class="overflow-auto">
-        <table class="w-full text-sm align-middle" id="tblPending">
-          <thead class="text-slate-300">
-            <tr>
-              <th class="text-left py-2">Waktu</th>
-              <th class="text-left">UID</th>
-              <th class="text-left">Nominal</th>
-              <th class="text-left">TXID/Ref</th>
-              <th class="text-left">Status</th>
-              <th class="text-left">Aksi</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-white/5"></tbody>
-        </table>
-      </div>
+        <div id="otpWrap" class="hidden">
+          <label class="text-xs text-slate-400">Kode OTP (6 digit)</label>
+          <input id="otpInput" class="input w-full" placeholder="123456" inputmode="numeric" />
+          <!-- OPSIONAL: PIN Admin (hash di Firestore) -->
+          <label class="text-xs text-slate-400 mt-2 block">PIN Admin (opsional)</label>
+          <input id="pinInput" class="input w-full" placeholder="PIN Admin (6-8 digit)" inputmode="numeric" />
+          <button id="btnVerifyOTP" class="btn-primary w-full py-2 rounded-xl mt-2" type="button">Verifikasi</button>
+        </div>
+      </form>
+      <div id="loginMsg" class="text-sm text-rose-300 mt-2"></div>
     </section>
 
-    <!-- Semua Topups (riwayat ringkas) -->
-    <section class="glass p-4 rounded-2xl">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="font-bold">Riwayat (50 terbaru)</h2>
-        <button id="btnRefreshAll" class="px-3 py-1 rounded bg-sky-400 text-black text-xs">Refresh</button>
-      </div>
-      <div class="overflow-auto">
-        <table class="w-full text-sm align-middle" id="tblAll">
-          <thead class="text-slate-300">
-            <tr>
-              <th class="text-left py-2">Waktu</th>
-              <th class="text-left">UID</th>
-              <th class="text-left">Nominal</th>
-              <th class="text-left">TXID/Ref</th>
-              <th class="text-left">Status</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-white/5"></tbody>
-        </table>
-      </div>
+    <!-- GATE (jika bukan admin) -->
+    <div id="gate" class="glass p-4 rounded-xl hidden"></div>
+
+    <!-- DASHBOARD (hanya muncul setelah admin verified) -->
+    <section id="adminArea" class="space-y-6 hidden">
+
+      <!-- Purchases Pending -->
+      <section class="glass p-4 rounded-2xl">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-bold">Purchases Pending</h2>
+          <button id="btnRefreshPurch" class="px-3 py-1 rounded bg-sky-400 text-black text-xs">Refresh</button>
+        </div>
+        <div class="overflow-auto">
+          <table class="w-full text-sm align-middle" id="tblPurch">
+            <thead class="text-slate-300">
+              <tr>
+                <th class="text-left py-2">Waktu</th>
+                <th class="text-left">UID</th>
+                <th class="text-left">Item</th>
+                <th class="text-left">Harga</th>
+                <th class="text-left">Bukti</th>
+                <th class="text-left">Status</th>
+                <th class="text-left">Aksi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Withdrawals Pending -->
+      <section class="glass p-4 rounded-2xl">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-bold">Withdrawals Pending</h2>
+          <button id="btnRefreshWd" class="px-3 py-1 rounded bg-sky-400 text-black text-xs">Refresh</button>
+        </div>
+        <div class="overflow-auto">
+          <table class="w-full text-sm align-middle" id="tblWd">
+            <thead class="text-slate-300">
+              <tr>
+                <th class="text-left py-2">Waktu</th>
+                <th class="text-left">UID</th>
+                <th class="text-left">Tujuan</th>
+                <th class="text-left">Nominal</th>
+                <th class="text-left">Status</th>
+                <th class="text-left">Aksi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Riwayat Gabungan -->
+      <section class="glass p-4 rounded-2xl">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-bold">Riwayat (50 terbaru)</h2>
+          <button id="btnRefreshAll" class="px-3 py-1 rounded bg-sky-400 text-black text-xs">Refresh</button>
+        </div>
+        <div class="overflow-auto">
+          <table class="w-full text-sm align-middle" id="tblAll">
+            <thead class="text-slate-300">
+              <tr>
+                <th class="text-left py-2">Waktu</th>
+                <th class="text-left">Jenis</th>
+                <th class="text-left">UID</th>
+                <th class="text-left">Nominal</th>
+                <th class="text-left">Ref/Bukti</th>
+                <th class="text-left">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5"></tbody>
+          </table>
+        </div>
+      </section>
     </section>
   </main>
 
