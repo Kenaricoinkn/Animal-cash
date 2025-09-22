@@ -1,4 +1,4 @@
-// js/dashboard.js — sinkron dgn dashboard.html (homeHeader + homeGrid)
+// js/dashboard.js — sinkron dengan dashboard.html (homePane + homeGrid)
 (() => {
   // ---------- Helper: tunggu DOM & Firebase siap ----------
   const whenDOMReady = new Promise(res => {
@@ -26,7 +26,7 @@
 
     try {
       const m = await import('./features/farm.js');
-      initFarm = m.initFarm || initFarm; // sudah include initFarmCards di dalamnya
+      initFarm = m.initFarm || initFarm;
     } catch {}
 
     try {
@@ -52,56 +52,63 @@
       gate?.classList.add('hidden');
       app?.classList.remove('hidden');
 
-      // Init fitur (jika modulnya tersedia)
       try { initProfile(user); } catch {}
-      try { initInvite(); } catch {}
-      try { initFarm(); } catch {}
+      try { initInvite(); }   catch {}
+      try { initFarm(); }     catch {}
 
-      // Setelah login, pastikan tab default muncul benar
       applyInitialTab();
     });
 
     // ---------- Tabs logic ----------
     const tabBtns   = document.querySelectorAll('.tabbtn');
 
-    // Home terdiri dari 2 view terpisah: header & grid
-    const homeHeader = document.querySelector('#homeHeader');
-    const homeGrid   = document.querySelector('#homeGrid');
-    const farmTab    = document.querySelector('#farmTab');
-    const inviteTab  = document.querySelector('#inviteTab');
-    const profileTab = document.querySelector('#profileTab');
+    // Home = 2 section terpisah
+    const homePane  = document.querySelector('#homePane');  // ✅ sesuai HTML
+    const homeGrid  = document.querySelector('#homeGrid');
+    const farmTab   = document.querySelector('#farmTab');
+    const inviteTab = document.querySelector('#inviteTab');
+    const profileTab= document.querySelector('#profileTab');
 
-    // Semua view yang bisa di-show/hide
-    const ALL_VIEWS = [homeHeader, homeGrid, farmTab, inviteTab, profileTab].filter(Boolean);
+    // Semua view
+    const ALL_VIEWS = [homePane, homeGrid, farmTab, inviteTab, profileTab].filter(Boolean);
 
-    // View aktif per tab
+    // Mapping tab -> views
     const VIEWS_BY_TAB = {
-      home:   [homeHeader, homeGrid],
+      home:   [homePane, homeGrid],
       farm:   [farmTab],
       invite: [inviteTab],
       profile:[profileTab],
     };
 
     function showOnly(els) {
-      ALL_VIEWS.forEach(el => el?.classList.add('hidden'));
-      els?.forEach(el => el?.classList.remove('hidden'));
+      ALL_VIEWS.forEach(el => {
+        if (!el) return;
+        el.classList.add('hidden');
+      });
+      els?.forEach(el => {
+        el?.classList.remove('hidden');
+
+        // efek fade ringan biar terasa “slide lembut”
+        try {
+          el.style.opacity = 0;
+          el.style.transition = 'opacity .25s ease';
+          requestAnimationFrame(() => { el.style.opacity = 1; });
+        } catch {}
+      });
     }
 
     function switchTab(tabKey) {
-      // Update tombol aktif
       tabBtns.forEach(b => b.classList.toggle('tab-active', b.dataset.tab === tabKey));
-      // Tampilkan hanya view milik tab
       showOnly(VIEWS_BY_TAB[tabKey] || []);
-      // Simpan di hash agar refresh tetap di tab yang sama
       try { history.replaceState(null, '', `#${tabKey}`); } catch {}
+      try { window.scrollTo({ top: 0, behavior: 'instant' }); } catch { window.scrollTo(0, 0); }
     }
 
-    // Klik pada tombol tab bawah
     tabBtns.forEach(btn => {
       btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
 
-    // Delegasi: elemen lain yang punya [data-tab] (mis. item menu “Mengundang teman”)
+    // Elemen lain yang punya [data-tab] (mis. item menu)
     document.addEventListener('click', (e) => {
       const t = e.target.closest('[data-tab]');
       if (!t) return;
@@ -110,12 +117,9 @@
       if (!t.classList.contains('tabbtn')) {
         e.preventDefault();
         switchTab(key);
-        // optional: scroll ke atas saat pindah tab via menu
-        try { window.scrollTo({ top: 0, behavior: 'instant' }); } catch { window.scrollTo(0, 0); }
       }
     });
 
-    // Default ke tab dari hash atau 'home'
     function applyInitialTab() {
       const hash = (location.hash || '').replace('#','');
       const first = ['home','farm','invite','profile'].includes(hash) ? hash : 'home';
@@ -123,7 +127,7 @@
     }
     applyInitialTab();
 
-    // ---------- Language sheet (opsional) ----------
+    // ---------- Language sheet ----------
     const langSheet = document.querySelector('#langSheet');
     document.querySelector('#btnLanguage')?.addEventListener('click', () => {
       try { buildLanguageSheet(); } catch {}
@@ -134,7 +138,7 @@
     });
     try { applyLang(localStorage.getItem('lang') || 'id'); } catch {}
 
-    // ---------- Optional logout (kalau ada tombolnya) ----------
+    // ---------- Optional logout ----------
     document.querySelector('#btnLogout')?.addEventListener('click', async () => {
       try { await auth.signOut(); } finally {
         unsubAuth?.();
