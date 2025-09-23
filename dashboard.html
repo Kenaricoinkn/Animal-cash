@@ -459,15 +459,17 @@
 <script type="module" src="js/app-core.js"></script>
   <script type="module" src="js/firebase-init.js"></script>
   <script type="module" src="js/i18n.js"></script>
-  <script type="module" src="js/features/withdraw.js"></script>
   <script type="module" src="js/dashboard.js"></script>
   <script type="module">
-    import { initFarm, initFarmCards } from './js/features/farm.js?v=5';
-    window.addEventListener('DOMContentLoaded', () => {
-      initFarm();
-      initFarmCards();
-    });
-  </script>
+  import { initFarm, initFarmCards } from './js/features/farm.js?v=5';
+  import { initWithdraw } from './js/features/withdraw.js?v=5';
+
+  window.addEventListener('DOMContentLoaded', () => {
+    initFarm();
+    initFarmCards();
+    initWithdraw();   // <— INI YANG KURANG
+  });
+</script>
 
   <!-- Fallback: buka modal QR walau farm.js gagal -->
   <script>
