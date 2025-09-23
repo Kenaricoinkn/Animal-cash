@@ -1,4 +1,4 @@
-// js/features/farm.js — Cloudinary unsigned preset (FIXED no-recursion)
+// js/features/farm.js — Cloudinary unsigned preset (FIXED)
 
 /* =================== Helpers =================== */
 const $  = (sel, root=document) => root.querySelector(sel);
@@ -9,8 +9,8 @@ const fmtRp = (n,opt={}) => new Intl.NumberFormat('id-ID',{
 const toast = (m)=> window.App?.toast ? window.App.toast(m) : alert(m);
 
 /* =================== Cloudinary =================== */
-const CLOUD_NAME    = "ddxezj8az";      // <- cloud name kamu
-const UPLOAD_PRESET = "Animalcash";     // <- unsigned preset
+const CLOUD_NAME    = "ddxezj8az";
+const UPLOAD_PRESET = "Animalcash";
 const UPLOAD_URL    = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
 
 /* =================== Firebase =================== */
@@ -40,7 +40,6 @@ export function initFarm() {
  *  MARKETPLACE + MODAL QR
  * ========================================================================= */
 export function initFarmCards() {
-  // longgarkan selector agar pasti kena
   const cards = $$('.animal-card, .animal-card.v2, .market-card');
   if (!cards.length) return;
 
@@ -62,7 +61,6 @@ export function initFarmCards() {
 
   let selected = null;
 
-  // helper untuk buka modal dari kartu
   function openFromCard(card){
     const price    = Number(card.dataset.price || 0);
     const daily    = Number(card.dataset.daily || 0);
@@ -70,15 +68,20 @@ export function initFarmCards() {
     const name     = (card.dataset.animal || card.querySelector('.ac-title, .mc-title')?.textContent || 'Item').toUpperCase();
 
     selected = { animal:name, price, daily, days:contract };
-    nameEl && (nameEl.textContent = name);
-    priceEl && (priceEl.textContent = fmtRp(price));
+
+    if (nameEl)  nameEl.textContent  = name;
+    if (priceEl) priceEl.textContent = fmtRp(price);
+
     form?.reset();
     if (submitBtn){
       submitBtn.disabled=false;
       submitBtn.textContent='Kirim Bukti';
       submitBtn.classList.remove('bg-emerald-500','text-black','opacity-60','pointer-events-none');
     }
-    noteEl && (noteEl.classList.add('hidden'), noteEl.textContent='');
+    if (noteEl){
+      noteEl.classList.add('hidden');
+      noteEl.textContent='';
+    }
     showModal();
   }
 
@@ -88,35 +91,26 @@ export function initFarmCards() {
     const daily    = Number(card.dataset.daily || 0);
     const contract = Number(card.dataset.contract || 0);
     const total    = daily * contract;
-    card.querySelector('.ac-price, .mc-price b')?.textContent = fmtRp(price);
-    card.querySelector('.ac-daily, .mc-stat .mc-big')?.textContent = fmtRp(daily);
-    card.querySelector('.ac-total')?.textContent = fmtRp(total);
-    card.querySelector('.ac-cycle, .mc-contract')?.textContent = `${contract} hari`;
 
-    // tombol yang umum
-    card.querySelector('.buy-btn, .buy-btn-green, .btn-buy')?.addEventListener('click', ()=> openFromCard(card));
-    // opsi: atribut data-buy (kalau ada)
-    card.querySelector('[data-buy]')?.addEventListener('click', ()=> openFromCard(card));
+    let el;
+    el = card.querySelector('.ac-price, .mc-price b');        if (el) el.textContent = fmtRp(price);
+    el = card.querySelector('.ac-daily, .mc-stat .mc-big');    if (el) el.textContent = fmtRp(daily);
+    el = card.querySelector('.ac-total, .mc-total');           if (el) el.textContent = fmtRp(total);
+    el = card.querySelector('.ac-cycle, .mc-contract');        if (el) el.textContent = `${contract} hari`;
+
+    const btns = card.querySelectorAll('.buy-btn, .buy-btn-green, .btn-buy, [data-buy]');
+    btns.forEach(btn=>{
+      btn.__hasFarmHandler = true;
+      btn.addEventListener('click', ()=> openFromCard(card));
+    });
   });
 
-  /* ---------- SAFE delegation (tanpa re-dispatch) ----------
-     Beberapa tema mungkin pakai tombol lain. Kita tangkap klik pada
-     elemen yang mirip tombol BELI, lalu langsung panggil openFromCard()
-     TANPA dispatch event "click" lagi (agar tidak rekursif). */
+  // SAFE delegation (tanpa re-dispatch / rekursi)
   document.addEventListener('click', (ev)=>{
     const btn = ev.target.closest('.buy-btn, .buy-btn-green, .btn-buy, [data-buy]');
-    if (!btn) return;
-    // kalau tombolnya sudah punya handler di atas, biarkan handler itu jalan
-    // handler di atas terpasang pada element dalam kartu; deteksi via flag
-    if (btn.__hasFarmHandler) return;
+    if (!btn || btn.__hasFarmHandler) return; // sudah ada handler langsung
     const card = btn.closest('.animal-card, .animal-card.v2, .market-card');
     if (card) openFromCard(card);
-  });
-
-  // tandai tombol yang sudah dipasang handlernya supaya delegation tidak dobel
-  cards.forEach(card=>{
-    card.querySelectorAll('.buy-btn, .buy-btn-green, .btn-buy, [data-buy]')
-        .forEach(el => el.__hasFarmHandler = true);
   });
 
   closeBt?.addEventListener('click', hideModal);
@@ -131,12 +125,13 @@ export function initFarmCards() {
     const file = proofEl?.files?.[0];
     if (!file) {
       toast('Silakan unggah foto / bukti transfer dulu.');
-      proofEl?.classList.add('ring-2','ring-rose-400');
-      setTimeout(()=>proofEl?.classList.remove('ring-2','ring-rose-400'),1200);
+      if (proofEl){
+        proofEl.classList.add('ring-2','ring-rose-400');
+        setTimeout(()=>proofEl.classList.remove('ring-2','ring-rose-400'),1200);
+      }
       return;
     }
 
-    // state: loading
     if (submitBtn){
       submitBtn.disabled = true;
       submitBtn.textContent = 'Mengirim...';
@@ -144,9 +139,9 @@ export function initFarmCards() {
     }
 
     try {
-      // 1) create purchase pending
+      // 1) Doc purchase pending
       const pRef = await addDoc(collection(db,'purchases'),{
-        uid: user.uid,
+        uid: (auth?.currentUser?.uid)||'-',
         animal: selected.animal,
         price: selected.price,
         daily: selected.daily,
@@ -156,15 +151,16 @@ export function initFarmCards() {
         createdAt: serverTimestamp()
       });
 
-      // 2) upload ke Cloudinary (unsigned)
+      // 2) Upload ke Cloudinary (unsigned)
       const fd = new FormData();
       fd.append('file', file);
       fd.append('upload_preset', UPLOAD_PRESET);
+
       const res  = await fetch(UPLOAD_URL, { method:'POST', body: fd });
       const json = await res.json();
       if (!json.secure_url) throw new Error('Upload Cloudinary gagal');
 
-      // 3) simpan proofUrl
+      // 3) Simpan proofUrl
       await updateDoc(doc(db,'purchases', pRef.id), { proofUrl: json.secure_url });
 
       // 4) UI sukses
