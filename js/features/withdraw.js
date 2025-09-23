@@ -17,15 +17,15 @@ const toast = (m)=> window.App?.toast ? window.App.toast(m) : alert(m);
 
 /* ================== STATE ================== */
 const MIN_WD = 50000;                 // batas minimal penarikan
-let CURRENT_BALANCE = 0;              // users/{uid}.balance
-let PENDING_TOTAL   = 0;              // total WD status pending
-let AVAILABLE       = 0;              // saldo bisa ditarik = balance - pending
+let CURRENT_BALANCE = 0;              // saldo di users/{uid}.balance
+let PENDING_TOTAL    = 0;             // total penarikan status pending
+let AVAILABLE        = 0;             // saldo yang boleh ditarik (balance - pending)
 
 /* ================== INIT ================== */
 export function initWithdraw() {
-  // cegah dobel binding
-  if (window.__WD_BOUND) return;
-  window.__WD_BOUND = true;
+  // cegah inisialisasi dobel
+  if (window.__wdInit) return;
+  window.__wdInit = true;
 
   const auth = window.App?.firebase?.auth || getAuth();
   const db   = window.App?.firebase?.db   || getFirestore();
@@ -53,21 +53,20 @@ export function initWithdraw() {
   // tunggu login
   onAuthStateChanged(auth, async (user)=>{
     if (!user) return;
-
     gate?.classList.add('hidden');
     appEl?.classList.remove('hidden');
 
     const uid = user.uid;
 
-    // 1) ambil saldo user (sekali) lalu render
+    // 1) ambil saldo user satu kali
     try{
       const uref = doc(db,'users',uid);
       const usnap = await getDoc(uref);
       CURRENT_BALANCE = Number(usnap.data()?.balance || 0);
-    }catch(e){ console.warn('[WD] get user balance fail', e); CURRENT_BALANCE = 0; }
-    renderBalance();
+      renderBalance();
+    }catch(e){ console.warn('[WD] get balance fail', e); }
 
-    // 2) listener total WD pending → hitung AVAILABLE
+    // 2) subscribe total WD pending user → hitung AVAILABLE
     const qPending = query(
       collection(db,'withdrawals'),
       where('uid', '==', uid),
@@ -80,7 +79,7 @@ export function initWithdraw() {
       calcAvailable();
     });
 
-    // 3) riwayat (semua status) realtime terbaru
+    // 3) render riwayat (semua status) realtime & tersusun terbaru
     const qHist = query(
       collection(db,'withdrawals'),
       where('uid', '==', uid),
@@ -116,7 +115,7 @@ export function initWithdraw() {
       list.innerHTML = rows.join('');
     });
 
-    // 4) submit e-wallet
+    // 4) submit form e-wallet
     formWallet?.addEventListener('submit', async (e)=>{
       e.preventDefault();
       const provider = (wdChecked('wallet') || 'Dana');
@@ -124,13 +123,17 @@ export function initWithdraw() {
       const name     = $('#wdwName')?.value?.trim();
       const amount   = Number($('#wdwAmount')?.value || 0);
 
-      if (!validateAmount(amount)) return;
+      const ok = validateAmount(amount);
+      if (!ok) return;
+
       if (!number || !name) { toast('Lengkapi nomor dan nama pemilik.'); return; }
 
-      await addWithdrawal(db, { uid, type:'ewallet', provider, number, name, amount });
+      await addWithdrawal(db, {
+        uid, type:'ewallet', provider, number, name, amount
+      });
     });
 
-    // 5) submit bank
+    // 5) submit form bank
     formBank?.addEventListener('submit', async (e)=>{
       e.preventDefault();
       const bank    = (wdChecked('bank') || 'Mandiri');
@@ -138,10 +141,14 @@ export function initWithdraw() {
       const owner   = $('#wdbName')?.value?.trim();
       const amount  = Number($('#wdbAmount')?.value || 0);
 
-      if (!validateAmount(amount)) return;
+      const ok = validateAmount(amount);
+      if (!ok) return;
+
       if (!account || !owner) { toast('Lengkapi nomor rekening dan nama pemilik.'); return; }
 
-      await addWithdrawal(db, { uid, type:'bank', bank, account, owner, amount });
+      await addWithdrawal(db, {
+        uid, type:'bank', bank, account, owner, amount
+      });
     });
   });
 }
@@ -162,7 +169,7 @@ function calcAvailable(){
 function statusBadge(st){
   if (st === 'approved') return 'bg-emerald-500/20 text-emerald-300';
   if (st === 'rejected') return 'bg-rose-500/20 text-rose-300';
-  return 'bg-amber-500/20 text-amber-300';
+  return 'bg-amber-500/20 text-amber-300'; // pending
 }
 
 function tsToLocal(ts){
@@ -243,27 +250,10 @@ function findSubmitBtn(formSel){
   return f.querySelector('button[type="submit"]');
 }
 
-/* ============ AUTO INIT + FALLBACK DELEGATION ============ */
-// auto-init saat modul dimuat (tanpa perlu import terpisah)
-if (document.readyState === 'loading') {
-  window.addEventListener('DOMContentLoaded', initWithdraw);
+/* ============ SELF-BOOTSTRAP (penting!) ============ */
+// Jalankan otomatis saat modul ini dimuat.
+if (document.readyState === 'loading'){
+  window.addEventListener('DOMContentLoaded', initWithdraw, { once:true });
 } else {
   initWithdraw();
-}
-
-// fallback: kalau karena cache/urutan load listener belum terpasang,
-// tetap cegat submit agar tidak “mati”.
-if (!window.__WD_FALLBACK_ATTACHED) {
-  window.__WD_FALLBACK_ATTACHED = true;
-  document.addEventListener('submit', (e)=>{
-    const id = e.target?.id;
-    if (id === 'wdFormWallet' || id === 'wdFormBank') {
-      // kalau belum ter-init, inisialisasi dulu
-      if (!window.__WD_BOUND) {
-        try { initWithdraw(); } catch {}
-      }
-      // biarkan handler utama yang jalan (default dicegat di handler utama)
-      // di sini jangan preventDefault agar tidak bentrok
-    }
-  }, { capture: true });
 }
