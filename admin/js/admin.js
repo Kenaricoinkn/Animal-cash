@@ -167,10 +167,13 @@ async function loadPurchPending(){
   tblPurchBody.innerHTML = `<tr><td colspan="7" class="py-3 text-slate-400">Memuat...</td></tr>`;
   const rows=[];
   try{
-    const q1=query(collection(db,'purchases'),
+    const q1 = query(
+      collection(db,'purchases'),
       where('status','==','pending'),
-      orderBy('createdAt','desc'), limit(50));
-    const snap=await getDocs(q1);
+      orderBy('createdAt','desc'),
+      limit(50)
+    );
+    const snap = await getDocs(q1);
     snap.forEach(d=>{
       const v=d.data()||{};
       rows.push(renderPurchRow({
@@ -183,9 +186,15 @@ async function loadPurchPending(){
         status:v.status||'pending'
       }));
     });
-  }catch(e){ console.warn(e); }
-  if(!rows.length){ tblPurchBody.innerHTML=`<tr><td colspan="7" class="py-3 text-slate-400">Tidak ada pending.</td></tr>`; }
-  else{ tblPurchBody.innerHTML=rows.join(''); bindPurchActions(tblPurchBody); }
+    tblPurchBody.innerHTML = rows.length
+      ? rows.join('')
+      : `<tr><td colspan="7" class="py-3 text-slate-400">Tidak ada pending.</td></tr>`;
+    bindPurchActions(tblPurchBody);
+  }catch(e){
+    console.error('loadPurchPending error:', e);
+    tblPurchBody.innerHTML =
+      `<tr><td colspan="7" class="py-3 text-rose-400">Gagal membaca purchases: ${e?.message||e}</td></tr>`;
+  }
 }
 function renderPurchRow({id,time,uid,item,price,proofUrl,status}){
   const proof = proofUrl ? `<a href="${proofUrl}" target="_blank" class="text-sky-300 underline">Bukti</a>` : `<span class="opacity-60">—</span>`;
