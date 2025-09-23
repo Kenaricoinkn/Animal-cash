@@ -463,6 +463,10 @@
   <script type="module" src="js/features/withdraw.js"></script>
   <script type="module" src="js/dashboard.js"></script>
   <script type="module">
+  import { initBalanceWatcher } from './js/features/balance.js';
+  initBalanceWatcher();
+</script>
+  <script type="module">
   import { initFarm, initFarmCards } from './js/features/farm.js?v=5';
   window.addEventListener('DOMContentLoaded', () => {
     initFarm();
