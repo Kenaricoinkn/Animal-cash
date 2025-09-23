@@ -1,0 +1,31 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Test Unsigned Upload</title>
+<input type="file" id="f">
+<button id="u">Upload</button>
+<pre id="out"></pre>
+<script>
+const CLOUD = "ddxezj8az";
+const PRESET = "Animalcash";
+const URL = `https://api.cloudinary.com/v1_1/${CLOUD}/upload`;
+
+u.onclick = async () => {
+  const file = f.files?.[0];
+  if (!file) return out.textContent = "Pilih file dulu";
+  const fd = new FormData();
+  fd.append("file", file);
+  fd.append("upload_preset", PRESET);
+  // fd.append("folder","proofs"); // aktifkan jika presetmu pakai folder
+  try {
+    const res = await fetch(URL, { method:"POST", body: fd });
+    const json = await res.json();
+    out.textContent = JSON.stringify(json, null, 2);
+    if (json.secure_url) {
+      const img = new Image(); img.src = json.secure_url; img.width = 240;
+      document.body.appendChild(img);
+    }
+  } catch (e) {
+    out.textContent = "Error: " + e.message;
+  }
+};
+</script>
