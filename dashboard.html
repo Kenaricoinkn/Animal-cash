@@ -185,72 +185,73 @@
       </div>
     </section>
 
-    <!-- ===================== WITHDRAW ===================== -->
-    <section id="withdrawTab" class="hidden tab-content">
-      <h2 class="text-lg font-semibold mb-3">Tarik Saldo</h2>
+<!-- ===================== WITHDRAW ===================== -->
+<section id="withdrawTab" class="hidden tab-content">
+  <h2 class="text-lg font-semibold mb-3">Tarik Saldo</h2>
 
-      <div class="glass p-1 rounded-xl inline-flex mb-3">
-        <button id="wdTabWallet" type="button" class="px-3 py-1.5 rounded-lg tab-active">E-Wallet</button>
-        <button id="wdTabBank"   type="button" class="px-3 py-1.5 rounded-lg">Bank</button>
-      </div>
+  <div class="glass p-1 rounded-xl inline-flex mb-3">
+    <button id="wdTabWallet" type="button" class="px-3 py-1.5 rounded-lg tab-active">E-Wallet</button>
+    <button id="wdTabBank"   type="button" class="px-3 py-1.5 rounded-lg">Bank</button>
+  </div>
 
-      <!-- SALDO -->
-      <div class="grid grid-cols-2 gap-3 mb-3">
-        <div class="glass p-4 rounded-2xl">
-          <div class="text-slate-300 text-sm">Saldo Kuantitatif</div>
-          <div class="text-2xl font-bold pf-quant">0.00</div>
-        </div>
-        <div class="glass p-4 rounded-2xl">
-          <div class="text-slate-300 text-sm">Total aset</div>
-          <div class="text-2xl font-bold pf-total">Rp 0</div>
-          <div class="text-xs text-slate-400 pf-total-approx">≈ Rp 0</div>
-        </div>
-      </div>
+  <!-- SALDO -->
+  <div class="grid grid-cols-2 gap-3 mb-3">
+    <div class="glass p-4 rounded-2xl">
+      <div class="text-slate-300 text-sm">Saldo Kuantitatif</div>
+      <div class="text-2xl font-bold pf-quant">0.00</div>
+    </div>
+    <div class="glass p-4 rounded-2xl">
+      <div class="text-slate-300 text-sm">Total aset</div>
+      <div class="text-2xl font-bold pf-total">Rp 0</div>
+      <div class="text-xs text-slate-400 pf-total-approx">≈ Rp 0</div>
+    </div>
+  </div>
 
-      <!-- FORM: E-WALLET -->
-      <form id="wdFormWallet" class="glass p-4 rounded-2xl space-y-3">
-        <div class="text-sm text-slate-300 font-medium">E-Wallet</div>
-        <div class="grid grid-cols-3 gap-2">
-          <label class="chip cursor-pointer"><input type="radio" name="wallet" value="Dana"  class="sr-only" checked><span>Dana</span></label>
-          <label class="chip cursor-pointer"><input type="radio" name="wallet" value="OVO"   class="sr-only"><span>OVO</span></label>
-          <label class="chip cursor-pointer"><input type="radio" name="wallet" value="GoPay" class="sr-only"><span>GoPay</span></label>
-        </div>
-        <div class="grid gap-2">
-          <input type="tel" id="wdwNumber" class="input" placeholder="Nomor e-wallet" required>
-          <input type="text" id="wdwName" class="input" placeholder="Nama pemilik" required>
-          <input type="number" id="wdwAmount" class="input" placeholder="Nominal tarik (IDR)" min="50000" step="1000" required>
-        </div>
-        <button class="btn-primary w-full py-2 rounded-xl" type="submit">Ajukan Penarikan</button>
-        <p class="text-xs text-slate-400">Pengajuan akan dikirim ke admin untuk diverifikasi.</p>
-      </form>
+  <!-- FORM: E-WALLET -->
+  <form id="wdFormWallet" class="glass p-4 rounded-2xl space-y-3" novalidate>
+    <div class="text-sm text-slate-300 font-medium">E-Wallet</div>
+    <div class="grid grid-cols-3 gap-2">
+      <label class="chip cursor-pointer"><input type="radio" name="wallet" value="Dana"  class="sr-only" checked><span>Dana</span></label>
+      <label class="chip cursor-pointer"><input type="radio" name="wallet" value="OVO"   class="sr-only"><span>OVO</span></label>
+      <label class="chip cursor-pointer"><input type="radio" name="wallet" value="GoPay" class="sr-only"><span>GoPay</span></label>
+    </div>
+    <div class="grid gap-2">
+      <input type="tel"  id="wdwNumber" class="input" placeholder="Nomor e-wallet" inputmode="numeric">
+      <input type="text" id="wdwName"   class="input" placeholder="Nama pemilik">
+      <!-- min dihapus; validasi min 50rb dilakukan oleh withdraw.js -->
+      <input type="number" id="wdwAmount" class="input" placeholder="Nominal tarik (IDR)" step="1000" inputmode="numeric">
+    </div>
+    <button class="btn-primary w-full py-2 rounded-xl" type="submit">Ajukan Penarikan</button>
+    <p class="text-xs text-slate-400">Pengajuan akan dikirim ke admin untuk diverifikasi.</p>
+  </form>
 
-      <!-- FORM: BANK -->
-      <form id="wdFormBank" class="glass p-4 rounded-2xl space-y-3 hidden">
-        <div class="text-sm text-slate-300 font-medium">Bank</div>
-        <div class="grid grid-cols-4 gap-2">
-          <label class="chip cursor-pointer"><input type="radio" name="bank" value="Mandiri" class="sr-only" checked><span>Mandiri</span></label>
-          <label class="chip cursor-pointer"><input type="radio" name="bank" value="BCA" class="sr-only"><span>BCA</span></label>
-          <label class="chip cursor-pointer"><input type="radio" name="bank" value="BNI" class="sr-only"><span>BNI</span></label>
-          <label class="chip cursor-pointer"><input type="radio" name="bank" value="BRI" class="sr-only"><span>BRI</span></label>
-        </div>
-        <div class="grid gap-2">
-          <input type="text" id="wdbRek" class="input" placeholder="No. Rekening" required>
-          <input type="text" id="wdbName" class="input" placeholder="Nama pemilik" required>
-          <input type="number" id="wdbAmount" class="input" placeholder="Nominal tarik (IDR)" min="50000" step="1000" required>
-        </div>
-        <button class="btn-primary w-full py-2 rounded-xl" type="submit">Ajukan Penarikan</button>
-        <p class="text-xs text-slate-400">Pengajuan akan dikirim ke admin untuk diverifikasi.</p>
-      </form>
+  <!-- FORM: BANK -->
+  <form id="wdFormBank" class="glass p-4 rounded-2xl space-y-3 hidden" novalidate>
+    <div class="text-sm text-slate-300 font-medium">Bank</div>
+    <div class="grid grid-cols-4 gap-2">
+      <label class="chip cursor-pointer"><input type="radio" name="bank" value="Mandiri" class="sr-only" checked><span>Mandiri</span></label>
+      <label class="chip cursor-pointer"><input type="radio" name="bank" value="BCA" class="sr-only"><span>BCA</span></label>
+      <label class="chip cursor-pointer"><input type="radio" name="bank" value="BNI" class="sr-only"><span>BNI</span></label>
+      <label class="chip cursor-pointer"><input type="radio" name="bank" value="BRI" class="sr-only"><span>BRI</span></label>
+    </div>
+    <div class="grid gap-2">
+      <input type="text"   id="wdbRek"   class="input" placeholder="No. Rekening" inputmode="numeric">
+      <input type="text"   id="wdbName"  class="input" placeholder="Nama pemilik">
+      <!-- min dihapus; validasi min 50rb dilakukan oleh withdraw.js -->
+      <input type="number" id="wdbAmount" class="input" placeholder="Nominal tarik (IDR)" step="1000" inputmode="numeric">
+    </div>
+    <button class="btn-primary w-full py-2 rounded-xl" type="submit">Ajukan Penarikan</button>
+    <p class="text-xs text-slate-400">Pengajuan akan dikirim ke admin untuk diverifikasi.</p>
+  </form>
 
-      <!-- Riwayat singkat -->
-      <div class="glass p-4 rounded-2xl mt-3">
-        <h3 class="text-base font-semibold mb-2">Riwayat Penarikan</h3>
-        <ul id="wdList" class="text-sm space-y-2 text-slate-300">
-          <li class="text-slate-400">Belum ada penarikan.</li>
-        </ul>
-      </div>
-    </section>
-
+  <!-- Riwayat singkat -->
+  <div class="glass p-4 rounded-2xl mt-3">
+    <h3 class="text-base font-semibold mb-2">Riwayat Penarikan</h3>
+    <ul id="wdList" class="text-sm space-y-2 text-slate-300">
+      <li class="text-slate-400">Belum ada penarikan.</li>
+    </ul>
+  </div>
+</section>
     <!-- ===================== MODAL PEMBELIAN (QR ADMIN) ===================== -->
     <div id="buyModal" class="fixed inset-0 hidden items-center justify-center bg-black/70 z-50">
       <div class="bg-slate-900 rounded-2xl p-4 w-[92%] max-w-md text-center relative">
