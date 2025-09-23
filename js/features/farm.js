@@ -1,4 +1,4 @@
-// js/features/farm.js — Cloudinary unsigned preset
+// js/features/farm.js — Cloudinary unsigned preset + Firestore sinkron
 
 /* =================== Helpers =================== */
 const $  = (sel, root=document) => root.querySelector(sel);
@@ -68,33 +68,39 @@ export function initFarmCards() {
     const daily    = Number(card.dataset.daily || 0);
     const contract = Number(card.dataset.contract || 0);
     const total    = daily * contract;
+
     card.querySelector('.ac-price, .mc-price b')?.textContent = fmtRp(price);
-    card.querySelector('.ac-daily, .mc-stat .mc-big')?.textContent = fmtRp(daily);
-    card.querySelector('.ac-total')?.textContent = fmtRp(total);
+    // Untuk market-card, jangan menimpa semua .mc-big; cukup total & harian bila ada
+    const dailyBig = card.querySelector('.ac-daily, .mc-stat .mc-big');
+    if (dailyBig) dailyBig.textContent = fmtRp(daily);
+    card.querySelector('.ac-total, .mc-total')?.textContent = fmtRp(total);
     card.querySelector('.ac-cycle, .mc-contract')?.textContent = `${contract} hari`;
 
     const openModal = ()=>{
-      const name = (card.dataset.animal || card.querySelector('.ac-title, .mc-title')?.textContent || 'Item').toUpperCase();
-      selected = { animal:name, price, daily, days:contract };
-      nameEl && (nameEl.textContent = name);
-      priceEl && (priceEl.textContent = fmtRp(price));
+      // Normalisasi animal => UPPERCASE agar lolos rules Firestore
+      const rawName = (card.dataset.animal || card.querySelector('.ac-title, .mc-title')?.textContent || 'Item');
+      const name = String(rawName).trim().toUpperCase();
+      selected = { animal: name, price, daily, days: contract };
+
+      if (nameEl)  nameEl.textContent  = name;
+      if (priceEl) priceEl.textContent = fmtRp(price);
+
       form?.reset();
       if (submitBtn){
         submitBtn.disabled=false;
         submitBtn.textContent='Kirim Bukti';
         submitBtn.classList.remove('bg-emerald-500','text-black','opacity-60','pointer-events-none');
       }
-      noteEl && (noteEl.classList.add('hidden'), noteEl.textContent='');
+      if (noteEl){ noteEl.classList.add('hidden'); noteEl.textContent=''; }
+
       showModal();
     };
 
-    // tombol-tombol umum di kartu
-    card.querySelector('.buy-btn, .buy-btn-green, .btn-buy')?.addEventListener('click', openModal);
-    // juga kalau kartu punya atribut data-buy
-    card.querySelector('[data-buy]')?.addEventListener('click', openModal);
+    // tombol beli (beberapa variasi)
+    card.querySelector('.buy-btn, .buy-btn-green, .btn-buy, [data-buy]')?.addEventListener('click', openModal);
   });
 
-  // Fallback: event delegation (kalau class tombol beda)
+  // Delegasi global (kalau tombol buy punya class berbeda)
   document.addEventListener('click', (ev)=>{
     const t = ev.target.closest('button, a, div, span');
     if (!t) return;
@@ -103,20 +109,27 @@ export function initFarmCards() {
       t.matches('.buy-btn, .buy-btn-green, .btn-buy') ||
       /(^|\s)beli(\s|$)/i.test(t.textContent?.trim()||'');
     if (!isBuy) return;
-    const card = t.closest('.animal-card, .animal-card.v2, .market-card');
-    if (!card) return;
-    // trigger handler kartu di atas
-    card.querySelector('.buy-btn, .buy-btn-green, .btn-buy, [data-buy]')?.dispatchEvent(new Event('click',{bubbles:true}));
+    const parentCard = t.closest('.animal-card, .animal-card.v2, .market-card');
+    if (!parentCard) return;
+    parentCard.querySelector('.buy-btn, .buy-btn-green, .btn-buy, [data-buy]')?.dispatchEvent(new Event('click',{bubbles:true}));
   });
 
+  // Close modal
   closeBt?.addEventListener('click', hideModal);
 
   // Submit bukti → Cloudinary → update Firestore
   form?.addEventListener('submit', async (ev)=>{
     ev.preventDefault();
+
     const user = auth?.currentUser;
     if (!user) return toast('Silakan login.');
     if (!selected?.animal || !selected?.price) return toast('Data produk tidak valid.');
+
+    // Validasi sesuai rules: animal harus COW/CHICKEN/SHEEP
+    const allowed = ['COW','CHICKEN','SHEEP'];
+    if (!allowed.includes(selected.animal)) {
+      return toast('Produk tidak tersedia.');
+    }
 
     const file = proofEl?.files?.[0];
     if (!file) {
@@ -134,14 +147,14 @@ export function initFarmCards() {
     }
 
     try {
-      // 1) create purchase pending
+      // 1) create purchase (pending) — sesuai Firestore rules
       const pRef = await addDoc(collection(db,'purchases'),{
-        uid: user.uid,
-        animal: selected.animal,
-        price: selected.price,
-        daily: selected.daily,
-        contractDays: selected.days,
-        payMethod: 'QR_ADMIN',
+        uid: auth.currentUser.uid,
+        animal: selected.animal,          // <- uppercase!
+        price: Number(selected.price||0),
+        daily: Number(selected.daily||0),
+        contractDays: Number(selected.days||0),
+        payMethod: 'QR_ADMIN',            // <- statis
         status: 'pending',
         createdAt: serverTimestamp()
       });
@@ -154,7 +167,7 @@ export function initFarmCards() {
       const json = await res.json();
       if (!json.secure_url) throw new Error('Upload Cloudinary gagal');
 
-      // 3) simpan proofUrl
+      // 3) simpan proofUrl (hanya field ini yang berubah — aman utk rules)
       await updateDoc(doc(db,'purchases', pRef.id), { proofUrl: json.secure_url });
 
       // 4) UI sukses
@@ -166,11 +179,13 @@ export function initFarmCards() {
       }
       if (noteEl){
         noteEl.classList.remove('hidden');
-        noteEl.innerHTML = 'Bukti berhasil dikirim. Mohon tunggu persetujuan admin (maks <b>15 menit</b>). Jika lebih dari itu, silakan hubungi admin.';
+        noteEl.innerHTML =
+          'Bukti berhasil dikirim. Mohon tunggu persetujuan admin (maks <b>15 menit</b>). Jika lebih dari itu, silakan hubungi admin.';
         setTimeout(()=>{ noteEl.innerHTML = 'Sudah lebih dari 15 menit. Jika belum diproses, silakan hubungi admin.'; }, 15*60*1000);
       }
       toast('Bukti terkirim. Menunggu verifikasi admin.');
       // biarkan modal tetap terbuka agar user baca catatan
+
     } catch(err){
       console.error(err);
       toast('Gagal mengirim bukti. Coba lagi.');
