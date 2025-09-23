@@ -13,13 +13,19 @@ const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 const fmtRp = (n,opt={}) => new Intl.NumberFormat('id-ID',{
   style:'currency', currency:'IDR', maximumFractionDigits:0, ...opt
 }).format(Number(n||0));
-const toast = (m)=> window.App?.toast ? window.App.toast(m) : alert(m);
+
+// SELALU munculkan alert agar pasti terlihat di mobile.
+// Kalau ada App.toast, tetap dipanggil juga.
+function toast(msg){
+  try { window.App?.toast?.(msg); } catch {}
+  alert(msg);
+}
 
 /* ================== STATE ================== */
 const MIN_WD = 50000;                 // minimal penarikan
 let CURRENT_BALANCE = 0;              // users/{uid}.balance
-let PENDING_TOTAL    = 0;             // total WD status pending
-let AVAILABLE        = 0;             // saldo yg bisa ditarik (balance - pending)
+let PENDING_TOTAL   = 0;              // total WD status pending
+let AVAILABLE       = 0;              // saldo yg bisa ditarik (balance - pending)
 
 /* ================== INIT ================== */
 export function initWithdraw() {
@@ -121,9 +127,7 @@ export function initWithdraw() {
       if (!validateAmount(amount)) return;
       if (!number || !name) { toast('Lengkapi nomor dan nama pemilik.'); return; }
 
-      await addWithdrawal(db, {
-        uid, type:'ewallet', provider, number, name, amount
-      });
+      await addWithdrawal(db, { uid, type:'ewallet', provider, number, name, amount });
     });
 
     // 5) submit form bank
@@ -137,9 +141,7 @@ export function initWithdraw() {
       if (!validateAmount(amount)) return;
       if (!account || !owner) { toast('Lengkapi nomor rekening dan nama pemilik.'); return; }
 
-      await addWithdrawal(db, {
-        uid, type:'bank', bank, account, owner, amount
-      });
+      await addWithdrawal(db, { uid, type:'bank', bank, account, owner, amount });
     });
   });
 }
@@ -226,7 +228,6 @@ async function addWithdrawal(db, payload){
       }, 1200);
     }
     toast('Pengajuan penarikan dikirim. Menunggu verifikasi admin.');
-    // kosongkan input nominal supaya tidak double submit
     const a1 = $('#wdwAmount'); if (a1) a1.value = '';
     const a2 = $('#wdbAmount'); if (a2) a2.value = '';
   }catch(e){
