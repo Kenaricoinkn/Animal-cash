@@ -4,12 +4,17 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Animals Cash — Dashboard</title>
+
+  <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Styles -->
   <link rel="stylesheet" href="css/styles.css"/>
   <link rel="stylesheet" href="css/bg-anim.css"/>
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col bg-anim">
-  <!-- Gradient defs untuk ikon stroked -->
+
+  <!-- Gradient defs (opsional untuk ikon) -->
   <svg aria-hidden="true" width="0" height="0" style="position:absolute">
     <defs>
       <linearGradient id="icGrad" x1="0" y1="0" x2="1" y2="1">
@@ -20,29 +25,30 @@
     </defs>
   </svg>
 
-  <!-- Top bar -->
+  <!-- Topbar -->
   <header class="px-4 pt-4">
     <div class="flex items-center justify-between">
       <div class="min-w-0"><span class="brand-title truncate">Animals Cash</span></div>
       <div class="flex items-center gap-2">
         <button class="icon-chip" aria-label="pesan">💬</button>
-        <button id="btnLanguage" class="lang-chip"><span>🌐</span><span id="langLabel">bahasa Indonesia</span></button>
+        <button id="btnLanguage" class="lang-chip">
+          <span>🌐</span><span id="langLabel">bahasa Indonesia</span>
+        </button>
       </div>
     </div>
     <div class="mt-3 search-pill"></div>
   </header>
 
-  <!-- Loader sebelum auth cek -->
+  <!-- Gate (loading / guard sebelum auth ready) -->
   <div id="gate" class="px-4 py-4 text-center text-slate-300">Memuat...</div>
 
   <!-- Konten utama -->
   <main id="app" class="hidden flex-1 px-4 pb-20 pt-1">
 
-    <!-- ===================== HOME (khusus tab Home) ===================== -->
+    <!-- ===================== HOME ===================== -->
     <section id="homeHeader" class="tab-content">
-      <!-- Banner Slider -->
+      <!-- Slider -->
       <div class="relative overflow-hidden rounded-2xl mb-2 ring-1 ring-white/10">
-        <!-- Track -->
         <div id="homeSlider" class="flex transition-transform duration-700 ease-in-out">
           <!-- Cow -->
           <div class="w-full flex-shrink-0 relative">
@@ -52,7 +58,6 @@
               🐄 <b>Cow</b> — Bonus <b>20%</b>
             </div>
           </div>
-
           <!-- Chicken -->
           <div class="w-full flex-shrink-0 relative">
             <img src="img/chicken.png" alt="Chicken"
@@ -61,7 +66,6 @@
               🐓 <b>Chicken</b> — Bonus <b>10%</b>
             </div>
           </div>
-
           <!-- Sheep -->
           <div class="w-full flex-shrink-0 relative">
             <img src="img/sheep.png" alt="Sheep"
@@ -71,7 +75,6 @@
             </div>
           </div>
         </div>
-
         <!-- Dots -->
         <div id="homeDots" class="absolute bottom-2 right-2 flex gap-1.5">
           <span class="w-2 h-2 rounded-full bg-white/70"></span>
@@ -80,7 +83,7 @@
         </div>
       </div>
 
-      <!-- Kartu saldo ringkas (HANYA tampil di Home) -->
+      <!-- Kartu ringkas -->
       <div class="grid grid-cols-2 gap-3 mb-2">
         <div class="glass p-4 rounded-2xl">
           <div class="text-slate-300 text-sm">Total aset</div>
@@ -95,11 +98,10 @@
       </div>
     </section>
 
-    <!-- GRID MENU (HANYA di Home) -->
+    <!-- GRID MENU -->
     <section id="homeGrid" class="glass p-4 rounded-2xl tab-content">
       <div class="menu-grid grid grid-cols-4 gap-x-3 gap-y-4 place-items-center text-center">
 
-        <!-- Menarik (buka tab withdraw) -->
         <a class="menu-item" data-tab="withdraw">
           <div class="menu-circle">
             <svg class="menu-icon" viewBox="0 0 24 24">
@@ -111,7 +113,6 @@
           <span class="menu-title">Menarik</span>
         </a>
 
-        <!-- Membantu -->
         <a class="menu-item">
           <div class="menu-circle">
             <svg class="menu-icon" viewBox="0 0 24 24">
@@ -122,7 +123,6 @@
           <span class="menu-title">Membantu</span>
         </a>
 
-        <!-- Tim -->
         <a class="menu-item">
           <div class="menu-circle">
             <svg class="menu-icon" viewBox="0 0 24 24">
@@ -135,7 +135,6 @@
           <span class="menu-title">Tim</span>
         </a>
 
-        <!-- Aktivitas -->
         <a class="menu-item">
           <div class="menu-circle">
             <svg class="menu-icon" viewBox="0 0 24 24">
@@ -148,7 +147,6 @@
           <span class="menu-title">Aktivitas</span>
         </a>
 
-        <!-- Mengundang teman -->
         <a class="menu-item" data-tab="invite">
           <div class="menu-circle">
             <svg class="menu-icon" viewBox="0 0 24 24">
@@ -159,7 +157,6 @@
           <span class="menu-title">Mengundang teman</span>
         </a>
 
-        <!-- Kerjasama Agen -->
         <a class="menu-item">
           <div class="menu-circle">
             <svg class="menu-icon" viewBox="0 0 24 24">
@@ -173,7 +170,6 @@
           <span class="menu-title">Kerjasama Agen</span>
         </a>
 
-        <!-- Berita -->
         <a class="menu-item">
           <div class="menu-circle">
             <svg class="menu-icon" viewBox="0 0 24 24">
@@ -189,17 +185,16 @@
       </div>
     </section>
 
-    <!-- ===================== WITHDRAW (TERPISAH dari homeGrid!) ===================== -->
+    <!-- ===================== WITHDRAW ===================== -->
     <section id="withdrawTab" class="hidden tab-content">
       <h2 class="text-lg font-semibold mb-3">Tarik Saldo</h2>
 
-      <!-- Tabs -->
       <div class="glass p-1 rounded-xl inline-flex mb-3">
-  <button id="wdTabWallet" type="button" class="px-3 py-1.5 rounded-lg tab-active">E-Wallet</button>
-  <button id="wdTabBank"   type="button" class="px-3 py-1.5 rounded-lg">Bank</button>
-</div>
+        <button id="wdTabWallet" type="button" class="px-3 py-1.5 rounded-lg tab-active">E-Wallet</button>
+        <button id="wdTabBank"   type="button" class="px-3 py-1.5 rounded-lg">Bank</button>
+      </div>
 
-      <!-- SALDO INFO -->
+      <!-- SALDO -->
       <div class="grid grid-cols-2 gap-3 mb-3">
         <div class="glass p-4 rounded-2xl">
           <div class="text-slate-300 text-sm">Saldo Kuantitatif</div>
@@ -216,26 +211,15 @@
       <form id="wdFormWallet" class="glass p-4 rounded-2xl space-y-3">
         <div class="text-sm text-slate-300 font-medium">E-Wallet</div>
         <div class="grid grid-cols-3 gap-2">
-          <label class="chip cursor-pointer">
-            <input type="radio" name="wallet" value="Dana"  class="sr-only" checked>
-            <span>Dana</span>
-          </label>
-          <label class="chip cursor-pointer">
-            <input type="radio" name="wallet" value="OVO"   class="sr-only">
-            <span>OVO</span>
-          </label>
-          <label class="chip cursor-pointer">
-            <input type="radio" name="wallet" value="GoPay" class="sr-only">
-            <span>GoPay</span>
-          </label>
+          <label class="chip cursor-pointer"><input type="radio" name="wallet" value="Dana"  class="sr-only" checked><span>Dana</span></label>
+          <label class="chip cursor-pointer"><input type="radio" name="wallet" value="OVO"   class="sr-only"><span>OVO</span></label>
+          <label class="chip cursor-pointer"><input type="radio" name="wallet" value="GoPay" class="sr-only"><span>GoPay</span></label>
         </div>
-
         <div class="grid gap-2">
           <input type="tel" id="wdwNumber" class="input" placeholder="Nomor e-wallet" required>
           <input type="text" id="wdwName" class="input" placeholder="Nama pemilik" required>
           <input type="number" id="wdwAmount" class="input" placeholder="Nominal tarik (IDR)" min="10000" step="1000" required>
         </div>
-
         <button class="btn-primary w-full py-2 rounded-xl" type="submit">Ajukan Penarikan</button>
         <p class="text-xs text-slate-400">Pengajuan akan dikirim ke admin untuk diverifikasi.</p>
       </form>
@@ -244,26 +228,16 @@
       <form id="wdFormBank" class="glass p-4 rounded-2xl space-y-3 hidden">
         <div class="text-sm text-slate-300 font-medium">Bank</div>
         <div class="grid grid-cols-4 gap-2">
-          <label class="chip cursor-pointer">
-            <input type="radio" name="bank" value="Mandiri" class="sr-only" checked><span>Mandiri</span>
-          </label>
-          <label class="chip cursor-pointer">
-            <input type="radio" name="bank" value="BCA" class="sr-only"><span>BCA</span>
-          </label>
-          <label class="chip cursor-pointer">
-            <input type="radio" name="bank" value="BNI" class="sr-only"><span>BNI</span>
-          </label>
-          <label class="chip cursor-pointer">
-            <input type="radio" name="bank" value="BRI" class="sr-only"><span>BRI</span>
-          </label>
+          <label class="chip cursor-pointer"><input type="radio" name="bank" value="Mandiri" class="sr-only" checked><span>Mandiri</span></label>
+          <label class="chip cursor-pointer"><input type="radio" name="bank" value="BCA" class="sr-only"><span>BCA</span></label>
+          <label class="chip cursor-pointer"><input type="radio" name="bank" value="BNI" class="sr-only"><span>BNI</span></label>
+          <label class="chip cursor-pointer"><input type="radio" name="bank" value="BRI" class="sr-only"><span>BRI</span></label>
         </div>
-
         <div class="grid gap-2">
           <input type="text" id="wdbRek" class="input" placeholder="No. Rekening" required>
           <input type="text" id="wdbName" class="input" placeholder="Nama pemilik" required>
           <input type="number" id="wdbAmount" class="input" placeholder="Nominal tarik (IDR)" min="10000" step="1000" required>
         </div>
-
         <button class="btn-primary w-full py-2 rounded-xl" type="submit">Ajukan Penarikan</button>
         <p class="text-xs text-slate-400">Pengajuan akan dikirim ke admin untuk diverifikasi.</p>
       </form>
@@ -276,34 +250,33 @@
         </ul>
       </div>
     </section>
-<!-- Modal Pembelian (QR Admin) -->
-<div id="buyModal" class="fixed inset-0 hidden items-center justify-center bg-black/70 z-50">
-  <div class="bg-slate-900 rounded-2xl p-4 w-[92%] max-w-md text-center relative">
-    <button id="closeBuy" class="absolute top-2 right-2 text-slate-400">✕</button>
 
-    <h3 class="text-lg font-semibold mb-1">Pembayaran</h3>
-    <p class="text-xs text-slate-400 mb-3">Scan QR berikut, lalu unggah bukti transfer.</p>
+    <!-- ===================== MODAL PEMBELIAN (QR ADMIN) ===================== -->
+    <div id="buyModal" class="fixed inset-0 hidden items-center justify-center bg-black/70 z-50">
+      <div class="bg-slate-900 rounded-2xl p-4 w-[92%] max-w-md text-center relative">
+        <button id="closeBuy" class="absolute top-2 right-2 text-slate-400">✕</button>
 
-    <!-- info pesanan -->
-    <div class="glass rounded-xl p-3 mb-3 text-left">
-      <div class="text-sm"><span class="text-slate-400">Hewan:</span> <b id="buyAnimal">-</b></div>
-      <div class="text-sm"><span class="text-slate-400">Harga:</span> <b id="buyPrice">Rp 0</b></div>
-      <div class="text-xs text-slate-400">Pastikan nominal transfer sesuai.</div>
+        <h3 class="text-lg font-semibold mb-1">Pembayaran</h3>
+        <p class="text-xs text-slate-400 mb-3">Scan QR berikut, lalu unggah bukti transfer.</p>
+
+        <div class="glass rounded-xl p-3 mb-3 text-left">
+          <div class="text-sm"><span class="text-slate-400">Hewan:</span> <b id="buyAnimal">-</b></div>
+          <div class="text-sm"><span class="text-slate-400">Harga:</span> <b id="buyPrice">Rp 0</b></div>
+          <div class="text-xs text-slate-400">Pastikan nominal transfer sesuai.</div>
+        </div>
+
+        <img id="buyQr" src="img/qr-admin.png" alt="QR Admin" class="mx-auto w-56 h-56 mb-2 rounded-lg bg-white p-2">
+        <a id="downloadQr" href="img/qr-admin.png" download="QR-Admin.png"
+           class="chip inline-flex items-center mb-3">⬇️ Download QR</a>
+
+        <form id="buyForm" class="space-y-3">
+          <input type="file" id="proof" accept="image/*" class="w-full text-sm text-slate-300">
+          <button id="buySubmit" class="btn-primary w-full py-2 rounded-xl" type="submit">Kirim Bukti</button>
+          <p id="buyNote" class="text-xs text-slate-400 mt-2 hidden"></p>
+        </form>
+      </div>
     </div>
 
-    <!-- QR Admin (statis) -->
-    <img id="buyQr" src="img/qr-admin.png" alt="QR Admin" class="mx-auto w-56 h-56 mb-2 rounded-lg bg-white p-2">
-    <a id="downloadQr" href="img/qr-admin.png" download="QR-Admin.png"
-       class="chip inline-flex items-center mb-3">⬇️ Download QR</a>
-
-    <!-- Form bukti transfer -->
-    <form id="buyForm" class="space-y-3">
-      <input type="file" id="proof" accept="image/*" class="w-full text-sm text-slate-300">
-      <button id="buySubmit" class="btn-primary w-full py-2 rounded-xl" type="submit">Kirim Bukti</button>
-      <p id="buyNote" class="text-xs text-slate-400 mt-2 hidden"></p>
-    </form>
-  </div>
-</div>
     <!-- ===================== FARM ===================== -->
     <section id="farmTab" class="hidden tab-content">
       <h2 class="section-title">Farm</h2>
@@ -314,7 +287,6 @@
           <div class="farm-balance">0.00</div>
         </div>
 
-        <!-- Pasar Ternak -->
         <h3 class="section-title mt-3">Pasar Ternak</h3>
 
         <div id="marketList" class="market-list">
@@ -328,7 +300,6 @@
                 <div class="mc-price">Harga: <b>Rp 160.000</b></div>
               </div>
             </div>
-
             <div class="mc-stats">
               <div class="mc-stat">
                 <div class="mc-big">Rp 17.000</div>
@@ -343,7 +314,6 @@
                 <div class="mc-sub">Siklus</div>
               </div>
             </div>
-
             <button class="buy-btn-green">Beli</button>
           </article>
 
@@ -357,7 +327,6 @@
                 <div class="mc-price">Harga: <b>Rp 90.000</b></div>
               </div>
             </div>
-
             <div class="mc-stats">
               <div class="mc-stat">
                 <div class="mc-big">Rp 6.000</div>
@@ -372,7 +341,6 @@
                 <div class="mc-sub">Siklus</div>
               </div>
             </div>
-
             <button class="buy-btn-green">Beli</button>
           </article>
 
@@ -386,7 +354,6 @@
                 <div class="mc-price">Harga: <b>Rp 250.000</b></div>
               </div>
             </div>
-
             <div class="mc-stats">
               <div class="mc-stat">
                 <div class="mc-big">Rp 11.000</div>
@@ -401,7 +368,6 @@
                 <div class="mc-sub">Siklus</div>
               </div>
             </div>
-
             <button class="buy-btn-green">Beli</button>
           </article>
         </div>
@@ -424,40 +390,19 @@
     <section id="profileTab" class="hidden tab-content">
       <h2 class="text-lg font-semibold mb-2">Aku</h2>
 
-      <!-- Rincian akun -->
       <div class="glass p-4 rounded-2xl mb-3">
         <div class="text-sm">
-          <span class="text-slate-400">UID:</span>
-          <span id="uid">—</span>
+          <span class="text-slate-400">UID:</span> <span id="uid">—</span>
         </div>
         <div class="text-sm">
-          <span class="text-slate-400">Masuk sebagai</span>:
-          <span id="who">—</span>
+          <span class="text-slate-400">Masuk sebagai</span>: <span id="who">—</span>
         </div>
       </div>
 
-      <!-- Ringkasan Farm -->
       <div class="glass p-4 rounded-2xl">
         <h3 class="text-base font-semibold mb-3">Ringkasan Farm</h3>
 
-        <!-- Baris atas -->
         <div class="grid grid-cols-2 gap-3 mb-3">
-          <!-- Saldo Kuantitatif -->
-          <div class="glass p-4 rounded-2xl">
-            <div class="text-slate-300 text-sm">Saldo Kuantitatif</div>
-            <div class="text-2xl font-bold pf-quant">0.00</div>
-          </div>
-
-          <!-- Total aset -->
-          <div class="glass p-4 rounded-2xl">
-            <div class="text-slate-300 text-sm">Total aset</div>
-            <div class="text-2xl font-bold pf-total">0</div>
-            <div class="text-xs text-slate-400 pf-total-approx">≈ Rp 0</div>
-          </div>
-        </div>
-
-        <!-- Metrik lain -->
-        <div class="grid grid-cols-2 gap-3">
           <div class="glass p-4 rounded-2xl">
             <div class="chip">Aset Keuntungan</div>
             <div class="text-2xl font-bold pf-profit">0.00</div>
@@ -510,15 +455,26 @@
     </div>
   </div>
 
-  <!-- Scripts -->
+  <!-- ========= Scripts ========= -->
   <script src="js/app-core.js" defer></script>
   <script type="module" src="js/firebase-init.js"></script>
   <script type="module" src="js/i18n.js"></script>
-  <script type="module" src="js/features/withdraw.js"></script> <!-- ✅ penting untuk form tarik -->
+  <script type="module" src="js/features/withdraw.js"></script>
   <script type="module" src="js/dashboard.js"></script>
   <script type="module" src="js/features/invite.v2.js"></script>
 
-  <!-- Slider logic ringan (inline biar langsung jalan) -->
+  <!-- Panggil farm.js (modal QR + submit Cloudinary) -->
+  <script type="module">
+    import { initFarm, initFarmCards } from './js/features/farm.js';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Jalankan setelah DOM siap
+      initFarm();
+      initFarmCards();
+    });
+  </script>
+
+  <!-- Slider auto-run -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const track = document.getElementById('homeSlider');
@@ -526,13 +482,12 @@
       const dots  = Array.from((document.getElementById('homeDots')||{}).children || []);
       let i = 0;
       const total = track.children.length;
-
       function go(idx) {
         i = (idx + total) % total;
         track.style.transform = `translateX(-${i * 100}%)`;
         dots.forEach((d, k) => d.className = 'w-2 h-2 rounded-full ' + (k===i ? 'bg-white/70' : 'bg-white/30'));
       }
-      setInterval(() => go(i + 1), 2000); // ganti setiap 2 detik
+      setInterval(() => go(i + 1), 2000);
     });
   </script>
 </body>
