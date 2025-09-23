@@ -57,12 +57,12 @@ export function initFarmCards() {
   const auth = window.App?.firebase?.auth;
   const db   = window.App?.firebase?.db || getFirestore();
 
-  const showModal = () => { modal?.classList.remove('hidden'); modal && (modal.style.display='flex'); };
-  const hideModal = () => { modal?.classList.add('hidden');   modal && (modal.style.display='none'); };
+  const showModal = () => { if(modal){ modal.classList.remove('hidden'); modal.style.display='flex'; } };
+  const hideModal = () => { if(modal){ modal.classList.add('hidden');   modal.style.display='none'; } };
 
   let selected = null;
 
-  // isi angka & pasang handler beli
+  // isi angka & pasang handler beli (tiap kartu)
   cards.forEach(card=>{
     const price    = Number(card.dataset.price || 0);
     const daily    = Number(card.dataset.daily || 0);
@@ -73,20 +73,40 @@ export function initFarmCards() {
     card.querySelector('.ac-total')?.textContent = fmtRp(total);
     card.querySelector('.ac-cycle, .mc-contract')?.textContent = `${contract} hari`;
 
-    // tombol beli (cari beberapa variasi class)
-    const buyBtn = card.querySelector('.buy-btn, .buy-btn-green, .btn-buy');
-    buyBtn?.addEventListener('click', ()=>{
+    const openModal = ()=>{
       const name = (card.dataset.animal || card.querySelector('.ac-title, .mc-title')?.textContent || 'Item').toUpperCase();
       selected = { animal:name, price, daily, days:contract };
       nameEl && (nameEl.textContent = name);
       priceEl && (priceEl.textContent = fmtRp(price));
-
       form?.reset();
-      submitBtn && (submitBtn.disabled=false, submitBtn.textContent='Kirim Bukti', submitBtn.classList.remove('bg-emerald-500','text-black','opacity-60','pointer-events-none'));
+      if (submitBtn){
+        submitBtn.disabled=false;
+        submitBtn.textContent='Kirim Bukti';
+        submitBtn.classList.remove('bg-emerald-500','text-black','opacity-60','pointer-events-none');
+      }
       noteEl && (noteEl.classList.add('hidden'), noteEl.textContent='');
-
       showModal();
-    });
+    };
+
+    // tombol-tombol umum di kartu
+    card.querySelector('.buy-btn, .buy-btn-green, .btn-buy')?.addEventListener('click', openModal);
+    // juga kalau kartu punya atribut data-buy
+    card.querySelector('[data-buy]')?.addEventListener('click', openModal);
+  });
+
+  // Fallback: event delegation (kalau class tombol beda)
+  document.addEventListener('click', (ev)=>{
+    const t = ev.target.closest('button, a, div, span');
+    if (!t) return;
+    const isBuy =
+      t.hasAttribute('data-buy') ||
+      t.matches('.buy-btn, .buy-btn-green, .btn-buy') ||
+      /(^|\s)beli(\s|$)/i.test(t.textContent?.trim()||'');
+    if (!isBuy) return;
+    const card = t.closest('.animal-card, .animal-card.v2, .market-card');
+    if (!card) return;
+    // trigger handler kartu di atas
+    card.querySelector('.buy-btn, .buy-btn-green, .btn-buy, [data-buy]')?.dispatchEvent(new Event('click',{bubbles:true}));
   });
 
   closeBt?.addEventListener('click', hideModal);
@@ -107,7 +127,11 @@ export function initFarmCards() {
     }
 
     // state: loading
-    submitBtn && (submitBtn.disabled=true, submitBtn.textContent='Mengirim...', submitBtn.classList.add('opacity-60','pointer-events-none'));
+    if (submitBtn){
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Mengirim...';
+      submitBtn.classList.add('opacity-60','pointer-events-none');
+    }
 
     try {
       // 1) create purchase pending
@@ -134,8 +158,13 @@ export function initFarmCards() {
       await updateDoc(doc(db,'purchases', pRef.id), { proofUrl: json.secure_url });
 
       // 4) UI sukses
-      submitBtn && (submitBtn.disabled=true, submitBtn.textContent='Berhasil dikirim ✓', submitBtn.classList.remove('opacity-60','pointer-events-none'), submitBtn.classList.add('bg-emerald-500','text-black'));
-      if (noteEl) {
+      if (submitBtn){
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Berhasil dikirim ✓';
+        submitBtn.classList.remove('opacity-60','pointer-events-none');
+        submitBtn.classList.add('bg-emerald-500','text-black');
+      }
+      if (noteEl){
         noteEl.classList.remove('hidden');
         noteEl.innerHTML = 'Bukti berhasil dikirim. Mohon tunggu persetujuan admin (maks <b>15 menit</b>). Jika lebih dari itu, silakan hubungi admin.';
         setTimeout(()=>{ noteEl.innerHTML = 'Sudah lebih dari 15 menit. Jika belum diproses, silakan hubungi admin.'; }, 15*60*1000);
@@ -145,7 +174,11 @@ export function initFarmCards() {
     } catch(err){
       console.error(err);
       toast('Gagal mengirim bukti. Coba lagi.');
-      submitBtn && (submitBtn.disabled=false, submitBtn.textContent='Kirim Bukti', submitBtn.classList.remove('opacity-60','pointer-events-none','bg-emerald-500','text-black'));
+      if (submitBtn){
+        submitBtn.disabled=false;
+        submitBtn.textContent='Kirim Bukti';
+        submitBtn.classList.remove('opacity-60','pointer-events-none','bg-emerald-500','text-black');
+      }
     }
   });
 }
