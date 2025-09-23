@@ -1,6 +1,7 @@
 // js/dashboard.js — sinkron dengan dashboard.html (homeHeader + homeGrid + withdrawTab)
 (() => {
   // ---------- Helper: tunggu DOM & Firebase siap ----------
+  import { initFarm, initFarmCards } from './features/farm.js';
   const whenDOMReady = new Promise(res => {
     if (document.readyState !== 'loading') res();
     else document.addEventListener('DOMContentLoaded', res, { once: true });
