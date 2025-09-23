@@ -457,18 +457,44 @@
 
   <!-- ========= Scripts ========= -->
 <script type="module" src="js/app-core.js"></script>
-<script type="module" src="js/firebase-init.js"></script>
-<script type="module" src="js/i18n.js"></script>
-<script type="module" src="js/features/withdraw.js"></script>
-<script type="module" src="js/dashboard.js"></script>
-  <!-- Panggil farm.js (modal QR + submit Cloudinary) -->
+  <script type="module" src="js/firebase-init.js"></script>
+  <script type="module" src="js/i18n.js"></script>
+  <script type="module" src="js/features/withdraw.js"></script>
+  <script type="module" src="js/dashboard.js"></script>
   <script type="module">
     import { initFarm, initFarmCards } from './js/features/farm.js';
-
     window.addEventListener('DOMContentLoaded', () => {
-      // Jalankan setelah DOM siap
       initFarm();
       initFarmCards();
+    });
+  </script>
+
+  <!-- Fallback: buka modal QR walau farm.js gagal -->
+  <script>
+    document.addEventListener('click', function (e) {
+      const btn = e.target.closest('.buy-btn, .buy-btn-green, .btn-buy');
+      if (!btn) return;
+
+      const card   = btn.closest('[data-animal]');
+      const nameEl = document.getElementById('buyAnimal');
+      const priceEl= document.getElementById('buyPrice');
+
+      if (card) {
+        const name  = (card.dataset.animal || card.querySelector('.mc-title')?.textContent || 'ITEM').toUpperCase();
+        const price = Number(card.dataset.price || 0);
+        if (nameEl)  nameEl.textContent  = name;
+        if (priceEl) priceEl.textContent = new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(price);
+      }
+
+      const modal = document.getElementById('buyModal');
+      if (modal) { modal.classList.remove('hidden'); modal.style.display = 'flex'; }
+    });
+
+    document.addEventListener('click', function (e) {
+      if (e.target.id === 'closeBuy') {
+        const modal = document.getElementById('buyModal');
+        if (modal) { modal.classList.add('hidden'); modal.style.display = 'none'; }
+      }
     });
   </script>
 
