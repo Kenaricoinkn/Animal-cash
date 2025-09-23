@@ -218,8 +218,8 @@
     <div class="grid gap-2">
       <input type="tel"  id="wdwNumber" class="input" placeholder="Nomor e-wallet" inputmode="numeric">
       <input type="text" id="wdwName"   class="input" placeholder="Nama pemilik">
-      <!-- min dihapus; validasi min 50rb dilakukan oleh withdraw.js -->
-      <input type="number" id="wdwAmount" class="input" placeholder="Nominal tarik (IDR)" step="1000" inputmode="numeric">
+      <input type="number" id="wdwAmount" class="input" placeholder="min: 50000" step="1000" inputmode="numeric">
+      <small id="wdwError" class="text-rose-400 text-xs hidden"></small>
     </div>
     <button class="btn-primary w-full py-2 rounded-xl" type="submit">Ajukan Penarikan</button>
     <p class="text-xs text-slate-400">Pengajuan akan dikirim ke admin untuk diverifikasi.</p>
@@ -237,8 +237,8 @@
     <div class="grid gap-2">
       <input type="text"   id="wdbRek"   class="input" placeholder="No. Rekening" inputmode="numeric">
       <input type="text"   id="wdbName"  class="input" placeholder="Nama pemilik">
-      <!-- min dihapus; validasi min 50rb dilakukan oleh withdraw.js -->
-      <input type="number" id="wdbAmount" class="input" placeholder="Nominal tarik (IDR)" step="1000" inputmode="numeric">
+      <input type="number" id="wdbAmount" class="input" placeholder="min: 50000" step="1000" inputmode="numeric">
+      <small id="wdbError" class="text-rose-400 text-xs hidden"></small>
     </div>
     <button class="btn-primary w-full py-2 rounded-xl" type="submit">Ajukan Penarikan</button>
     <p class="text-xs text-slate-400">Pengajuan akan dikirim ke admin untuk diverifikasi.</p>
