@@ -18,14 +18,11 @@ const toast = (m)=> window.App?.toast ? window.App.toast(m) : alert(m);
 /* ================== STATE ================== */
 const MIN_WD = 50000;                 // minimal penarikan
 let CURRENT_BALANCE = 0;              // users/{uid}.balance
-let PENDING_TOTAL   = 0;              // total WD pending
-let AVAILABLE       = 0;              // balance - pending
+let PENDING_TOTAL    = 0;             // total WD status pending
+let AVAILABLE        = 0;             // saldo yg bisa ditarik (balance - pending)
 
 /* ================== INIT ================== */
 export function initWithdraw() {
-  // cegah inisialisasi ganda (mis. file disertakan 2x atau SPA rehydrate)
-  if (window.__wd_inited) return; window.__wd_inited = true;
-
   const auth = window.App?.firebase?.auth || getAuth();
   const db   = window.App?.firebase?.db   || getFirestore();
 
@@ -57,14 +54,14 @@ export function initWithdraw() {
 
     const uid = user.uid;
 
-    // 1) ambil saldo awal user sekali (cepat)
-    try {
+    // 1) ambil saldo awal user
+    try{
       const usnap = await getDoc(doc(db,'users',uid));
       CURRENT_BALANCE = Number(usnap.data()?.balance || 0);
-      renderBalance();
-    } catch { CURRENT_BALANCE = 0; renderBalance(); }
+    }catch{ CURRENT_BALANCE = 0; }
+    renderBalance();
 
-    // 2) subscribe penarikan pending → hitung AVAILABLE realtime
+    // 2) subscribe total WD pending user → hitung AVAILABLE
     const qPending = query(
       collection(db,'withdrawals'),
       where('uid', '==', uid),
@@ -77,7 +74,7 @@ export function initWithdraw() {
       calcAvailable();
     });
 
-    // 3) render riwayat terbaru realtime
+    // 3) render riwayat realtime (semua status), terbaru dulu
     const qHist = query(
       collection(db,'withdrawals'),
       where('uid', '==', uid),
@@ -113,65 +110,49 @@ export function initWithdraw() {
       list.innerHTML = rows.join('');
     });
 
-    // 4) BIND FORM — pakai dua jalur: 'submit' & klik tombol
-    bindWalletForm(uid, db, formWallet);
-    bindBankForm(uid, db, formBank);
+    // 4) submit form e-wallet
+    formWallet?.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const provider = (wdChecked('wallet') || 'Dana');
+      const number   = $('#wdwNumber')?.value?.trim();
+      const name     = $('#wdwName')?.value?.trim();
+      const amount   = Number($('#wdwAmount')?.value || 0);
+
+      if (!validateAmount(amount)) return;
+      if (!number || !name) { toast('Lengkapi nomor dan nama pemilik.'); return; }
+
+      await addWithdrawal(db, {
+        uid, type:'ewallet', provider, number, name, amount
+      });
+    });
+
+    // 5) submit form bank
+    formBank?.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const bank    = (wdChecked('bank') || 'Mandiri');
+      const account = $('#wdbRek')?.value?.trim();
+      const owner   = $('#wdbName')?.value?.trim();
+      const amount  = Number($('#wdbAmount')?.value || 0);
+
+      if (!validateAmount(amount)) return;
+      if (!account || !owner) { toast('Lengkapi nomor rekening dan nama pemilik.'); return; }
+
+      await addWithdrawal(db, {
+        uid, type:'bank', bank, account, owner, amount
+      });
+    });
   });
 }
 
-/* =============== BINDERS =============== */
-function bindWalletForm(uid, db, formWallet){
-  if (!formWallet) return;
-
-  const btn = formWallet.querySelector('button[type="submit"]');
-  const handler = async (e)=>{
-    if (e) e.preventDefault();
-    // jalankan validasi native dulu
-    if (!formWallet.checkValidity()) { formWallet.reportValidity(); return; }
-
-    const provider = (wdChecked('wallet') || 'Dana');
-    const number   = $('#wdwNumber')?.value?.trim();
-    const name     = $('#wdwName')?.value?.trim();
-    const amount   = Number($('#wdwAmount')?.value || 0);
-
-    if (!validateAmount(amount)) return;
-    await addWithdrawal(db, { uid, type:'ewallet', provider, number, name, amount });
-  };
-
-  // submit normal
-  formWallet.addEventListener('submit', handler);
-  // cadangan mobile: klik tombol langsung
-  btn?.addEventListener('click', handler, { passive:false });
-}
-
-function bindBankForm(uid, db, formBank){
-  if (!formBank) return;
-
-  const btn = formBank.querySelector('button[type="submit"]');
-  const handler = async (e)=>{
-    if (e) e.preventDefault();
-    if (!formBank.checkValidity()) { formBank.reportValidity(); return; }
-
-    const bank    = (wdChecked('bank') || 'Mandiri');
-    const account = $('#wdbRek')?.value?.trim();
-    const owner   = $('#wdbName')?.value?.trim();
-    const amount  = Number($('#wdbAmount')?.value || 0);
-
-    if (!validateAmount(amount)) return;
-    await addWithdrawal(db, { uid, type:'bank', bank, account, owner, amount });
-  };
-
-  formBank.addEventListener('submit', handler);
-  btn?.addEventListener('click', handler, { passive:false });
-}
-
 /* ================== UI / RENDER ================== */
+
 function renderBalance(){
   $$('.pf-quant').forEach(el=> el.textContent = Number(CURRENT_BALANCE).toFixed(2));
   $$('.pf-total').forEach(el=> el.textContent = fmtRp(CURRENT_BALANCE));
   $$('.pf-total-approx').forEach(el=> el.textContent = `≈ ${fmtRp(CURRENT_BALANCE)}`);
   calcAvailable();
 }
+
 function calcAvailable(){
   AVAILABLE = Math.max(0, Number(CURRENT_BALANCE) - Number(PENDING_TOTAL||0));
 }
@@ -192,29 +173,37 @@ function tsToLocal(ts){
 function escapeHtml(s=''){
   return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+
 function wdChecked(name){
   const el = document.querySelector(`input[name="${name}"]:checked`);
   return el?.value || null;
 }
 
 /* ================== VALIDATION ================== */
+
 function validateAmount(amount){
+  // saldo di bawah minimal → langsung kasih tahu user
+  if (AVAILABLE < MIN_WD){
+    toast(`Saldo Anda kurang dari minimal penarikan (${fmtRp(MIN_WD)}).`);
+    return false;
+  }
   if (!Number.isFinite(amount) || amount <= 0){
-    toast('Nominal tidak valid.'); return false;
+    toast('Nominal tidak valid.');
+    return false;
   }
   if (amount < MIN_WD){
-    toast(`Minimal penarikan adalah ${fmtRp(MIN_WD)}.`); return false;
-  }
-  if (AVAILABLE <= 0){
-    toast('Saldo Anda 0 atau seluruh saldo sedang diproses (pending).'); return false;
+    toast(`Minimal penarikan adalah ${fmtRp(MIN_WD)}.`);
+    return false;
   }
   if (amount > AVAILABLE){
-    toast(`Nominal melebihi saldo tersedia (${fmtRp(AVAILABLE)}).`); return false;
+    toast(`Nominal melebihi saldo tersedia (${fmtRp(AVAILABLE)}).`);
+    return false;
   }
   return true;
 }
 
 /* ================== FIRESTORE WRITE ================== */
+
 async function addWithdrawal(db, payload){
   try{
     const createBtn = findSubmitBtn(payload.type === 'ewallet' ? '#wdFormWallet' : '#wdFormBank');
@@ -237,7 +226,7 @@ async function addWithdrawal(db, payload){
       }, 1200);
     }
     toast('Pengajuan penarikan dikirim. Menunggu verifikasi admin.');
-    // kosongkan nominal supaya tak double
+    // kosongkan input nominal supaya tidak double submit
     const a1 = $('#wdwAmount'); if (a1) a1.value = '';
     const a2 = $('#wdbAmount'); if (a2) a2.value = '';
   }catch(e){
@@ -251,11 +240,16 @@ async function addWithdrawal(db, payload){
     }
   }
 }
+
 function findSubmitBtn(formSel){
   const f = $(formSel);
   if (!f) return null;
   return f.querySelector('button[type="submit"]');
 }
 
-/* ============== self-bootstrap ============== */
-window.addEventListener('DOMContentLoaded', initWithdraw);
+/* ============ Safe auto-run jika tidak dipanggil manual ============ */
+if (typeof window !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    try { initWithdraw(); } catch {}
+  });
+}
