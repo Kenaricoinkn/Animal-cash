@@ -106,26 +106,93 @@ export function initFarmCards() {
   });
 
   // === Submit bukti transfer ===
-  form?.addEventListener('submit', async (ev) => {
-    ev.preventDefault();
-    const user = auth?.currentUser;
-    if (!user) return toast('Silakan login.');
-    if (!selected?.animal) return toast('Data produk tidak valid.');
-    const file = proofEl?.files?.[0];
-    if (!file) return toast('Unggah bukti transfer terlebih dahulu.');
+  // refs tambahan
+const btnSubmit = $('#buySubmit');
+const noteEl    = $('#buyNote');
 
-    try {
-      // 1) Buat dokumen purchase (pending)
-      const docRef = await addDoc(collection(db, 'purchases'), {
-        uid: user.uid,
-        animal: selected.animal,
-        price: selected.price,
-        daily: selected.daily,
-        contractDays: selected.days,
-        payMethod: 'QR_ADMIN',
-        status: 'pending',
-        createdAt: serverTimestamp()
-      });
+form?.addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const user = auth?.currentUser;
+
+  // 1) Validasi file bukti
+  const file = proofEl?.files?.[0];
+  if (!file) {
+    // alert + hentikan
+    toast('Silakan unggah foto / bukti transfer dulu.');
+    // sorot input biar jelas
+    proofEl?.classList.add('ring-2','ring-rose-400');
+    setTimeout(()=>proofEl?.classList.remove('ring-2','ring-rose-400'), 1200);
+    return;
+  }
+  if (!user) return toast('Silakan login.');
+
+  if (!selected?.animal || !selected?.price) {
+    toast('Data produk tidak valid.');
+    return;
+  }
+
+  // 2) State: mengirim
+  const restoreBtn = () => {
+    btnSubmit?.removeAttribute('disabled');
+    btnSubmit?.classList.remove('opacity-60','pointer-events-none');
+    btnSubmit?.textContent = 'Kirim Bukti';
+  };
+  btnSubmit?.setAttribute('disabled','true');
+  btnSubmit?.classList.add('opacity-60','pointer-events-none');
+  btnSubmit && (btnSubmit.textContent = 'Mengirim...');
+
+  try {
+    // 3) Buat dokumen purchase (pending)
+    const docRef = await addDoc(collection(db, 'purchases'), {
+      uid: user.uid,
+      animal: selected.animal,
+      price: selected.price,
+      daily: selected.daily,
+      contractDays: selected.days,
+      payMethod: 'QR_ADMIN',
+      status: 'pending',
+      createdAt: serverTimestamp()
+    });
+
+    // 4) Upload bukti → Storage
+    const path = `purchases/${user.uid}/${docRef.id}/proof.jpg`;
+    await uploadBytes(ref(stg, path), file);
+
+    // 5) Ambil URL & update dokumen
+    const proofUrl = await getDownloadURL(ref(stg, path));
+    await updateDoc(doc(db, 'purchases', docRef.id), { proofUrl });
+
+    // 6) UI sukses: tombol hijau + ceklis & catatan 15 menit
+    btnSubmit?.classList.remove('opacity-60','pointer-events-none');
+    btnSubmit?.classList.add('bg-emerald-500','text-black');
+    btnSubmit && (btnSubmit.textContent = 'Berhasil dikirim ✓');
+
+    if (noteEl) {
+      noteEl.classList.remove('hidden');
+      noteEl.innerHTML = `
+        Bukti berhasil dikirim. Mohon tunggu persetujuan admin (maks <b>15 menit</b>).
+        Jika lebih dari 15 menit belum diproses, silakan hubungi admin.
+      `;
+    }
+
+    // opsional: setelah 15 menit ubah catatan jadi “hubungi admin”
+    setTimeout(() => {
+      if (!noteEl) return;
+      noteEl.innerHTML =
+        `Sudah lebih dari 15 menit. Jika belum diproses, silakan hubungi admin.`;
+    }, 15 * 60 * 1000);
+
+    // bersihkan form (tapi biarkan modal terbuka agar user baca noted)
+    form?.reset();
+    toast('Bukti terkirim. Menunggu verifikasi admin.');
+
+  } catch (err) {
+    console.error(err);
+    toast('Gagal mengirim bukti. Coba lagi.');
+    // kembalikan tombol ke kondisi awal
+    restoreBtn();
+  }
+});
 
       // 2) Upload ke Cloudinary (unsigned)
       const fd = new FormData();
