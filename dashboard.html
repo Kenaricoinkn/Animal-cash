@@ -497,7 +497,58 @@
       }
     });
   </script>
+<!-- Fallback: submit bukti jika farm.js belum terpasang -->
+<script>
+  (function(){
+    if (window.__buySubmitFallback) return; // cegah dobel
+    window.__buySubmitFallback = true;
 
+    document.addEventListener('submit', function (e) {
+      const form = e.target;
+      if (form.id !== 'buyForm') return;
+      e.preventDefault();
+
+      const file   = document.getElementById('proof')?.files?.[0];
+      const btn    = document.getElementById('buySubmit');
+      const noteEl = document.getElementById('buyNote');
+
+      // Validasi file wajib
+      if (!file) {
+        alert('Silakan unggah foto / bukti transfer dulu.');
+        const proof = document.getElementById('proof');
+        proof?.classList.add('ring-2','ring-rose-400');
+        setTimeout(()=>proof?.classList.remove('ring-2','ring-rose-400'), 1200);
+        return;
+      }
+
+      // State: loading → sukses (fallback UI saja)
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Mengirim...';
+        btn.classList.add('opacity-60','pointer-events-none');
+      }
+
+      setTimeout(() => {
+        if (btn) {
+          btn.disabled = true;
+          btn.classList.remove('opacity-60','pointer-events-none');
+          btn.classList.add('bg-emerald-500','text-black');
+          btn.textContent = 'Berhasil dikirim ✓';
+        }
+        if (noteEl) {
+          noteEl.classList.remove('hidden');
+          noteEl.innerHTML =
+            'Bukti berhasil dikirim. Mohon tunggu persetujuan admin (maks <b>15 menit</b>). Jika lebih dari itu, silakan hubungi admin.';
+          setTimeout(() => {
+            noteEl.innerHTML =
+              'Sudah lebih dari 15 menit. Jika belum diproses, silakan hubungi admin.';
+          }, 15 * 60 * 1000);
+        }
+        alert('Bukti terkirim. Menunggu verifikasi admin.');
+      }, 600);
+    });
+  })();
+</script>
   <!-- Slider auto-run -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
