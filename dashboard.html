@@ -504,6 +504,9 @@
     window.__buySubmitFallback = true;
 
     document.addEventListener('submit', function (e) {
+      // 👉 Tambahin pengecekan ini biar fallback nggak jalan
+      if (window.__buyFormHasHandler) return;
+
       const form = e.target;
       if (form.id !== 'buyForm') return;
       e.preventDefault();
