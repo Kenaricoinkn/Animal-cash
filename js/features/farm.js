@@ -1,141 +1,184 @@
-// js/features/farm.js — Cloudinary unsigned preset + Firestore sinkron
+// js/features/farm.js — versi kompatibel (tanpa optional chaining/comma operator)
 
-/* =================== Helpers =================== */
-const $  = (sel, root=document) => root.querySelector(sel);
-const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-const fmtRp = (n,opt={}) => new Intl.NumberFormat('id-ID',{
-  style:'currency', currency:'IDR', maximumFractionDigits:0, ...opt
-}).format(Number(n||0));
-const toast = (m)=> window.App?.toast ? window.App.toast(m) : alert(m);
+// =================== Helpers =================== //
+function $(sel, root) {
+  return (root || document).querySelector(sel);
+}
+function $all(sel, root) {
+  return Array.prototype.slice.call((root || document).querySelectorAll(sel));
+}
+function fmtRp(n, opt) {
+  var base = { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 };
+  if (opt) { for (var k in opt) base[k] = opt[k]; }
+  return new Intl.NumberFormat('id-ID', base).format(Number(n || 0));
+}
+function toast(m) {
+  try {
+    if (window.App && window.App.toast) { window.App.toast(m); return; }
+  } catch (e) {}
+  alert(m);
+}
 
-/* =================== Cloudinary =================== */
-const CLOUD_NAME    = "dszl9phmt";      // <- punyamu
-const UPLOAD_PRESET = "ml_default";     // <- unsigned preset
-const UPLOAD_URL    = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
+// =================== Cloudinary (unsigned) =================== //
+var CLOUD_NAME    = "dszl9phmt";     // <- punyamu
+var UPLOAD_PRESET = "ml_default";    // <- unsigned preset
+var UPLOAD_URL    = "https://api.cloudinary.com/v1_1/" + CLOUD_NAME + "/upload";
 
-/* =================== Firebase =================== */
+// =================== Firebase =================== //
 import {
   getFirestore, collection, addDoc, updateDoc, doc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* =========================================================================
- *  PUBLIC
- * ========================================================================= */
+// =============================================================
+// PUBLIC API
+// ============================================================= //
 export function initFarm() {
-  const farmTab = $('#farmTab');
-  if (!farmTab || !window.App?.firebase) return;
+  var farmTab = $('#farmTab');
+  if (!farmTab) return;
 
-  const { auth, ensureUserDoc, onUserDoc } = window.App.firebase;
-  const user = auth.currentUser;
+  try {
+    if (!window.App || !window.App.firebase) return;
+  } catch (e) { return; }
+
+  var auth = window.App.firebase.auth;
+  var user = auth.currentUser;
   if (!user) return;
 
-  ensureUserDoc(user.uid)
-    .then(() => onUserDoc(user.uid, snap => snap.exists() && renderFarm(snap.data()||{})))
-    .catch(e => { console.error(e); toast('Gagal memuat Farm'); });
+  // render saldo ringkas dari user doc kalau app-core menyiapkan API-nya
+  try {
+    var ensureUserDoc = window.App.firebase.ensureUserDoc;
+    var onUserDoc     = window.App.firebase.onUserDoc;
+    if (ensureUserDoc && onUserDoc) {
+      ensureUserDoc(user.uid).then(function(){
+        onUserDoc(user.uid, function (snap) {
+          if (snap && snap.exists()) renderFarm(snap.data() || {});
+        });
+      })["catch"](function(err){
+        console.error(err); toast('Gagal memuat Farm');
+      });
+    }
+  } catch(e){ console.warn(e); }
 
   initFarmCards();
 }
 
-/* =========================================================================
- *  MARKETPLACE + MODAL QR
- * ========================================================================= */
+// =============================================================
+// MARKETPLACE + MODAL QR
+// ============================================================= //
 export function initFarmCards() {
   // longgarkan selector agar pasti kena
-  const cards = $$('.animal-card, .animal-card.v2, .market-card');
+  var cards = $all('.animal-card, .animal-card.v2, .market-card');
   if (!cards.length) return;
 
   // modal refs
-  const modal     = $('#buyModal');
-  const closeBt   = $('#closeBuy');
-  const form      = $('#buyForm');
-  const proofEl   = $('#proof');
-  const nameEl    = $('#buyAnimal');
-  const priceEl   = $('#buyPrice');
-  const submitBtn = $('#buySubmit');
-  const noteEl    = $('#buyNote');
+  var modal     = $('#buyModal');
+  var closeBt   = $('#closeBuy');
+  var form      = $('#buyForm');
+  var proofEl   = $('#proof');
+  var nameEl    = $('#buyAnimal');
+  var priceEl   = $('#buyPrice');
+  var submitBtn = $('#buySubmit');
+  var noteEl    = $('#buyNote');
 
-  const auth = window.App?.firebase?.auth;
-  const db   = window.App?.firebase?.db || getFirestore();
+  var auth = (window.App && window.App.firebase) ? window.App.firebase.auth : null;
+  var db   = (window.App && window.App.firebase) ? (window.App.firebase.db || getFirestore()) : getFirestore();
 
-  const showModal = () => { if(modal){ modal.classList.remove('hidden'); modal.style.display='flex'; } };
-  const hideModal = () => { if(modal){ modal.classList.add('hidden');   modal.style.display='none'; } };
+  function showModal() {
+    if (modal) { modal.classList.remove('hidden'); modal.style.display = 'flex'; }
+  }
+  function hideModal() {
+    if (modal) { modal.classList.add('hidden'); modal.style.display = 'none'; }
+  }
 
-  let selected = null;
+  var selected = null;
 
   // isi angka & pasang handler beli (tiap kartu)
-  cards.forEach(card=>{
-    const price    = Number(card.dataset.price || 0);
-    const daily    = Number(card.dataset.daily || 0);
-    const contract = Number(card.dataset.contract || 0);
-    const total    = daily * contract;
+  cards.forEach(function(card){
+    var price    = Number(card.getAttribute('data-price') || 0);
+    var daily    = Number(card.getAttribute('data-daily') || 0);
+    var contract = Number(card.getAttribute('data-contract') || 0);
+    var total    = daily * contract;
 
-    card.querySelector('.ac-price, .mc-price b')?.textContent = fmtRp(price);
-    // Untuk market-card, jangan menimpa semua .mc-big; cukup total & harian bila ada
-    const dailyBig = card.querySelector('.ac-daily, .mc-stat .mc-big');
-    if (dailyBig) dailyBig.textContent = fmtRp(daily);
-    card.querySelector('.ac-total, .mc-total')?.textContent = fmtRp(total);
-    card.querySelector('.ac-cycle, .mc-contract')?.textContent = `${contract} hari`;
+    var priceTarget = card.querySelector('.ac-price, .mc-price b');
+    if (priceTarget) priceTarget.textContent = fmtRp(price);
 
-    const openModal = ()=>{
-      // Normalisasi animal => UPPERCASE agar lolos rules Firestore
-      const rawName = (card.dataset.animal || card.querySelector('.ac-title, .mc-title')?.textContent || 'Item');
-      const name = String(rawName).trim().toUpperCase();
-      selected = { animal: name, price, daily, days: contract };
+    var dailyTarget = card.querySelector('.ac-daily, .mc-stat .mc-big');
+    if (dailyTarget) dailyTarget.textContent = fmtRp(daily);
+
+    var totalTarget = card.querySelector('.ac-total');
+    if (totalTarget) totalTarget.textContent = fmtRp(total);
+
+    var cycleTarget = card.querySelector('.ac-cycle, .mc-contract');
+    if (cycleTarget) cycleTarget.textContent = contract + ' hari';
+
+    function openModal() {
+      var name = (card.getAttribute('data-animal') ||
+                 (card.querySelector('.ac-title, .mc-title') ? card.querySelector('.ac-title, .mc-title').textContent : 'Item')
+                ).toUpperCase();
+      selected = { animal: name, price: price, daily: daily, days: contract };
 
       if (nameEl)  nameEl.textContent  = name;
       if (priceEl) priceEl.textContent = fmtRp(price);
 
-      form?.reset();
+      if (form) form.reset();
       if (submitBtn){
-        submitBtn.disabled=false;
-        submitBtn.textContent='Kirim Bukti';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Kirim Bukti';
         submitBtn.classList.remove('bg-emerald-500','text-black','opacity-60','pointer-events-none');
       }
-      if (noteEl){ noteEl.classList.add('hidden'); noteEl.textContent=''; }
-
+      if (noteEl){
+        noteEl.classList.add('hidden');
+        noteEl.textContent = '';
+      }
       showModal();
-    };
-
-    // tombol beli (beberapa variasi)
-    card.querySelector('.buy-btn, .buy-btn-green, .btn-buy, [data-buy]')?.addEventListener('click', openModal);
-  });
-
-  // Delegasi global (kalau tombol buy punya class berbeda)
-  document.addEventListener('click', (ev)=>{
-    const t = ev.target.closest('button, a, div, span');
-    if (!t) return;
-    const isBuy =
-      t.hasAttribute('data-buy') ||
-      t.matches('.buy-btn, .buy-btn-green, .btn-buy') ||
-      /(^|\s)beli(\s|$)/i.test(t.textContent?.trim()||'');
-    if (!isBuy) return;
-    const parentCard = t.closest('.animal-card, .animal-card.v2, .market-card');
-    if (!parentCard) return;
-    parentCard.querySelector('.buy-btn, .buy-btn-green, .btn-buy, [data-buy]')?.dispatchEvent(new Event('click',{bubbles:true}));
-  });
-
-  // Close modal
-  closeBt?.addEventListener('click', hideModal);
-
-  // Submit bukti → Cloudinary → update Firestore
-  form?.addEventListener('submit', async (ev)=>{
-    ev.preventDefault();
-
-    const user = auth?.currentUser;
-    if (!user) return toast('Silakan login.');
-    if (!selected?.animal || !selected?.price) return toast('Data produk tidak valid.');
-
-    // Validasi sesuai rules: animal harus COW/CHICKEN/SHEEP
-    const allowed = ['COW','CHICKEN','SHEEP'];
-    if (!allowed.includes(selected.animal)) {
-      return toast('Produk tidak tersedia.');
     }
 
-    const file = proofEl?.files?.[0];
+    var tBuy = card.querySelector('.buy-btn, .buy-btn-green, .btn-buy');
+    if (tBuy) tBuy.addEventListener('click', openModal);
+
+    var tData = card.querySelector('[data-buy]');
+    if (tData) tData.addEventListener('click', openModal);
+  });
+
+  // Delegasi klik (kalau class tombol beda)
+  document.addEventListener('click', function(ev){
+    var t = ev.target.closest ? ev.target.closest('button, a, div, span') : null;
+    if (!t) return;
+
+    var text = (t.textContent || '').trim().toLowerCase();
+    var isBuy = t.hasAttribute && t.hasAttribute('data-buy');
+    if (!isBuy && t.matches) {
+      isBuy = t.matches('.buy-btn, .buy-btn-green, .btn-buy');
+    }
+    if (!isBuy && text) {
+      isBuy = /\bbeli\b/.test(text);
+    }
+    if (!isBuy) return;
+
+    var card = t.closest ? t.closest('.animal-card, .animal-card.v2, .market-card') : null;
+    if (!card) return;
+
+    var btn = card.querySelector('.buy-btn, .buy-btn-green, .btn-buy, [data-buy]');
+    if (btn) btn.dispatchEvent(new Event('click', { bubbles: true }));
+  });
+
+  if (closeBt) closeBt.addEventListener('click', hideModal);
+
+  // Submit bukti → Cloudinary → update Firestore
+  if (form) form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+
+    var user = auth ? auth.currentUser : null;
+    if (!user) { toast('Silakan login.'); return; }
+    if (!selected || !selected.animal || !selected.price) { toast('Data produk tidak valid.'); return; }
+
+    var file = proofEl && proofEl.files ? proofEl.files[0] : null;
     if (!file) {
       toast('Silakan unggah foto / bukti transfer dulu.');
-      proofEl?.classList.add('ring-2','ring-rose-400');
-      setTimeout(()=>proofEl?.classList.remove('ring-2','ring-rose-400'),1200);
+      if (proofEl) {
+        proofEl.classList.add('ring-2','ring-rose-400');
+        setTimeout(function(){ proofEl.classList.remove('ring-2','ring-rose-400'); }, 1200);
+      }
       return;
     }
 
@@ -146,77 +189,77 @@ export function initFarmCards() {
       submitBtn.classList.add('opacity-60','pointer-events-none');
     }
 
-    try {
-      // 1) create purchase (pending) — sesuai Firestore rules
-      const pRef = await addDoc(collection(db,'purchases'),{
-        uid: auth.currentUser.uid,
-        animal: selected.animal,          // <- uppercase!
-        price: Number(selected.price||0),
-        daily: Number(selected.daily||0),
-        contractDays: Number(selected.days||0),
-        payMethod: 'QR_ADMIN',            // <- statis
-        status: 'pending',
-        createdAt: serverTimestamp()
-      });
+    (async function(){
+      try {
+        // 1) create purchase pending
+        var pRef = await addDoc(collection(db,'purchases'),{
+          uid: user.uid,
+          animal: selected.animal,
+          price: selected.price,
+          daily: selected.daily,
+          contractDays: selected.days,
+          payMethod: 'QR_ADMIN',
+          status: 'pending',
+          createdAt: serverTimestamp()
+        });
 
-      // 2) upload ke Cloudinary (unsigned)
-      const fd = new FormData();
-      fd.append('file', file);
-      fd.append('upload_preset', UPLOAD_PRESET);
-      const res  = await fetch(UPLOAD_URL, { method:'POST', body: fd });
-      const json = await res.json();
-      if (!json.secure_url) throw new Error('Upload Cloudinary gagal');
+        // 2) upload ke Cloudinary (unsigned)
+        var fd = new FormData();
+        fd.append('file', file);
+        fd.append('upload_preset', UPLOAD_PRESET);
+        var res  = await fetch(UPLOAD_URL, { method:'POST', body: fd });
+        var json = await res.json();
+        if (!json || !json.secure_url) throw new Error('Upload Cloudinary gagal');
 
-      // 3) simpan proofUrl (hanya field ini yang berubah — aman utk rules)
-      await updateDoc(doc(db,'purchases', pRef.id), { proofUrl: json.secure_url });
+        // 3) simpan proofUrl
+        await updateDoc(doc(db,'purchases', pRef.id), { proofUrl: json.secure_url });
 
-      // 4) UI sukses
-      if (submitBtn){
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Berhasil dikirim ✓';
-        submitBtn.classList.remove('opacity-60','pointer-events-none');
-        submitBtn.classList.add('bg-emerald-500','text-black');
+        // 4) UI sukses
+        if (submitBtn){
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Berhasil dikirim ✓';
+          submitBtn.classList.remove('opacity-60','pointer-events-none');
+          submitBtn.classList.add('bg-emerald-500','text-black');
+        }
+        if (noteEl){
+          noteEl.classList.remove('hidden');
+          noteEl.innerHTML = 'Bukti berhasil dikirim. Mohon tunggu persetujuan admin (maks <b>15 menit</b>). Jika lebih dari itu, silakan hubungi admin.';
+          setTimeout(function(){
+            noteEl.innerHTML = 'Sudah lebih dari 15 menit. Jika belum diproses, silakan hubungi admin.';
+          }, 15 * 60 * 1000);
+        }
+        toast('Bukti terkirim. Menunggu verifikasi admin.');
+      } catch(err){
+        console.error(err);
+        toast('Gagal mengirim bukti. Coba lagi.');
+        if (submitBtn){
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Kirim Bukti';
+          submitBtn.classList.remove('opacity-60','pointer-events-none','bg-emerald-500','text-black');
+        }
       }
-      if (noteEl){
-        noteEl.classList.remove('hidden');
-        noteEl.innerHTML =
-          'Bukti berhasil dikirim. Mohon tunggu persetujuan admin (maks <b>15 menit</b>). Jika lebih dari itu, silakan hubungi admin.';
-        setTimeout(()=>{ noteEl.innerHTML = 'Sudah lebih dari 15 menit. Jika belum diproses, silakan hubungi admin.'; }, 15*60*1000);
-      }
-      toast('Bukti terkirim. Menunggu verifikasi admin.');
-      // biarkan modal tetap terbuka agar user baca catatan
-
-    } catch(err){
-      console.error(err);
-      toast('Gagal mengirim bukti. Coba lagi.');
-      if (submitBtn){
-        submitBtn.disabled=false;
-        submitBtn.textContent='Kirim Bukti';
-        submitBtn.classList.remove('opacity-60','pointer-events-none','bg-emerald-500','text-black');
-      }
-    }
+    })();
   });
 }
 
-/* =========================================================================
- *  Render saldo + metrik
- * ========================================================================= */
-function renderFarm({
-  balance=0, profitAsset=0, earningToday=0, totalIncome=0,
-  countableDays=210, countdownDays=210
-}={}) {
-  $$('.farm-balance').forEach(el=> el.textContent = Number(balance).toFixed(2));
-  const values = [
-    Number(profitAsset).toFixed(2),
-    String(earningToday),
-    Number(totalIncome).toFixed(2),
-    String(countableDays),
-    String(countdownDays)
-  ];
-  $$('.metric-grid').forEach(grid=>{
-    $$('.metric',grid).forEach((m,i)=>{
-      const v = m.querySelector('.metric-value');
-      if (v && values[i]!=null) v.textContent = values[i];
+// =============================================================
+// Render saldo + metrik ringkas
+// ============================================================= //
+function renderFarm(obj) {
+  var balance        = Number(obj && obj.balance != null ? obj.balance : 0).toFixed(2);
+  var profitAsset    = Number(obj && obj.profitAsset || 0).toFixed(2);
+  var earningToday   = String(obj && obj.earningToday != null ? obj.earningToday : 0);
+  var totalIncome    = Number(obj && obj.totalIncome || 0).toFixed(2);
+  var countableDays  = String(obj && obj.countableDays != null ? obj.countableDays : 210);
+  var countdownDays  = String(obj && obj.countdownDays != null ? obj.countdownDays : 210);
+
+  $all('.farm-balance').forEach(function(el){ el.textContent = balance; });
+
+  var values = [profitAsset, earningToday, totalIncome, countableDays, countdownDays];
+  $all('.metric-grid').forEach(function(grid){
+    $all('.metric', grid).forEach(function(m, i){
+      var v = m.querySelector('.metric-value');
+      if (v && values[i] != null) v.textContent = values[i];
     });
   });
 }
