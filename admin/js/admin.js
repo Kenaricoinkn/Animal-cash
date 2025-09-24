@@ -167,13 +167,10 @@ async function loadPurchPending(){
   tblPurchBody.innerHTML = `<tr><td colspan="7" class="py-3 text-slate-400">Memuat...</td></tr>`;
   const rows=[];
   try{
-    const q1 = query(
-      collection(db,'purchases'),
+    const q1=query(collection(db,'purchases'),
       where('status','==','pending'),
-      orderBy('createdAt','desc'),
-      limit(50)
-    );
-    const snap = await getDocs(q1);
+      orderBy('createdAt','desc'), limit(50));
+    const snap=await getDocs(q1);
     snap.forEach(d=>{
       const v=d.data()||{};
       rows.push(renderPurchRow({
@@ -186,15 +183,9 @@ async function loadPurchPending(){
         status:v.status||'pending'
       }));
     });
-    tblPurchBody.innerHTML = rows.length
-      ? rows.join('')
-      : `<tr><td colspan="7" class="py-3 text-slate-400">Tidak ada pending.</td></tr>`;
-    bindPurchActions(tblPurchBody);
-  }catch(e){
-    console.error('loadPurchPending error:', e);
-    tblPurchBody.innerHTML =
-      `<tr><td colspan="7" class="py-3 text-rose-400">Gagal membaca purchases: ${e?.message||e}</td></tr>`;
-  }
+  }catch(e){ console.warn(e); }
+  if(!rows.length){ tblPurchBody.innerHTML=`<tr><td colspan="7" class="py-3 text-slate-400">Tidak ada pending.</td></tr>`; }
+  else{ tblPurchBody.innerHTML=rows.join(''); bindPurchActions(tblPurchBody); }
 }
 function renderPurchRow({id,time,uid,item,price,proofUrl,status}){
   const proof = proofUrl ? `<a href="${proofUrl}" target="_blank" class="text-sky-300 underline">Bukti</a>` : `<span class="opacity-60">—</span>`;
@@ -222,19 +213,41 @@ async function approvePurchase(e){
     const ref=doc(db,'purchases',id); const snap=await getDoc(ref);
     if(!snap.exists()) throw new Error('Doc tidak ditemukan.');
     const d=snap.data(); if(d.status!=='pending') throw new Error('Status bukan pending.');
-    const uid=d.uid; const price=Number(d.price||0);
 
-    // bonus opsional
+    const uid   = d.uid;
+    const price = Number(d.price||0);
+    const daily = Number(d.daily||0);
+    const cDays = Number(d.contractDays||0);
+    const animal= d.animal || '-';
+
+    // bonus opsional → hanya bonus yang masuk saldo
     let bonusPct=prompt('Bonus % (opsional):',''); let bonus=0;
     if(bonusPct && !isNaN(bonusPct)){ bonusPct=Number(bonusPct); if(bonusPct>0) bonus=Math.floor(price*(bonusPct/100)); }
 
+    // 1) ubah purchase → approved
     await updateDoc(ref,{status:'approved', bonusAmount:bonus||0, bonusGranted:(bonus>0)});
-    await updateDoc(doc(db,'users',uid), { balance: increment(price + (bonus||0)) });
+
+    // 2) aktifkan kontrak ternak (bukan topup saldo harga penuh)
+    await addDoc(collection(db,'contracts'),{
+      uid, purchaseId:id, animal,
+      daily, contractDays:cDays, price,
+      status:'active',
+      startAt: serverTimestamp(),
+      createdAt: serverTimestamp()
+    });
+
+    // 3) kalau ada bonus → baru tambahkan ke saldo
+    if (bonus>0){
+      await updateDoc(doc(db,'users',uid), { balance: increment(bonus) });
+    }
+
+    // 4) log transaksi
     await addDoc(collection(db,'transactions'), {
-      uid, kind:'purchase_approved', purchaseId:id, amount:price, bonus:bonus||0, createdAt:serverTimestamp()
+      uid, kind:'purchase_activated', purchaseId:id, amount:price, bonus:bonus||0, createdAt:serverTimestamp()
     });
 
     await loadPurchPending(); await loadHistoryAll();
+    toast('Purchase di-approve dan kontrak diaktifkan.');
   }catch(err){ console.error(err); toast('Gagal approve purchase.'); }
 }
 async function rejectPurchase(e){
@@ -311,7 +324,7 @@ async function rejectWithdrawal(e){
   }catch(err){ console.error(err); toast('Gagal reject withdrawal.'); }
 }
 
-// Riwayat gabungan (50 terakhir dari purchases & withdrawals)
+// Riwayat gabungan (50 terakhir)
 async function loadHistoryAll(){
   if(!tblAllBody) return;
   tblAllBody.innerHTML=`<tr><td colspan="6" class="py-3 text-slate-400">Memuat...</td></tr>`;
