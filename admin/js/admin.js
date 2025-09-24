@@ -222,53 +222,90 @@ function bindPurchActions(scope){
 }
 async function approvePurchase(e){
   try{
-    const tr=e.target.closest('tr'); const id=tr?.dataset?.id; if(!id) return;
-    const ref=doc(db,'purchases',id); const snap=await getDoc(ref);
-    if(!snap.exists()) throw new Error('Doc tidak ditemukan.');
-    const d=snap.data(); if(d.status!=='pending') throw new Error('Status bukan pending.');
+    const tr = e.target.closest('tr');
+    const id = tr?.dataset?.id;
+    if(!id) return;
 
-    const uid   = d.uid;
-    const price = Number(d.price||0);
-    const daily = Number(d.daily||0);
-    const cDays = Number(d.contractDays||0);
-    const animal= d.animal || '-';
+    await runTransaction(db, async (tx)=>{
+      const pRef   = doc(db, 'purchases', id);
+      const pSnap  = await tx.get(pRef);
+      if(!pSnap.exists()) throw new Error('Dokumen purchase tidak ditemukan.');
 
-    // bonus opsional → hanya bonus yang masuk saldo
-    let bonusPct=prompt('Bonus % (opsional):',''); let bonus=0;
-    if(bonusPct && !isNaN(bonusPct)){ bonusPct=Number(bonusPct); if(bonusPct>0) bonus=Math.floor(price*(bonusPct/100)); }
+      const p = pSnap.data();
+      if(p.status !== 'pending') throw new Error('Purchase sudah diproses (bukan PENDING).');
 
-    // 1) ubah purchase → approved
-    await updateDoc(ref,{status:'approved', bonusAmount:bonus||0, bonusGranted:(bonus>0)});
+      const uid   = String(p.uid);
+      const animal= String(p.animal || '').trim();          // contoh: "COW"/"SHEEP" dst
+      const price = Number(p.price || 0);
 
-    // 2) aktifkan kontrak ternak (bukan topup saldo harga penuh)
-    await addDoc(collection(db,'contracts'),{
-      uid, purchaseId:id, animal,
-      daily, contractDays:cDays, price,
-      status:'active',
-      startAt: serverTimestamp(),
-      createdAt: serverTimestamp()
+      // 1) set approved pada purchase
+      tx.update(pRef, {
+        status: 'approved',
+        approvedAt: serverTimestamp()
+      });
+
+      // 2) beri kepemilikan ternak ke user (aktifkan jika sudah ada)
+      //    struktur: users/{uid}/animals/{animalId}
+      const ownedRef = doc(db, 'users', uid, 'animals', animal);
+      const ownedSnap = await tx.get(ownedRef);
+
+      if(!ownedSnap.exists()){
+        tx.set(ownedRef, {
+          animal,
+          daily: Number(p.daily || 0),
+          contractDays: Number(p.contractDays || 0),
+          purchasedAt: serverTimestamp(),
+          purchaseId: id,
+          active: true
+        });
+      }else{
+        // kalau sudah ada, pastikan aktif & simpan purchaseId terakhir
+        tx.update(ownedRef, {
+          active: true,
+          purchaseId: id,
+          lastApprovedAt: serverTimestamp()
+        });
+      }
+
+      // 3) catat log transaksi (opsional, untuk histori admin)
+      const tRef = doc(collection(db, 'transactions'));
+      tx.set(tRef, {
+        uid,
+        kind: 'purchase_approved',
+        purchaseId: id,
+        animal,
+        amount: price,
+        createdAt: serverTimestamp()
+      });
     });
 
-    // 3) kalau ada bonus → baru tambahkan ke saldo
-    if (bonus>0){
-      await updateDoc(doc(db,'users',uid), { balance: increment(bonus) });
-    }
-
-    // 4) log transaksi
-    await addDoc(collection(db,'transactions'), {
-      uid, kind:'purchase_activated', purchaseId:id, amount:price, bonus:bonus||0, createdAt:serverTimestamp()
-    });
-
-    await loadPurchPending(); await loadHistoryAll();
-    toast('Purchase di-approve dan kontrak diaktifkan.');
-  }catch(err){ console.error(err); toast('Gagal approve purchase.'); }
+    // refresh tabel setelah berhasil
+    await loadPurchPending();
+    await loadHistoryAll();
+  }catch(err){
+    console.error(err);
+    toast('Gagal approve purchase.');
+  }
 }
 async function rejectPurchase(e){
   try{
-    const tr=e.target.closest('tr'); const id=tr?.dataset?.id; if(!id) return;
-    await updateDoc(doc(db,'purchases',id), { status:'rejected' });
-    await loadPurchPending(); await loadHistoryAll();
-  }catch(err){ console.error(err); toast('Gagal reject purchase.'); }
+    const tr = e.target.closest('tr');
+    const id = tr?.dataset?.id;
+    if(!id) return;
+
+    const ref  = doc(db,'purchases',id);
+    const snap = await getDoc(ref);
+    if(!snap.exists()) throw new Error('Doc tidak ditemukan.');
+    const d = snap.data();
+    if(d.status !== 'pending') throw new Error('Status bukan pending.');
+
+    await updateDoc(ref,{ status:'rejected', rejectedAt: serverTimestamp() });
+    await loadPurchPending();
+    await loadHistoryAll();
+  }catch(err){
+    console.error(err);
+    toast('Gagal reject purchase.');
+  }
 }
 
 // Withdrawals Pending
