@@ -1,4 +1,11 @@
 // js/features/profile.js
+import {
+  getFirestore, collection, onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* =========================================================================
+ *  Inisialisasi Profil + Ringkasan Farm
+ * ========================================================================= */
 export function initProfile(user) {
   try {
     // ---------- Rincian akun ----------
@@ -16,34 +23,53 @@ export function initProfile(user) {
     const whoEl = document.getElementById('who');
     if (whoEl) whoEl.textContent = who || '—';
 
-    // ---------- Isi Ringkasan Farm dari Firestore ----------
+    // ---------- Ringkasan Farm dari subkoleksi animals ----------
     const fb = window.App?.firebase;
-    if (!fb?.onUserDoc || !user?.uid) return;
+    if (!fb?.db || !user?.uid) return;
+    const db = fb.db || getFirestore();
 
-    fb.onUserDoc(user.uid, (snap) => {
-      if (!snap.exists()) return;
-      const d = snap.data() || {};
+    const ref = collection(db, 'users', user.uid, 'animals');
+    onSnapshot(ref, (snap) => {
+      let profitAsset = 0;
+      let earningToday = 0;
+      let totalIncome = 0;
+      let countableDays = 0;
+      let countdownDays = 0;
+      let balance = 0; // masih bisa pakai field balance utama kalau ada
 
-      // Ambil nilai dengan default aman
-      const balance       = num(d.balance, 0);        // Akun Kuantitatif
-      const profitAsset   = num(d.profitAsset, 0);
-      const earningToday  = num(d.earningToday, 0);
-      const totalIncome   = num(d.totalIncome, 0);
-      const countableDays = num(d.countableDays, 210);
-      const countdownDays = num(d.countdownDays, 210);
+      const now = new Date();
+      let minRemain = null;
 
-      // Saldo Kuantitatif (2 desimal)
+      snap.forEach(d => {
+        const v = d.data() || {};
+        const daily = num(v.daily, 0);
+        const contractDays = num(v.contractDays, 0);
+        const active = !!v.active;
+
+        const start = v.purchasedAt?.toDate ? v.purchasedAt.toDate() : null;
+        const used = start ? daysBetween(start, now) : 0;
+        const remain = Math.max(0, contractDays - used);
+
+        totalIncome += daily * contractDays;
+        if (active && remain > 0) {
+          earningToday += daily;
+          countableDays += remain;
+          if (minRemain === null || remain < minRemain) minRemain = remain;
+        }
+      });
+
+      countdownDays = minRemain ?? 0;
+      profitAsset = totalIncome; // bisa diganti formula khusus kalau ada
+      balance = profitAsset;     // fallback ke total aset
+
+      // Tulis ke UI
       setText('.pf-quant', balance.toFixed(2));
-
-      // Total aset (anggap sama dengan saldo dalam IDR — bila nanti ada field khusus,
-      // tinggal ganti ke d.totalAssets)
       setText('.pf-total', fmtRp(balance, { maximumFractionDigits: 0 }));
       setText('.pf-total-approx', '≈ ' + fmtRp(balance));
 
-      // Metrik lainnya
-      setText('.pf-profit',    profitAsset.toFixed(2));
-      setText('.pf-today',     String(earningToday));
-      setText('.pf-income',    totalIncome.toFixed(2));
+      setText('.pf-profit', profitAsset.toFixed(2));
+      setText('.pf-today', String(earningToday));
+      setText('.pf-income', totalIncome.toFixed(2));
       setText('.pf-countable', String(countableDays));
       setText('.pf-countdown', String(countdownDays));
     });
@@ -61,4 +87,7 @@ function fmtRp(n, opt = {}) {
     style: 'currency', currency: 'IDR',
     maximumFractionDigits: 0, ...opt
   }).format(num(n, 0));
+}
+function daysBetween(d1, d2) {
+  return Math.floor((d2 - d1) / (24 * 60 * 60 * 1000));
 }
