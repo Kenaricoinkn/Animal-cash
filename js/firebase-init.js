@@ -9,7 +9,6 @@ import {
   browserLocalPersistence,
   indexedDBLocalPersistence,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
 import {
   getFirestore,
   doc,
@@ -21,31 +20,35 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =========================
-   Firebase config (FINAL)
+   Firebase config
    ========================= */
 const firebaseConfig = {
   apiKey: "AIzaSyCYeFdMMjTesJUVf6iQS1lMBljSWeCfD58",
   authDomain: "peternakan-29e74.firebaseapp.com",
   projectId: "peternakan-29e74",
-  storageBucket: "peternakan-29e74.firebasestorage.app",
+  // (opsional untuk Storage, tidak mempengaruhi auth/login)
+  storageBucket: "peternakan-29e74.appspot.com",
   messagingSenderId: "1823968365",
   appId: "1:1823968365:web:aede4c3b7eaa93bc464364",
 };
 
-// Init
+// Init core SDK
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 auth.languageCode = "id";
 
-// === Persistensi sesi (tetap login setelah refresh/reopen)
+/* =========================
+   Persistensi sesi (tetap login)
+   ========================= */
+// top-level await aman karena file ini module (type="module")
 try {
   await setPersistence(auth, browserLocalPersistence);
-} catch {
+} catch (e1) {
   try {
     await setPersistence(auth, indexedDBLocalPersistence);
-  } catch (e) {
-    console.warn("[Auth persistence] fallback gagal:", e);
+  } catch (e2) {
+    console.warn("[Auth persistence] gagal set:", e1, e2);
   }
 }
 
@@ -53,9 +56,8 @@ try {
    Phone → email mapping
    ========================= */
 const PHONE_EMAIL_DOMAIN = "phone.user";
-function normalizePhone(phone) {
-  if (!phone) return "";
-  const digits = phone.replace(/[^\d+]/g, "");
+function normalizePhone(phone = "") {
+  const digits = String(phone).replace(/[^\d+]/g, "");
   return digits.startsWith("+") ? digits.slice(1) : digits;
 }
 function phoneToEmail(phone) {
@@ -67,12 +69,10 @@ function phoneToEmail(phone) {
 /* =========================
    Firestore helpers (Farm)
    ========================= */
-// path: users/{uid}
 function userDocRef(uid) {
   return doc(db, "users", uid);
 }
 
-// nilai default saat pertama kali login
 const DEFAULT_FARM = {
   balance:        0.0,
   profitAsset:    0.0,
@@ -83,7 +83,6 @@ const DEFAULT_FARM = {
   updatedAt:      serverTimestamp(),
 };
 
-// create doc kalau belum ada
 async function ensureUserDoc(uid, extra = {}) {
   const ref = userDocRef(uid);
   const snap = await getDoc(ref);
@@ -128,5 +127,5 @@ window.App.firebase = {
   },
 };
 
-// sinyal siap
+// Sinyal siap (opsional untuk listener lain)
 window.dispatchEvent(new CustomEvent("firebase-ready"));
