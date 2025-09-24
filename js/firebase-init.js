@@ -4,7 +4,10 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  updateProfile
+  updateProfile,
+  setPersistence,
+  browserLocalPersistence,
+  indexedDBLocalPersistence,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
@@ -14,7 +17,7 @@ import {
   setDoc,
   updateDoc,
   onSnapshot,
-  serverTimestamp
+  serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =========================
@@ -26,27 +29,38 @@ const firebaseConfig = {
   projectId: "peternakan-29e74",
   storageBucket: "peternakan-29e74.firebasestorage.app",
   messagingSenderId: "1823968365",
-  appId: "1:1823968365:web:aede4c3b7eaa93bc464364"
+  appId: "1:1823968365:web:aede4c3b7eaa93bc464364",
 };
 
 // Init
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
-auth.languageCode = 'id';
+auth.languageCode = "id";
+
+// === Persistensi sesi (tetap login setelah refresh/reopen)
+try {
+  await setPersistence(auth, browserLocalPersistence);
+} catch {
+  try {
+    await setPersistence(auth, indexedDBLocalPersistence);
+  } catch (e) {
+    console.warn("[Auth persistence] fallback gagal:", e);
+  }
+}
 
 /* =========================
    Phone → email mapping
    ========================= */
 const PHONE_EMAIL_DOMAIN = "phone.user";
-function normalizePhone(phone){
-  if(!phone) return "";
-  const digits = phone.replace(/[^\d+]/g, '');
-  return digits.startsWith('+') ? digits.slice(1) : digits;
+function normalizePhone(phone) {
+  if (!phone) return "";
+  const digits = phone.replace(/[^\d+]/g, "");
+  return digits.startsWith("+") ? digits.slice(1) : digits;
 }
-function phoneToEmail(phone){
+function phoneToEmail(phone) {
   const d = normalizePhone(phone);
-  if(!d) throw new Error('Nomor telepon tidak valid.');
+  if (!d) throw new Error("Nomor telepon tidak valid.");
   return `${d}@${PHONE_EMAIL_DOMAIN}`;
 }
 
@@ -54,23 +68,23 @@ function phoneToEmail(phone){
    Firestore helpers (Farm)
    ========================= */
 // path: users/{uid}
-function userDocRef(uid){
-  return doc(db, 'users', uid);
+function userDocRef(uid) {
+  return doc(db, "users", uid);
 }
 
 // nilai default saat pertama kali login
 const DEFAULT_FARM = {
-  balance:        0.00,
-  profitAsset:    0.00,
+  balance:        0.0,
+  profitAsset:    0.0,
   earningToday:   0,
-  totalIncome:    0.00,
+  totalIncome:    0.0,
   countableDays:  210,
   countdownDays:  210,
-  updatedAt:      serverTimestamp()
+  updatedAt:      serverTimestamp(),
 };
 
 // create doc kalau belum ada
-async function ensureUserDoc(uid, extra={}) {
+async function ensureUserDoc(uid, extra = {}) {
   const ref = userDocRef(uid);
   const snap = await getDoc(ref);
   if (!snap.exists()) {
@@ -91,11 +105,12 @@ window.App.firebase = {
   userDocRef,
   ensureUserDoc,
   onUserDoc: (uid, cb) => onSnapshot(userDocRef(uid), cb),
-  updateUserDoc: (uid, data) => updateDoc(userDocRef(uid), { ...data, updatedAt: serverTimestamp() }),
+  updateUserDoc: (uid, data) =>
+    updateDoc(userDocRef(uid), { ...data, updatedAt: serverTimestamp() }),
 
   // EMAIL
   signInEmail: (email, pass) => signInWithEmailAndPassword(auth, email, pass),
-  signUpEmail : async (email, pass) => {
+  signUpEmail: async (email, pass) => {
     const uc = await createUserWithEmailAndPassword(auth, email, pass);
     return uc;
   },
@@ -110,8 +125,8 @@ window.App.firebase = {
     const uc = await createUserWithEmailAndPassword(auth, email, pass);
     await updateProfile(uc.user, { displayName: `tel:${normalizePhone(phone)}` });
     return uc;
-  }
+  },
 };
 
 // sinyal siap
-window.dispatchEvent(new CustomEvent('firebase-ready'));
+window.dispatchEvent(new CustomEvent("firebase-ready"));
