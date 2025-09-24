@@ -20,10 +20,10 @@
       </div>
 
       <!-- ==== Email form ==== -->
-      <form id="emailForm" class="space-y-3">
+      <form id="emailForm" class="space-y-3" novalidate>
         <label class="block text-sm text-slate-300">Email</label>
         <input id="email" type="email" class="w-full rounded-xl bg-slate-900/70 border border-white/10 px-3 py-3"
-               placeholder="nama@email.com" autocomplete="email" />
+               placeholder="nama@email.com" autocomplete="email" autofocus />
 
         <label class="block text-sm text-slate-300 mt-2">Kata sandi</label>
         <div class="relative">
@@ -38,7 +38,7 @@
       </form>
 
       <!-- ==== Phone form ==== -->
-      <form id="phoneForm" class="space-y-3 hidden">
+      <form id="phoneForm" class="space-y-3 hidden" novalidate>
         <label class="block text-sm text-slate-300">Telepon</label>
         <div class="flex gap-2">
           <select id="country" class="rounded-xl bg-slate-900/70 border border-white/10 px-2">
@@ -48,7 +48,7 @@
             <option value="+1">+1</option>
           </select>
           <input id="phone" type="tel" class="flex-1 rounded-xl bg-slate-900/70 border border-white/10 px-3 py-3"
-                 placeholder="812xxxxxxx" autocomplete="tel" />
+                 placeholder="812xxxxxxx" autocomplete="tel" inputmode="numeric"/>
         </div>
 
         <label class="block text-sm text-slate-300 mt-2">Kata sandi</label>
@@ -72,10 +72,19 @@
   </main>
 
   <!-- ORDER SCRIPTS PENTING -->
+  <!-- util kecil (toast, tab switch dasar, toggle password) -->
   <script src="js/app-core.js" defer></script>
+
+  <!-- beri tahu skrip auth bahwa ini page "login" -->
   <script>window.AUTH_MODE='login';</script>
+
+  <!-- Firebase init (wajib lebih dulu, sudah include persistence di dalamnya) -->
   <script type="module" src="js/firebase-init.js"></script>
+
+  <!-- Tab switch login (email <-> phone) -->
   <script type="module" src="js/auth-tabs.js"></script>
+
+  <!-- Handler login (email & phone, mapping phone->email) -->
   <script type="module" src="js/login.js"></script>
 </body>
 </html>
