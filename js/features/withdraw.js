@@ -213,41 +213,28 @@ function clearFieldErrors(){
   showFieldError('#wdbAmount','#wdbError','');
 }
 
-function validateAmount(amount, inputSel, errorSel){
-  // saldo tersedia harus cukup minimal
-  if (AVAILABLE < MIN_WD){
-    const m = `Saldo Anda kurang dari minimal penarikan (${fmtRp(MIN_WD)}).`;
-    console.log('❌', m);
-    showFieldError(inputSel, errorSel, m);
-    toast(m);
-    return false;
-  }
+function validateAmount(amount){
   if (!Number.isFinite(amount) || amount <= 0){
-    const m = 'Nominal tidak valid.';
-    console.log('❌', m);
-    showFieldError(inputSel, errorSel, m);
-    toast(m);
-    return false;
+    toast('Nominal tidak valid.'); return false;
   }
   if (amount < MIN_WD){
-    const m = `Minimal penarikan adalah ${fmtRp(MIN_WD)}.`;
-    console.log('❌', m);
-    showFieldError(inputSel, errorSel, m);
-    toast(m);
+    toast(`Minimal penarikan adalah ${fmtRp(MIN_WD)}.`); return false;
+  }
+
+  // ⛔ Tambahan: kalau masih ada WD pending, larang submit apa pun
+  if (PENDING_TOTAL > 0){
+    toast('Masih ada pengajuan penarikan berstatus PENDING. Tunggu persetujuan admin terlebih dulu.'); 
     return false;
+  }
+
+  if (AVAILABLE <= 0){
+    toast('Saldo Anda 0 atau seluruh saldo sedang diproses (pending).'); return false;
   }
   if (amount > AVAILABLE){
-    const m = `Nominal melebihi saldo tersedia (${fmtRp(AVAILABLE)}).`;
-    console.log('❌', m);
-    showFieldError(inputSel, errorSel, m);
-    toast(m);
-    return false;
+    toast(`Nominal melebihi saldo tersedia (${fmtRp(AVAILABLE)}).`); return false;
   }
-  // bersihkan error
-  showFieldError(inputSel, errorSel, '');
   return true;
 }
-
 /* ================== FIRESTORE WRITE ================== */
 
 async function addWithdrawal(db, payload){
