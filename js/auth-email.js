@@ -3,7 +3,7 @@
   const MODE = (window.AUTH_MODE || 'login').toLowerCase();
   const isReg = MODE === 'register';
 
-  const { signInEmail, signUpEmail, ensureUserDoc, auth } = window.App.firebase;
+  const { signInEmail, signUpEmail, ensureUserDoc } = window.App.firebase;
   const form   = document.getElementById('emailForm');
   if (!form) return;
 
@@ -18,14 +18,16 @@
     if (isReg && pass !== pass2) return toast('Kata sandi tidak sama.');
 
     try {
-      let cred;
       if (isReg) {
-        cred = await signUpEmail(email, pass);
+        const cred = await signUpEmail(email, pass);
         try { await ensureUserDoc(cred.user.uid); } catch {}
       } else {
-        cred = await signInEmail(email, pass);
+        await signInEmail(email, pass);
       }
-      location.href = 'dashboard.html';
+
+      // ✅ jangan redirect manual!
+      // cukup tunggu onAuthStateChanged di app-core.js yang akan membuka dashboard
+      toast('Login berhasil, memuat dashboard...');
     } catch (err) {
       console.error(err);
       toast(err.message || 'Gagal memproses email.');
