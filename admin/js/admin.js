@@ -10,9 +10,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore, collection, query, where, orderBy, limit, getDocs,
-  doc, updateDoc, increment, addDoc, serverTimestamp, getDoc
+  doc, updateDoc, increment, addDoc, serverTimestamp, getDoc, runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 /* =================== CONFIG (jalur darurat) =================== */
 const FALLBACK_ADMIN_UIDS = [
   // "UID_ADMIN_KAMU"
