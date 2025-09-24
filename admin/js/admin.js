@@ -1,6 +1,11 @@
 // admin/js/admin.js
 import {
   getAuth, onAuthStateChanged, signOut,
+  RecaptchaVerifier, signInWithPhoneNumber,
+  setPersistence, browserLocalPersistence, indexedDBLocalPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getAuth, onAuthStateChanged, signOut,
   RecaptchaVerifier, signInWithPhoneNumber
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
@@ -50,9 +55,17 @@ $('#btnRefreshWd')?.addEventListener('click', loadWdPending);
 $('#btnRefreshAll')?.addEventListener('click', loadHistoryAll);
 
 /* =================== FIREBASE =================== */
+/* =================== FIREBASE =================== */
 const auth = window.App?.firebase?.auth || getAuth();
 const db   = window.App?.firebase?.db   || getFirestore();
 
+// Pastikan sesi disimpan di storage browser (tetap login setelah refresh / reopen)
+setPersistence(auth, browserLocalPersistence)
+  .catch(async () => {
+    // fallback kalau environment tertentu menolak localStorage
+    try { await setPersistence(auth, indexedDBLocalPersistence); }
+    catch(e){ console.warn('[Auth persistence] fallback gagal:', e); }
+  });
 let recaptchaVerifier = null;
 let confirmationResult = null;
 
