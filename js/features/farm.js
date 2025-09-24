@@ -1,4 +1,4 @@
-// js/features/farm.js — Cloudinary unsigned preset (FIXED)
+// js/features/farm.js — Cloudinary unsigned preset (FIXED + lock if owned)
 
 /* =================== Helpers =================== */
 const $  = (sel, root=document) => root.querySelector(sel);
@@ -7,6 +7,7 @@ const fmtRp = (n,opt={}) => new Intl.NumberFormat('id-ID',{
   style:'currency', currency:'IDR', maximumFractionDigits:0, ...opt
 }).format(Number(n||0));
 const toast = (m)=> window.App?.toast ? window.App.toast(m) : alert(m);
+const daysBetween = (d1, d2)=> Math.floor((d2 - d1) / (24*60*60*1000));
 
 /* =================== Cloudinary =================== */
 const CLOUD_NAME    = "ddxezj8az";
@@ -15,8 +16,12 @@ const UPLOAD_URL    = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
 
 /* =================== Firebase =================== */
 import {
-  getFirestore, collection, addDoc, updateDoc, doc, serverTimestamp
+  getFirestore, collection, addDoc, updateDoc, doc, serverTimestamp, onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* =================== Owned state =================== */
+let OWNED = Object.create(null); // { COW: {active, contractDays, daily, purchasedAt}, ... }
+let CURRENT_UID = null;
 
 /* =========================================================================
  *  PUBLIC
@@ -25,13 +30,33 @@ export function initFarm() {
   const farmTab = $('#farmTab');
   if (!farmTab || !window.App?.firebase) return;
 
-  const { auth, ensureUserDoc, onUserDoc } = window.App.firebase;
+  const { auth, ensureUserDoc, onUserDoc, db:dbFromApp } = window.App.firebase;
   const user = auth.currentUser;
   if (!user) return;
 
+  CURRENT_UID = user.uid;
+
+  // ringkasan di farm header
+  const db = dbFromApp || getFirestore();
   ensureUserDoc(user.uid)
     .then(() => onUserDoc(user.uid, snap => snap.exists() && renderFarm(snap.data()||{})))
     .catch(e => { console.error(e); toast('Gagal memuat Farm'); });
+
+  // dengarkan kepemilikan hewan user ⇒ kunci tombol beli
+  const animalsRef = collection(db, 'users', user.uid, 'animals');
+  onSnapshot(animalsRef, (snap)=>{
+    OWNED = Object.create(null);
+    snap.forEach(d=>{
+      const v = d.data() || {};
+      OWNED[d.id] = {
+        active: !!v.active,
+        contractDays: Number(v.contractDays||0),
+        daily: Number(v.daily||0),
+        purchasedAt: v.purchasedAt || v.createdAt || null
+      };
+    });
+    refreshAllCardLocks();
+  });
 
   initFarmCards();
 }
@@ -61,11 +86,26 @@ export function initFarmCards() {
 
   let selected = null;
 
+  function canBuy(animalId){
+    const info = OWNED[animalId];
+    if (!info) return { ok:true };
+
+    const start = info.purchasedAt?.toDate ? info.purchasedAt.toDate() : null;
+    const remain = Math.max(0, Number(info.contractDays||0) - (start ? daysBetween(start, new Date()) : 0));
+    if (info.active && remain > 0){
+      return { ok:false, msg:`Anda sudah memiliki ${animalId}. Sisa ${remain} hari.` };
+    }
+    return { ok:true };
+  }
+
   function openFromCard(card){
+    const name     = (card.dataset.animal || card.querySelector('.ac-title, .mc-title')?.textContent || 'Item').toUpperCase();
     const price    = Number(card.dataset.price || 0);
     const daily    = Number(card.dataset.daily || 0);
     const contract = Number(card.dataset.contract || 0);
-    const name     = (card.dataset.animal || card.querySelector('.ac-title, .mc-title')?.textContent || 'Item').toUpperCase();
+
+    const gate = canBuy(name);
+    if (!gate.ok){ toast(gate.msg); return; }
 
     selected = { animal:name, price, daily, days:contract };
 
@@ -85,7 +125,7 @@ export function initFarmCards() {
     showModal();
   }
 
-  // isi angka & pasang handler beli (tiap kartu)
+  // render angka & pasang handler beli (tiap kartu)
   cards.forEach(card=>{
     const price    = Number(card.dataset.price || 0);
     const daily    = Number(card.dataset.daily || 0);
@@ -98,24 +138,33 @@ export function initFarmCards() {
     el = card.querySelector('.ac-total, .mc-total');           if (el) el.textContent = fmtRp(total);
     el = card.querySelector('.ac-cycle, .mc-contract');        if (el) el.textContent = `${contract} hari`;
 
+    // siapkan badge kepemilikan jika belum ada
+    if (!card.querySelector('.owned-badge')){
+      const badge = document.createElement('div');
+      badge.className = 'owned-badge hidden text-xs text-emerald-300 mb-1';
+      const head = card.querySelector('.ac-title, .mc-title')?.parentElement || card;
+      head.insertBefore(badge, head.firstChild);
+    }
+
     const btns = card.querySelectorAll('.buy-btn, .buy-btn-green, .btn-buy, [data-buy]');
     btns.forEach(btn=>{
+      if (btn.__hasFarmHandler) return;
       btn.__hasFarmHandler = true;
       btn.addEventListener('click', ()=> openFromCard(card));
     });
   });
 
-  // SAFE delegation (tanpa re-dispatch / rekursi)
+  // delegation (kalau ada tombol yang dirender dinamis)
   document.addEventListener('click', (ev)=>{
     const btn = ev.target.closest('.buy-btn, .buy-btn-green, .btn-buy, [data-buy]');
-    if (!btn || btn.__hasFarmHandler) return; // sudah ada handler langsung
+    if (!btn || btn.__hasFarmHandler) return;
     const card = btn.closest('.animal-card, .animal-card.v2, .market-card');
     if (card) openFromCard(card);
   });
 
   closeBt?.addEventListener('click', hideModal);
 
-  // Submit bukti → Cloudinary → update Firestore
+  // Submit bukti → Cloudinary → purchase pending
   form?.addEventListener('submit', async (ev)=>{
     ev.preventDefault();
     const user = auth?.currentUser;
@@ -172,7 +221,7 @@ export function initFarmCards() {
       }
       if (noteEl){
         noteEl.classList.remove('hidden');
-        noteEl.innerHTML = 'Bukti berhasil dikirim. Mohon tunggu persetujuan admin (maks <b>15 menit</b>). Jika lebih dari itu, silakan hubungi admin.';
+        noteEl.innerHTML = 'Bukti berhasil dikirim. Mohon tunggu persetujuan admin (maks <b>15 menit</b>).';
         setTimeout(()=>{ noteEl.innerHTML = 'Sudah lebih dari 15 menit. Jika belum diproses, silakan hubungi admin.'; }, 15*60*1000);
       }
       toast('Bukti terkirim. Menunggu verifikasi admin.');
@@ -189,7 +238,54 @@ export function initFarmCards() {
 }
 
 /* =========================================================================
- *  Render saldo + metrik
+ *  Lock/Badge rendering berdasarkan kepemilikan
+ * ========================================================================= */
+function refreshAllCardLocks(){
+  $$('.animal-card, .animal-card.v2, .market-card').forEach(card=>{
+    const animalId = (card.dataset.animal || '').toUpperCase();
+    const info = OWNED[animalId];
+    const btn  = card.querySelector('.buy-btn, .buy-btn-green, .btn-buy, [data-buy]');
+    const badge= card.querySelector('.owned-badge');
+
+    if (!btn) return;
+
+    if (!info){
+      btn.disabled = false;
+      btn.textContent = 'Beli';
+      btn.classList.remove('opacity-50','cursor-not-allowed');
+      badge?.classList.add('hidden');
+      return;
+    }
+
+    const start = info.purchasedAt?.toDate ? info.purchasedAt.toDate() : null;
+    const remain = Math.max(0, Number(info.contractDays||0) - (start ? daysBetween(start, new Date()) : 0));
+
+    if (info.active && remain > 0){
+      btn.disabled = true;
+      btn.textContent = 'Sudah dibeli';
+      btn.classList.add('opacity-50','cursor-not-allowed');
+      if (badge){
+        badge.textContent = `Aktif • sisa ${remain} hari`;
+        badge.classList.remove('hidden');
+      }
+    }else{
+      btn.disabled = false;
+      btn.textContent = 'Beli';
+      btn.classList.remove('opacity-50','cursor-not-allowed');
+      if (badge){
+        if (info.contractDays && remain === 0){
+          badge.textContent = 'Selesai. Bisa beli lagi';
+          badge.classList.remove('hidden');
+        }else{
+          badge.classList.add('hidden');
+        }
+      }
+    }
+  });
+}
+
+/* =========================================================================
+ *  Render saldo + metrik (header Farm)
  * ========================================================================= */
 function renderFarm({
   balance=0, profitAsset=0, earningToday=0, totalIncome=0,
