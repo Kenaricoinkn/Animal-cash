@@ -473,7 +473,16 @@
     initFarmCards();
   });
 </script>
+<!-- Profile (ringkasan farm dari users/{uid}/animals) -->
+<script type="module">
+  import { initProfile } from './js/features/profile.js';
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+  const auth = window.App?.firebase?.auth || getAuth();
+  onAuthStateChanged(auth, (user) => {
+    if (user) initProfile(user);
+  });
+</script>
   <!-- Fallback: buka modal QR walau farm.js gagal -->
   <script>
     document.addEventListener('click', function (e) {
